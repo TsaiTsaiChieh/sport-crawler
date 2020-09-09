@@ -1,4 +1,4 @@
-const db = require('./sequelizeUtil');
+const db = require('./mysqlUtil');
 
 async function connection() {
   try {
