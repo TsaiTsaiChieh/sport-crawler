@@ -24,6 +24,7 @@ schedule.scheduleJob('*/3 * * * * *', async function() {
 schedule.scheduleJob('*/3 * * * * *', async function() {
   // 其他測試
   // HW.test();
+});
 schedule.scheduleJob('*/3 * * * * *', async function() {
   try {
     // console.log('Each 3 second...');
