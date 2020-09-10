@@ -1719,6 +1719,45 @@ const UserBuy = sequelize.define(
   }
 );
 
+const UserBuyFake = sequelize.define(
+  'user__buy__fake',
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    league_id: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    god_uid: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    matches_date: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    matches_date_tw: {
+      type: Sequelize.DATE,
+      allowNull: false
+    },
+    fake_purchase: {
+      type: Sequelize.INTEGER,
+      allowNull: 0
+    }
+  },
+  {
+    indexes: [
+      {
+        fields: ['league_id', 'god_uid', 'matches_date'],
+        unique: true
+      }
+    ]
+  }
+);
+
 const Honor_board = sequelize.define(
   'user__honor__board',
   {
@@ -2861,6 +2900,7 @@ const dbUtil = {
   Home_List,
   Service_Contact,
   UserBuy,
+  UserBuyFake,
   Honor_board,
   News,
   News_Sys,
