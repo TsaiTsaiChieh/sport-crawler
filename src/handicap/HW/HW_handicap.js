@@ -1,6 +1,6 @@
 const axios = require('axios');
-const db = require('../../util/dbUtil');
-const leagueUtil = require('../../util/leagueUtil');
+const db = require('../../helpers/mysqlUtil');
+const leagueUtil = require('../../helpers/leaguesUtil');
 const acceptLeague = require('../../configs/acceptValues');
 const token = db.Token;
 

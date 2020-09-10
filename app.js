@@ -4,6 +4,8 @@ const Have = require('domain-haven');
 const schedule = require('node-schedule');
 const HW = require('./src/handicap/HW/HW_handicap');
 // const NBA_prematch = require('./src/invoke/baseball/NBA_match');
+const NBA_match = require('./src/invoke/baseball/NBA_match');
+// const NBA_livescore = require('./src/invoke/baseball/NBA_livescore');
 // const connection = require('./src/helpers/connection');
 // const mysql = require('./src/helpers/mysqlUtil');
 
@@ -25,10 +27,21 @@ schedule.scheduleJob('*/3 * * * * *', async function() {
   // 其他測試
   // HW.test();
 });
-schedule.scheduleJob('*/3 * * * * *', async function() {
+
+schedule.scheduleJob('*/3 * * * * *', async function(fireDate) {
   try {
-    // console.log('Each 3 second...');
-    // await NBA_prematch();
+    // console.log(`This job was supposed to run at ${fireDate}`);
+    // await NBA_livescore();
+  } catch (err) {
+    console.log(err);
+  }
+  // await connection();
+});
+
+schedule.scheduleJob('0 21 * * *', async function(fireDate) {
+  try {
+    console.log(`This job was supposed to run at ${fireDate} , but actually ran at ${new Date()}`);
+    await NBA_match();
   } catch (err) {
     console.log(err);
   }
