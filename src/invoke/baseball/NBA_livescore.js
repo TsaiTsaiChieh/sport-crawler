@@ -156,7 +156,7 @@ async function updateMatchEndStatus2DB(status, gameId, path) {
       await mysql.Match.update(
         { status: MATCH_STATUS.END },
         { where: { bets_id: gameId } });
-      await set2realtime(path, { Summary: { status: matchStatus['3'] } });
+      await set2realtime(`${path}/status`, { status: matchStatus['3'] });
     }
     return Promise.resolve();
   } catch (err) {
