@@ -39,8 +39,15 @@ function timestamp2date(timestamp, operation, zone = zone_tw) {
   if (operation.format) return datetime.format(operation.format);
   else return datetime.format('YYYYMMDD');
 }
+
+function taipeiDate(timestamp, format = 'YYYY-MM-DD HH:mm ZZ') {
+  const today = moment.tz(timestamp, zone_tw).format(format);
+  return today;
+}
+
 module.exports = {
   timestampFormat,
   date2unix,
-  timestamp2date
+  timestamp2date,
+  taipeiDate
 };
