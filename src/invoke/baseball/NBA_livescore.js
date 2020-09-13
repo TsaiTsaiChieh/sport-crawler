@@ -31,7 +31,6 @@ async function main() {
     const matchData = await getMatchDataFromMySQL(nowUnix);
     await updateMatchInplayStatus2MySQL(matchData);
     await liveTextStart(matchData);
-    // await teamStatData(matchData);
   } catch (err) {
     console.log(err);
     return err;
