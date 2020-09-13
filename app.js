@@ -19,9 +19,9 @@ schedule.scheduleJob('*/3 * * * * *', async function(fireDate) {
   }
 });
 
-schedule.scheduleJob('0 21 * * *', async function(fireDate) {
+schedule.scheduleJob('0 22 * * *', async function(fireDate) {
   try {
-    console.log(`This job was supposed to run at ${fireDate} , but actually ran at ${new Date()}`);
+    console.log(`NBA_match run at ${fireDate} , but actually ran at ${new Date()}`);
     await NBA_match();
   } catch (err) {
     console.log(err);
