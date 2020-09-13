@@ -30,8 +30,15 @@ class MySQLError extends ExtendableError {
   }
 }
 
+class RealtimeError extends ExtendableError {
+  constructor(message = 'Realtime 錯誤', status = 50003, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+    super(message, status, isPublic, code);
+  }
+}
+
 module.exports = {
   AxiosGetMethodError,
   RepackageError,
-  MySQLError
+  MySQLError,
+  RealtimeError
 };
