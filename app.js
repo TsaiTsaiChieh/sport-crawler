@@ -13,7 +13,7 @@ app.use(Have.haven());
 
 schedule.scheduleJob('*/3 * * * * *', async function() {
   try {
-    console.log(`NBA_livescore was supposed to run at ${taipeiDate(new Date())}`);
+    // console.log(`NBA_livescore was supposed to run at ${taipeiDate(new Date())}`);
     await NBA_livescore();
   } catch (err) {
     console.log(err);
