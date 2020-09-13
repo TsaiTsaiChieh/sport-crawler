@@ -30,7 +30,7 @@ schedule.scheduleJob('Match information', '0 9 * * *', zone_tw, async function()
   }
 });
 
-schedule.scheduleJob('0 */1 * * * *', async function() {
+schedule.scheduleJob('0 0 */1 * * *', async function() {
   try {
     await connection();
   } catch (err) {
