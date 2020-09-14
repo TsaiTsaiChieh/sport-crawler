@@ -140,6 +140,7 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
           await set2realtime(`${specificPath}/Clock`, event.gameClock);
           await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
           await set2realtime(`${specificPath}/description_ch`, descriptionCh);
+          console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
         }
       }
     }
@@ -156,7 +157,7 @@ async function updateMatchEndStatus2DB(status, gameId, path) {
       await mysql.Match.update(
         { status: MATCH_STATUS.END },
         { where: { bets_id: gameId } });
-      await set2realtime(path, { Summary: { status: matchStatus['3'] } });
+      await set2realtime(`${path}/status`, { status: matchStatus['3'] });
     }
     return Promise.resolve();
   } catch (err) {
@@ -229,7 +230,6 @@ async function updateTeamsStat(data, path) {
       };
       for (const key in awayData) await set2realtime(`${path}/info/away/Total/${key}`, awayData[key]);
       for (const key in homeData) await set2realtime(`${path}/info/home/Total/${key}`, homeData[key]);
-      // console.log(`更新 NBA: ${gameId} 文字直播`);
     }
     return Promise.resolve();
   } catch (err) {
