@@ -21,11 +21,6 @@ schedule.scheduleJob('*/10 * * * * *', async function() {
   HW.getHandicap();
 });
 
-schedule.scheduleJob('*/3 * * * * *', async function() {
-  // 其他測試
-  // HW.test();
-});
-
 schedule.scheduleJob('*/3 * * * * *', async function(fireDate) {
   try {
     // console.log(`This job was supposed to run at ${fireDate}`);

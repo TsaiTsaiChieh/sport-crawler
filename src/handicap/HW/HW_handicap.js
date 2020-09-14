@@ -31,7 +31,6 @@ async function test() {
 async function getHandicap() {
 // 美國時間
   const token = await queryForToken();
-
   const timeTolerance = 3600000; // 時間誤差在一個小時內
   for (let i = 0; i < acceptLeague.acceptLeague.length; i++) {
     // for -> 開放聯盟
@@ -62,7 +61,6 @@ async function getHandicap() {
         const apiTime = new Date(data.result.data_list[k].game_time).getTime();
         const apiHomeId = leagueName2Id(data.result.data_list[k].main_team);
         const apiAwayId = leagueName2Id(data.result.data_list[k].visit_team);
-
         if (
           data.result.data_list[k].roll === '滾球場' &&
 					data.result.data_list[k].transType === '全場' &&
@@ -87,9 +85,11 @@ async function getHandicap() {
           const apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
 
           if (
-            sqlSpreadStatus === apiSpreadStatus && // 讓分方
+            sqlSpreadHandicap === null || (
+              sqlSpreadStatus === apiSpreadStatus && // 讓分方
 						sqlSpreadHandicap === apiSpreadHandicap && // 讓分盤口
 						sqlSpreadRate === apiSpreadRate // 讓分 rate
+            )
           ) {
             // 讓分盤口無變化
             console.log(ele[j].bets_id + ' spread is the same');
@@ -113,8 +113,10 @@ async function getHandicap() {
             });
           }
           if (
-            sqlTotalsHandicap === apiTotalsHandicap && // 大小分盤口
+            sqlTotalsHandicap === null(
+              sqlTotalsHandicap === apiTotalsHandicap && // 大小分盤口
 						sqlTotalsRate === apiTotalsRate // 大小分 rate
+            )
           ) {
             // 大小分盤口無變化
             console.log(ele[j].bets_id + ' total is the same');
@@ -193,7 +195,8 @@ async function queryForMatches(leagueId) {
 }
 
 function leagueName2Id(leagueName) {
-  const name = leagueName.split('G')[0];
+  let name = leagueName.split('G')[0];
+  name = name.split('-')[0];
   switch (name) {
     // MLB
     case '明尼蘇達雙城': {
@@ -458,7 +461,7 @@ function leagueName2Id(leagueName) {
     case '亞特蘭大老鷹': {
       return '55278';
     }
-    // NHL
+    // NHL 剩 7 組
     case '紐約島人': {
       return '52379';
     }
@@ -532,28 +535,6 @@ function leagueName2Id(leagueName) {
       return '51658';
     }
 
-    // 以下待確認
-    case '新澤西魔鬼': {
-      return '51830';
-    }
-    case '水牛城軍刀': {
-      return '53290';
-    }
-    case '底特律紅翼': {
-      return '51652';
-    }
-    case '渥太華參議員': {
-      return '53343';
-    }
-    case '安納罕巨鴨': {
-      return '51665';
-    }
-    case '聖荷西鯊魚': {
-      return '52641';
-    }
-    case '洛杉磯國王': {
-      return '51666';
-    }
     // 中超
     case '石家莊永昌': {
       return '49388';
@@ -603,7 +584,45 @@ function leagueName2Id(leagueName) {
     case '廣州富力': {
       return '43806';
     }
-    // 英超
+
+    // 英超 剩 8 組
+    case '富勒姆': {
+      return '17170';
+    }
+    case '阿仙奴': {
+      return '17230';
+    }
+    case '水晶宮': {
+      return '17189';
+    }
+    case '修咸頓': {
+      return '17231';
+    }
+    case '利物浦': {
+      return '23451';
+    }
+    case '列斯聯': {
+      return '17175';
+    }
+    case '韋斯咸': {
+      return '709';
+    }
+    case '紐卡斯爾聯': {
+      return '23478';
+    }
+    case '西布朗': {
+      return '331';
+    }
+    case '李斯特城': {
+      return '23452';
+    }
+    case '托特納姆熱刺': {
+      return '17212';
+    }
+    case '愛華頓': {
+      return '44249';
+    }
+
     // 法甲
     case '波爾多': {
       return '347';
@@ -665,16 +684,117 @@ function leagueName2Id(leagueName) {
     case '亞眠': {
       return '9919';
     }
-    // 西甲
-    // 義甲
-    // 德甲
-    // 荷甲
-    // 葡超
-    // 澳足
+
+    // 西甲 剩 6 組
+    case '伊巴': {
+      return '4442';
+    }
+    case '切爾達': {
+      return '10268';
+    }
+    case '格拉納達': {
+      return '993';
+    }
+    case '畢爾巴鄂競技': {
+      return '1210';
+    }
+    case '卡迪斯': {
+      return '1384';
+    }
+    case '奧薩蘇納': {
+      return '17164';
+    }
+    case '艾拉維斯': {
+      return '974';
+    }
+    case '皇家貝迪斯': {
+      return '17164';
+    }
+    case '巴拉多利德': {
+      return '1291';
+    }
+    case '皇家蘇斯達': {
+      return '6303';
+    }
+    case '維拉利爾': {
+      return '1374';
+    }
+    case '韋斯卡': {
+      return '1060';
+    }
+    case '華倫西亞': {
+      return '43939';
+    }
+    case '利雲特': {
+      return '1056';
+    }
+
+    // 義甲 尚未開打
+
+    // 德甲 尚未開打
+
+    // 荷甲 剩 4 組
+    case '海倫維恩': {
+      return '29096';
+    }
+    case '威廉二世': {
+      return '23727';
+    }
+    case '茲沃勒': {
+      return '23654';
+    }
+    case '費耶諾德': {
+      return '43767';
+    }
+    case '特溫特': {
+      return '29097';
+    }
+    case '錫塔德命運': {
+      return '44253';
+    }
+    case '埃門': {
+      return '9910';
+    }
+    case '芬洛': {
+      return '9913';
+    }
+    case '鹿特丹斯巴達': {
+      return '43860';
+    }
+    case '阿賈克斯': {
+      return '344';
+    }
+    case '赫拉克勒斯': {
+      return '342';
+    }
+    case '海牙': {
+      return '341';
+    }
+    case '格羅寧根': {
+      return '220';
+    }
+    case 'PSV埃因霍溫': {
+      return '219';
+    }
+    case '瓦爾維克': {
+      return '9917';
+    }
+    case '維迪斯': {
+      return '43996';
+    }
+
+    // 葡超 尚未開打
+
+    // 澳足 尚未開打
+
     // 日甲
+
     // 韓足
+
     // 歐冠杯
+
     // 歐洲杯
+
     default: {
       return name;
     }
