@@ -48,72 +48,86 @@ function leagueCodebook(league) {
     case 'NBA':
       return {
         id: '2274',
-        name_ch: '美國國家籃球協會'
+        name_ch: '美國國家籃球協會',
+        ori_league_id: '2274'
       };
     case 'SBL':
       return {
         id: '8251',
-        name_ch: '超級籃球聯賽'
+        name_ch: '超級籃球聯賽',
+        ori_league_id: '8251'
       };
     case 'WNBA':
       return {
         id: '244',
-        name_ch: '美國國家女子籃球協會'
+        name_ch: '美國國家女子籃球協會',
+        ori_league_id: '244'
       };
     case 'NBL':
       return {
         id: '1714',
-        name_ch: '澳洲職籃'
+        name_ch: '澳洲職籃',
+        ori_league_id: '1714'
       };
     case 'CBA':
       return {
         id: '2319',
-        name_ch: '中國職籃'
+        name_ch: '中國職籃',
+        ori_id: '2319'
       };
     case 'KBL':
       return {
         id: '2148',
-        name_ch: '韓國職籃'
+        name_ch: '韓國職籃',
+        ori_id: '2148'
       };
     case 'BJL':
       return {
         id: '1298',
-        name_ch: '日本職籃'
+        name_ch: '日本職籃',
+        ori_id: '2148'
       };
     case 'MLB':
       return {
         id: '3939',
-        name_ch: '美國職棒大聯盟'
+        name_ch: '美國職棒大聯盟',
+        ori_id: '225'
       };
     case 'NPB':
       return {
         id: '347',
-        name_ch: '日本職棒'
+        name_ch: '日本職棒',
+        ori_id: '347'
       };
     case 'CPBL':
       return {
         id: '11235',
-        name_ch: '中華職棒'
+        name_ch: '中華職棒',
+        ori_id: '11235'
       };
     case 'KBO':
       return {
         id: '349',
-        name_ch: '韓國職棒'
+        name_ch: '韓國職棒',
+        ori_id: '349'
       };
     case 'ABL':
       return {
         id: '2759',
-        name_ch: '澳洲職棒'
+        name_ch: '澳洲職棒',
+        ori_id: '2759'
       };
     case 'LMB':
       return {
         id: '4412',
-        name_ch: '墨西哥職棒'
+        name_ch: '墨西哥職棒',
+        ori_id: '4412'
       };
     case 'NHL':
       return {
         id: '1926',
-        name_ch: '國家冰球聯盟'
+        name_ch: '國家冰球聯盟',
+        ori_id: '1926'
       };
     case 'Soccer':
       return {
