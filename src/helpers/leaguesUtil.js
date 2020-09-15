@@ -49,100 +49,105 @@ function leagueCodebook(league) {
       return {
         id: '2274',
         name_ch: '美國國家籃球協會',
-        ori_league_id: '2274'
+        ori_league_id: '2274',
+        hw_ball: '6'
       };
     case 'SBL':
       return {
         id: '8251',
         name_ch: '超級籃球聯賽',
-        ori_league_id: '8251'
+        ori_league_id: '8251',
+        hw_ball: ''
       };
     case 'WNBA':
       return {
         id: '244',
         name_ch: '美國國家女子籃球協會',
-        ori_league_id: '244'
+        hw_ball: ''
       };
     case 'NBL':
       return {
         id: '1714',
         name_ch: '澳洲職籃',
-        ori_league_id: '1714'
+        hw_ball: ''
       };
     case 'CBA':
       return {
         id: '2319',
         name_ch: '中國職籃',
-        ori_id: '2319'
+        hw_ball: ''
       };
     case 'KBL':
       return {
         id: '2148',
         name_ch: '韓國職籃',
-        ori_id: '2148'
+        hw_ball: ''
       };
     case 'BJL':
       return {
         id: '1298',
         name_ch: '日本職籃',
-        ori_id: '2148'
+        hw_ball: ''
       };
     case 'MLB':
       return {
         id: '3939',
         name_ch: '美國職棒大聯盟',
-        ori_id: '225'
+        hw_ball: '1'
       };
     case 'NPB':
       return {
         id: '347',
         name_ch: '日本職棒',
-        ori_id: '347'
+        hw_ball: '2'
       };
     case 'CPBL':
       return {
         id: '11235',
         name_ch: '中華職棒',
-        ori_id: '11235'
+        hw_ball: '3'
       };
     case 'KBO':
       return {
         id: '349',
         name_ch: '韓國職棒',
-        ori_id: '349'
+        hw_ball: '4'
       };
     case 'ABL':
       return {
         id: '2759',
         name_ch: '澳洲職棒',
-        ori_id: '2759'
+        hw_ball: ''
       };
     case 'LMB':
       return {
         id: '4412',
         name_ch: '墨西哥職棒',
-        ori_id: '4412'
+        hw_ball: ''
       };
     case 'NHL':
       return {
         id: '1926',
         name_ch: '國家冰球聯盟',
-        ori_id: '1926'
+        hw_ball: '5'
       };
     case 'Soccer':
       return {
         id: '8',
-        name_ch: '足球'
+        name_ch: '足球',
+        hw_ball: '10'
       };
     case 'eSoccer':
       return {
         id: '22000',
-        name_ch: '足球電競'
+        name_ch: '足球電競',
+        hw_ball: ''
       };
     case 'eGame':
       return {
         id: '23000',
-        name_ch: '電競遊戲'
+        name_ch: '電競遊戲',
+        hw_ball: ''
       };
     default:
       throw new Error('Unknown league');
