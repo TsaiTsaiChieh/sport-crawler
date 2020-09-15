@@ -1,3 +1,5 @@
+const moment = require('moment');
+require('moment-timezone');
 const axios = require('axios');
 const db = require('../../helpers/mysqlUtil');
 const leagueUtil = require('../../helpers/leaguesUtil');
@@ -6,6 +8,7 @@ const Token = db.Token;
 const Match = db.Match;
 const Spread = db.Spread;
 const Totals = db.Totals;
+const { zone_tw } = process.env;
 async function getToken() {
   const URL = 'https://ag.hw8888.net/api/zh-Hant/jwt/login';
   const { data } = await axios(
@@ -25,29 +28,43 @@ async function getToken() {
   });
   console.log('Get HW Token success');
 }
-async function test() {
-  // console.log(Date.now());
-}
+
 async function getHandicap() {
 // 美國時間
-  const token = await queryForToken();
+  let token = await queryForToken();
   const timeTolerance = 3600000; // 時間誤差在一個小時內
   for (let i = 0; i < acceptLeague.acceptLeague.length; i++) {
     // for -> 開放聯盟
     const leagueId = leagueUtil.leagueCodebook(acceptLeague.acceptLeague[i]).id;
     const hw_ball = leagueUtil.leagueCodebook(acceptLeague.acceptLeague[i]).hw_ball;
     if (hw_ball === '') {
-      break;
+      continue;
     }
-    const URL = `https://ag.hw6666.net/api/zh-Hant/game/game-list?act=normal&ball=${hw_ball}&multi=N&time_interval=today&start=0&occupy=1&count_date=&page=1&count=500`;
-    const { data } = await axios(
-      {
-        method: 'get',
-        url: URL,
-        headers: { Authorization: `Bearer ${token[0].token}` }
+    let data;
+    try {
+      const URL = `https://ag.hw6666.net/api/zh-Hant/game/game-list?act=normal&ball=${hw_ball}&multi=N&time_interval=today&start=0&occupy=1&count_date=&page=1&count=500`;
+      data = await axios(
+        {
+          method: 'get',
+          url: URL,
+          headers: { Authorization: `Bearer ${token[0].token}` }
 
-      }
-    );
+        }
+      );
+    } catch (err) {
+      await getToken();
+      token = await queryForToken();
+      const URL = `https://ag.hw6666.net/api/zh-Hant/game/game-list?act=normal&ball=${hw_ball}&multi=N&time_interval=today&start=0&occupy=1&count_date=&page=1&count=500`;
+      data = await axios(
+        {
+          method: 'get',
+          url: URL,
+          headers: { Authorization: `Bearer ${token[0].token}` }
+
+        }
+      );
+    }
+    data = data.data;
     // ------ 目前僅更新賽前盤 ------- //
     const ele = await queryForMatches(leagueId);
     // -------------------------- //
@@ -58,7 +75,7 @@ async function getHandicap() {
       const sqlAwayId = ele[j].away_id;
       for (let k = 0; k < data.result.data_list.length; k++) {
         // for -> API 中的賽事
-        const apiTime = new Date(data.result.data_list[k].game_time).getTime();
+        const apiTime = moment.tz(data.result.data_list[k].game_time, zone_tw).unix() * 1000;
         const apiHomeId = leagueName2Id(data.result.data_list[k].main_team);
         const apiAwayId = leagueName2Id(data.result.data_list[k].visit_team);
         if (
@@ -85,11 +102,9 @@ async function getHandicap() {
           const apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
 
           if (
-            sqlSpreadHandicap === null || (
-              sqlSpreadStatus === apiSpreadStatus && // 讓分方
+            sqlSpreadStatus === apiSpreadStatus && // 讓分方
 						sqlSpreadHandicap === apiSpreadHandicap && // 讓分盤口
 						sqlSpreadRate === apiSpreadRate // 讓分 rate
-            )
           ) {
             // 讓分盤口無變化
             console.log(ele[j].bets_id + ' spread is the same');
@@ -97,10 +112,10 @@ async function getHandicap() {
             const time = Date.now();
             Match.upsert({
               bets_id: ele[j].bets_id,
-              spread_id: `${data.result.data_list[k].gsn}${time}`
+              spread_id: `${data.result.data_list[k].gsn}${time}1`
             });
             Spread.upsert({
-              spread_id: `${data.result.data_list[k].gsn}${time}`,
+              spread_id: `${data.result.data_list[k].gsn}${time}1`,
               match_id: ele[j].bets_id,
               league_id: ele[j].league_id,
               handicap: apiSpreadHandicap,
@@ -113,10 +128,8 @@ async function getHandicap() {
             });
           }
           if (
-            sqlTotalsHandicap === null(
-              sqlTotalsHandicap === apiTotalsHandicap && // 大小分盤口
+            sqlTotalsHandicap === apiTotalsHandicap && // 大小分盤口
 						sqlTotalsRate === apiTotalsRate // 大小分 rate
-            )
           ) {
             // 大小分盤口無變化
             console.log(ele[j].bets_id + ' total is the same');
@@ -124,10 +137,10 @@ async function getHandicap() {
             const time = Date.now();
             Match.upsert({
               bets_id: ele[j].bets_id,
-              totals_id: `${data.result.data_list[k].gsn}${time}`
+              totals_id: `${data.result.data_list[k].gsn}${time}2`
             });
             Totals.upsert({
-              totals_id: `${data.result.data_list[k].gsn}${time}`,
+              totals_id: `${data.result.data_list[k].gsn}${time}2`,
               match_id: ele[j].bets_id,
               league_id: ele[j].league_id,
               handicap: apiTotalsHandicap,
@@ -790,7 +803,42 @@ function leagueName2Id(leagueName) {
     // 日甲
 
     // 韓足
-
+    case '首爾': {
+      return '183';
+    }
+    case '水原三星': {
+      return '182';
+    }
+    case '江原': {
+      return '44269';
+    }
+    case '浦項制鐵': {
+      return '10236';
+    }
+    case '釜山偶像': {
+      return '1729';
+    }
+    case '仁川聯隊': {
+      return '44688';
+    }
+    case '光州': {
+      return '43711';
+    }
+    case '全北現代': {
+      return '184';
+    }
+    case '尚州尚武': {
+      return '181';
+    }
+    case '城南足球俱樂部': {
+      return '44689';
+    }
+    case '蔚山現代': {
+      return '43710';
+    }
+    case '大邱': {
+      return '47445';
+    }
     // 歐冠杯
 
     // 歐洲杯
@@ -800,4 +848,4 @@ function leagueName2Id(leagueName) {
     }
   }
 }
-module.exports = { getToken, getHandicap, test };
+module.exports = { getToken, getHandicap };
