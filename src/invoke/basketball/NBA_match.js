@@ -53,6 +53,7 @@ async function update2MySQL(data) {
   try {
     const leagueId = leagueCodebook(configs.league).id;
     const sportId = league2Sport(configs.league).sport_id;
+    const oriLeagueId = leagueCodebook(configs.league).ori_id;
     data.map(async function(ele) {
       await mysql.Match.upsert({
         bets_id: ele.matchId,
@@ -64,7 +65,7 @@ async function update2MySQL(data) {
         scheduled_tw: ele.scheduled,
         flag_prematch: MATCH_STATUS.VALID,
         status: MATCH_STATUS.SCHEDULED,
-        ori_league_id: leagueId,
+        ori_league_id: oriLeagueId,
         ori_sport_id: sportId
       });
       console.log(`更新 NBA: ${ele.matchId} - ${ele.awayAliasCh}(${ele.awayId}) vs ${ele.homeAliasCh}(${ele.homeId}) 成功`);
