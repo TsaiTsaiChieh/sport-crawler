@@ -49,12 +49,14 @@ function leagueCodebook(league) {
       return {
         id: '2274',
         name_ch: '美國國家籃球協會',
+        ori_league_id: '2274',
         hw_ball: '6'
       };
     case 'SBL':
       return {
         id: '8251',
         name_ch: '超級籃球聯賽',
+        ori_league_id: '8251',
         hw_ball: ''
       };
     case 'WNBA':

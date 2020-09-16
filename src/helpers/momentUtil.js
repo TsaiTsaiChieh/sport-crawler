@@ -21,6 +21,15 @@ function date2unix(date, operation, zone = zone_tw) {
   }
   return moment.tz(date, zone).unix();
 };
+
+function date2timestamp(date, operation, zone = zone_tw) {
+  if (operation) {
+    if (operation.op === 'add') return moment.tz(date, zone).add(operation.value, operation.unit).valueOf();
+    if (operation.op === 'subtract') return moment.tz(date, zone).subtract(operation.value, operation.unit).valueOf();
+    else throw new Error('Invalid parameter');
+  }
+  return moment.tz(date, zone).valueOf();
+};
 /**
  * * timestamp2date
  * @pInput { Integer } timestamp 時間戳記 ex: new Date()
@@ -34,7 +43,7 @@ function timestamp2date(timestamp, operation, zone = zone_tw) {
   /* 處理時間計算 */
   if (operation.op === 'add') datetime.add(operation.value, operation.unit);
   else if (operation.op === 'subtract') datetime.subtract(operation.value, operation.unit);
-  else throw new Error('Invalid parameter');
+  else if (operation.op) throw new Error('Invalid parameter');
   /* 處理時間格式 */
   if (operation.format) return datetime.format(operation.format);
   else return datetime.format('YYYYMMDD');
@@ -48,6 +57,7 @@ function taipeiDate(timestamp, format = 'YYYY-MM-DD HH:mm ZZ') {
 module.exports = {
   timestampFormat,
   date2unix,
+  date2timestamp,
   timestamp2date,
   taipeiDate
 };
