@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
-// const HW = require('./src/handicap/HW/HW_handicap');
+const HW = require('./src/handicap/HW/HW_handicap');
 const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
@@ -20,7 +20,7 @@ schedule.scheduleJob('取得 Token', '0 0 11 * * *', zone_tw, async function() {
 });
 
 schedule.scheduleJob('取得盤口', '*/10 * * * * *', zone_tw, async function() {
-  // await HW.getHandicap();
+  await HW.getHandicap();
 });
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
