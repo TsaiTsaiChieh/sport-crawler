@@ -8,7 +8,7 @@ const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
 const { zone_tw } = process.env;
 const { taipeiDate } = require('./src/helpers/momentUtil');
-// const connection = require('./src/helpers/connection');
+const connection = require('./src/helpers/connection');
 
 const app = express();
 
@@ -44,14 +44,14 @@ schedule.scheduleJob('Match information', '0 */4 * * *', zone_tw, async function
   }
 });
 
-// schedule.scheduleJob('*/10 * * * * *', async function(fireDate) {
-//   try {
-//     console.log(`This job was supposed to run at ${fireDate} , but actually ran at ${new Date()}`);
-//     await connection();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+schedule.scheduleJob('*/10 * * * * *', async function(fireDate) {
+  try {
+    console.log(`This job was supposed to run at ${fireDate} , but actually ran at ${new Date()}`);
+    await connection();
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 const { PORT } = process.env;
 app.listen(PORT, function() {
