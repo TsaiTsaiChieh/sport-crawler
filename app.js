@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
-const schedule = require('node-schedule');
+const schedule = require('node-schedule-tz');
 // const HW = require('./src/handicap/HW/HW_handicap');
 const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
