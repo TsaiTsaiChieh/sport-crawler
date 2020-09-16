@@ -107,14 +107,14 @@ async function getHandicap() {
 						sqlSpreadRate === apiSpreadRate // 讓分 rate
           ) {
             // 讓分盤口無變化
-            console.log(ele[j].bets_id + ' spread is the same');
+            // console.log(ele[j].bets_id + ' spread is the same');
           } else {
             const time = Date.now();
-            Match.upsert({
+            await Match.upsert({
               bets_id: ele[j].bets_id,
               spread_id: `${data.result.data_list[k].gsn}${time}1`
             });
-            Spread.upsert({
+            await Spread.upsert({
               spread_id: `${data.result.data_list[k].gsn}${time}1`,
               match_id: ele[j].bets_id,
               league_id: ele[j].league_id,
@@ -132,14 +132,14 @@ async function getHandicap() {
 						sqlTotalsRate === apiTotalsRate // 大小分 rate
           ) {
             // 大小分盤口無變化
-            console.log(ele[j].bets_id + ' total is the same');
+            // console.log(ele[j].bets_id + ' total is the same');
           } else {
             const time = Date.now();
-            Match.upsert({
+            await Match.upsert({
               bets_id: ele[j].bets_id,
               totals_id: `${data.result.data_list[k].gsn}${time}2`
             });
-            Totals.upsert({
+            await Totals.upsert({
               totals_id: `${data.result.data_list[k].gsn}${time}2`,
               match_id: ele[j].bets_id,
               league_id: ele[j].league_id,
