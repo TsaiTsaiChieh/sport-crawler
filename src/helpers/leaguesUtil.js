@@ -93,7 +93,8 @@ function leagueCodebook(league) {
       return {
         id: '3939',
         name_ch: '美國職棒大聯盟',
-        hw_ball: '1'
+        hw_ball: '1',
+        ori_league_id: '225'
       };
     case 'NPB':
       return {

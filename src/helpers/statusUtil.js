@@ -1,4 +1,4 @@
-const MATCH_STATUS = { SCHEDULED: 2, INPLAY: 1, END: 0, ABNORMAL: -1, VALID: 1, POSTPONED: -2, CANCELLED: -3 };
+const MATCH_STATUS = { SCHEDULED: 2, INPLAY: 1, END: 0, ABNORMAL: -1, VALID: 1, POSTPONED: -2, CANCELLED: -3, TBD: -10 };
 
 function MLB_statusMapping(status) {
   switch (status) {
@@ -11,7 +11,7 @@ function MLB_statusMapping(status) {
     case 'D':
       return MATCH_STATUS.POSTPONED;
     default:
-      throw new Error('Unknown status in MLB');
+      throw new Error(`Unknown status: ${status} in MLB`);
   }
 }
 
