@@ -49,7 +49,7 @@ function timestamp2date(timestamp, operation, zone = zone_tw) {
   else return datetime.format('YYYYMMDD');
 }
 
-function taipeiDate(timestamp, format = 'YYYY-MM-DD HH:mm ZZ') {
+function taipeiDate(timestamp, format = 'YYYY-MM-DD HH:mm:ss ZZ') {
   const today = moment.tz(timestamp, zone_tw).format(format);
   return today;
 }
