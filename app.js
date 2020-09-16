@@ -21,7 +21,7 @@ schedule.scheduleJob('0 0 11 * * *', async function() {
 
 schedule.scheduleJob('*/10 * * * * *', async function() {
   // 取得盤口
-  await HW.getHandicap();
+  // await HW.getHandicap();
 });
 
 schedule.scheduleJob('*/3 * * * * *', async function() {
