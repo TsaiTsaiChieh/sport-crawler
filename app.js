@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule');
-const HW = require('./src/handicap/HW/HW_handicap');
+// const HW = require('./src/handicap/HW/HW_handicap');
 const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
@@ -21,7 +21,7 @@ schedule.scheduleJob('0 0 11 * * *', async function() {
 
 schedule.scheduleJob('*/10 * * * * *', async function() {
   // 取得盤口
-  await HW.getHandicap();
+  // await HW.getHandicap();
 });
 
 schedule.scheduleJob('*/3 * * * * *', async function() {
