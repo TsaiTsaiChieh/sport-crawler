@@ -112,7 +112,8 @@ function leagueCodebook(league) {
       return {
         id: '349',
         name_ch: '韓國職棒',
-        hw_ball: '4'
+        hw_ball: '4',
+        ori_league_id: '349'
       };
     case 'ABL':
       return {
