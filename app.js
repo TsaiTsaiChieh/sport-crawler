@@ -7,6 +7,7 @@ const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
 const MLB_status = require('./src/invoke/baseball/MLB_status');
+const CPBL_match = require('./src/invoke/baseball/CPBL_match');
 const { zone_tw } = process.env;
 const { taipeiDate } = require('./src/helpers/momentUtil');
 // const connection = require('./src/helpers/connection');
@@ -14,6 +15,10 @@ const { taipeiDate } = require('./src/helpers/momentUtil');
 const app = express();
 
 app.use(Have.haven());
+
+schedule.scheduleJob('test', '*/3 * * * * *', zone_tw, async function() {
+  await CPBL_match();
+});
 
 schedule.scheduleJob('取得 Token', '0 0 11 * * *', zone_tw, async function() {
   // HW.getToken();
@@ -38,6 +43,7 @@ schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
     console.log(`Match run at ${taipeiDate(new Date())}`);
     await NBA_match();
     await MLB_match();
+    // await CPBL_match();
   } catch (err) {
     console.log(err);
   }

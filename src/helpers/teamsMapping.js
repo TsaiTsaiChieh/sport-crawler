@@ -209,7 +209,25 @@ function MLB_teamName2id(name) {
   }
 }
 
+function CPBL_teamName2id(name) {
+  switch (name) {
+    case 'AJL011': {
+      return '329121';
+    }
+    case 'E02': {
+      return '230422';
+    }
+    case 'L01': {
+      return '224095';
+    }
+    case 'B04': {
+      return '224094';
+    }
+  }
+}
+
 module.exports = {
   NBA_teamName2id,
-  MLB_teamName2id
+  MLB_teamName2id,
+  CPBL_teamName2id
 };

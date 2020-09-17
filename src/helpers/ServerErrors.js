@@ -36,9 +36,16 @@ class RealtimeError extends ExtendableError {
   }
 }
 
+class CrawlerError extends ExtendableError {
+  constructor(message = 'Crawler 錯誤', status = 50004, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+    super(message, status, isPublic, code);
+  }
+}
+
 module.exports = {
   AxiosGetMethodError,
   RepackageError,
   MySQLError,
-  RealtimeError
+  RealtimeError,
+  CrawlerError
 };
