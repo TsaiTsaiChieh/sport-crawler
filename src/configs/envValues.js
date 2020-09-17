@@ -8,3 +8,5 @@ exports.firebaseConfig = {
   appId: process.env.firebaseAppId,
   measurementId: process.env.firebaseMeasurementId
 };
+
+exports.betsToken = '46719-gZEnjYySo0cLKx';

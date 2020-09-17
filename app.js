@@ -15,11 +15,13 @@ const app = express();
 
 app.use(Have.haven());
 
-schedule.scheduleJob('取得 Token', '0 0 11 * * *', zone_tw, async function() {
-  // HW.getToken();
-});
+// schedule.scheduleJob('0 0 11 * * *', async function() {
+//  // 取得 Token
+//  // HW.getToken();
+// });
 
-schedule.scheduleJob('取得盤口', '*/10 * * * * *', zone_tw, async function() {
+schedule.scheduleJob('*/10 * * * * *', async function() {
+  // 取得盤口
   await HW.getHandicap();
 });
 
