@@ -7,6 +7,7 @@ const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
 const MLB_status = require('./src/invoke/baseball/MLB_status');
+const KBO_match = require('./src/crawler/baseball/KBO_match');
 const { zone_tw } = process.env;
 const { taipeiDate } = require('./src/helpers/momentUtil');
 // const connection = require('./src/helpers/connection');
@@ -20,7 +21,7 @@ schedule.scheduleJob('取得 Token', '0 0 11 * * *', zone_tw, async function() {
 });
 
 schedule.scheduleJob('取得盤口', '*/10 * * * * *', zone_tw, async function() {
-  await HW.getHandicap();
+  // await HW.getHandicap();
 });
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
@@ -38,6 +39,7 @@ schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
     console.log(`Match run at ${taipeiDate(new Date())}`);
     await NBA_match();
     await MLB_match();
+    await KBO_match();
   } catch (err) {
     console.log(err);
   }
