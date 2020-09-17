@@ -26,14 +26,18 @@ async function repackageMatches(matchData) {
     const data = [];
     matchData.dates[0].games.map(function(ele) {
       if (ele.status.startTimeTBD === undefined) {
+        const matchId = String(ele.gamePk);
+        const detailedStatus = ele.status.detailedStatus;
+        const codedGameState = ele.status.codedGameState;
+        const abstractGameCode = ele.status.abstractGameCode;
         data.push({
-          matchId: ele.gamePk,
+          matchId,
           scheduled: momentUtil.date2timestamp(ele.gameDate),
           homeId: MLB_teamName2id(ele.teams.home.team.teamCode).id,
           homeAlias: ele.teams.home.team.abbreviation,
           awayId: MLB_teamName2id(ele.teams.away.team.teamCode).id,
           awayAlias: ele.teams.away.team.abbreviation,
-          status: ele.status.codedGameState
+          status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode })
         });
       }
     });
@@ -57,7 +61,7 @@ async function update2MySQL(data) {
         scheduled: ele.scheduled / 1000,
         scheduled_tw: ele.scheduled,
         flag_prematch: MATCH_STATUS.VALID,
-        status: MLB_statusMapping(ele.status),
+        status: ele.status,
         ori_league_id: ori_league_id,
         ori_sport_id: sport_id
       });
