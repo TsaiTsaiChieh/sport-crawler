@@ -21,7 +21,7 @@ schedule.scheduleJob('取得 Token', '0 0 11 * * *', zone_tw, async function() {
 });
 
 schedule.scheduleJob('取得盤口', '*/10 * * * * *', zone_tw, async function() {
-  // await HW.getHandicap();
+  await HW.getHandicap();
 });
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
