@@ -8,6 +8,7 @@ const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
 const MLB_status = require('./src/invoke/baseball/MLB_status');
 const KBO_match = require('./src/crawler/baseball/KBO_match');
+const KBO_status = require('./src/crawler/baseball/KBO_status');
 const { zone_tw } = process.env;
 const { taipeiDate } = require('./src/helpers/momentUtil');
 // const connection = require('./src/helpers/connection');
@@ -48,6 +49,7 @@ schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async funct
   try {
     // console.log(`Status run at ${taipeiDate(new Date())}`);
     await MLB_status();
+    await KBO_status();
   } catch (err) {
     console.log(err);
   }
