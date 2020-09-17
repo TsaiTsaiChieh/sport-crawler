@@ -10,7 +10,7 @@ const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
 async function main() {
   try {
     let { matchURL, date, league, league_id, sport_id, ori_league_id } = configs;
-    date = momentUtil.timestampFormat(Date.now());
+    date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
     const URL = `${matchURL}${date}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatch(data);
