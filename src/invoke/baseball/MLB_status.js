@@ -39,12 +39,16 @@ function repackageMatchData(matchData) {
   try {
     const data = [];
     matchData.dates[0].games.map(function(ele, i) {
-      const status = ele.status.codedGameState;
+      const matchId = String(ele.gamePk);
+      const detailedStatus = ele.status.detailedState; // 詳細描述
+      const codedGameState = ele.status.codedGameState;
+      const abstractGameCode = ele.status.abstractGameCode;
       data.push({
-        matchId: String(ele.gamePk),
-        status: MLB_statusMapping(status)
+        matchId,
+        status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode })
       });
-      if (ele.status.startTimeTBD === true) data[i].status = MATCH_STATUS.TBD;
+      // 可能開打中，startTimeTBD 仍為 true，還不確定意義為何，目前只有 NBA_match.js 中，若欄位 detailedState: "Scheduled" 拿掉該賽事
+      // if (ele.status.startTimeTBD === true) data[i].status = MATCH_STATUS.TBD;
     });
 
     return Promise.resolve(data);
