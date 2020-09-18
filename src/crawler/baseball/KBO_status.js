@@ -12,6 +12,7 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const { league_id } = configs;
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
+    // TODO get schedule time, date = today, invoke API
     if (matchData.length) await invokeAPI(matchData);
 
     return Promise.resolve();
@@ -34,17 +35,19 @@ async function repackageMatchData(gameData) {
   try {
     const data = [];
     const json = html2json(gameData);
+    let awayScore = 0;
+    let homeScore = 0;
     json.child.map(function(ele, i) {
       if (i % 2 === 0) {
         let status = MATCH_STATUS.SCHEDULED;
-
         const matchId = hrefReplacement(ele.attr.href);
         const inningText = ele.child[5].child[3].child[0].text;
         const replaceText = inningText.replace(/\n/g, '');
-        const awayScore = ele.child[5].child[1].child[1].child[0].text;
-        const homeScore = ele.child[5].child[1].child[3].child[0].text;
+        if (ele.child[5].child[1].child[1].child) awayScore = ele.child[5].child[1].child[1].child[0].text;
+        if (ele.child[5].child[1].child[3].child) homeScore = ele.child[5].child[1].child[3].child[0].text;
+        console.log(replaceText);
         if (replaceText) status = MATCH_STATUS.INPLAY;
-        if (replaceText === 'Final') status = MATCH_STATUS.END;
+        if (replaceText.includes('Final')) status = MATCH_STATUS.END;
         data.push({
           matchId,
           status,
