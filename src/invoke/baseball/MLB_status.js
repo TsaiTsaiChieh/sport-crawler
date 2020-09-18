@@ -47,7 +47,8 @@ function repackageMatchData(matchData) {
         matchId,
         status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode })
       });
-      // 可能開打中，startTimeTBD 仍為 true，還不確定意義為何，目前只有 NBA_match.js 中，若欄位 detailedState: "Scheduled" 拿掉該賽事
+      // startTimeTBD 為 true，可能開打中或未開打或結束或根本沒開始過
+      // if (ele.status.startTimeTBD === true) data[i].scheduled = momentUtil.date2timestamp(ele.gameDate);
       // if (ele.status.startTimeTBD === true) data[i].status = MATCH_STATUS.TBD;
     });
 

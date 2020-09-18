@@ -53,7 +53,7 @@ async function update2MySQL(data) {
   try {
     const leagueId = leagueCodebook(configs.league).id;
     const sportId = league2Sport(configs.league).sport_id;
-    const oriLeagueId = leagueCodebook(configs.league).ori_id;
+    const oriLeagueId = leagueCodebook(configs.league).ori_league_id;
     data.map(async function(ele) {
       await mysql.Match.upsert({
         bets_id: ele.matchId,
