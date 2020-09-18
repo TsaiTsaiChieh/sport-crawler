@@ -2,22 +2,22 @@ const momentUtil = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { MLB_teamName2id } = require('../../helpers/teamsMapping');
-const mysql = require('../../helpers/mysqlUtil');
-const { MLB_statusMapping, MATCH_STATUS } = require('../../helpers/statusUtil');
+const { MLB_statusMapping } = require('../../helpers/statusUtil');
 const configs = require('../../configs/league/MLB_configs');
+const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
 
 async function main() {
   try {
-    let { scheduleAPI, sportId, date, leagueId, hydrate, useLatestGames } = configs;
+    let { scheduleAPI, sportId, date, leagueId, hydrate, useLatestGames, league, league_id, sport_id, ori_league_id } = configs;
     date = momentUtil.timestamp2date(Date.now(), { format: 'YYYY-MM-DD' });
     const URL = `${scheduleAPI}?sportId=${sportId}&date=${date}&leagueId=${leagueId}&hydrate=${hydrate}&useLatestGames=${useLatestGames}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatches(data);
-    await update2MySQL(matchChunk);
+    await updateMatchChunk2MySQL(matchChunk, { league, league_id, sport_id, ori_league_id });
 
     return Promise.resolve();
   } catch (err) {
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }
 
@@ -44,32 +44,6 @@ async function repackageMatches(matchData) {
     return Promise.resolve(data);
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
-  }
-}
-
-async function update2MySQL(data) {
-  try {
-    const { league_id, sport_id, ori_league_id } = configs;
-
-    data.map(async function(ele) {
-      await mysql.Match.upsert({
-        bets_id: ele.matchId,
-        league_id: league_id,
-        sport_id: sport_id,
-        home_id: ele.homeId,
-        away_id: ele.awayId,
-        scheduled: ele.scheduled / 1000,
-        scheduled_tw: ele.scheduled,
-        flag_prematch: MATCH_STATUS.VALID,
-        status: ele.status,
-        ori_league_id: ori_league_id,
-        ori_sport_id: sport_id
-      });
-      console.log(`更新 MLB: ${ele.matchId} - ${ele.awayAlias}(${ele.awayId}) vs ${ele.homeAlias}(${ele.homeId}) 成功`);
-    });
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new ServerErrors.MySQLError(err.stack));
   }
 }
 
