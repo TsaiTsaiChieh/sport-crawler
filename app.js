@@ -26,7 +26,7 @@ schedule.scheduleJob('*/10 * * * * *', async function() {
 schedule.scheduleJob('*/3 * * * * *', async function() {
   try {
     // console.log(`NBA_livescore was supposed to run at ${taipeiDate(new Date())}`);
-    await NBA_livescore();
+    //await NBA_livescore();
   } catch (err) {
     console.log(err);
   }
@@ -36,7 +36,7 @@ schedule.scheduleJob('*/3 * * * * *', async function() {
 schedule.scheduleJob('Match information', '0 9 * * *', zone_tw, async function() {
   try {
     console.log(`NBA_match run at ${taipeiDate(new Date())}`);
-    await NBA_match();
+    //await NBA_match();
   } catch (err) {
     console.log(err);
   }

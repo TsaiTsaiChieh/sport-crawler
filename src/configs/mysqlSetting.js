@@ -19,7 +19,7 @@ if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production
   setting.dialectOptions = { socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`, connectTimeout: 60000 };
   // setting.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
 } else {
-  setting.host = '35.188.137.1';
+  setting.host = '172.20.32.3';
   const SSL = {
     key: fs.readFileSync(path.join(__dirname, process.env.SQL_SSL_KEY_PATH)),
     cert: fs.readFileSync(path.join(__dirname, process.env.SQL_SSL_CERT_PATH)),
