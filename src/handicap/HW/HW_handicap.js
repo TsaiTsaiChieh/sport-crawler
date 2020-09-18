@@ -108,7 +108,7 @@ async function getHandicap() {
           const apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
           const apiSpreadTw = String(data.result.data_list[k].proffer_two_A) === '平' ? `${Math.abs(apiSpreadHandicap)}平` : apiSpreadHandicap === 0 && apiSpreadRate === 0 ? 0 : `${Math.abs(apiSpreadHandicap)}${String(data.result.data_list[k].proffer_two_A)}`;
           const apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
-          if (apiSpreadHandicap === 0 && apiSpreadRate === '0' && apiTotalsHandicap === 1 && apiTotalsRate === '0' && apiTotalsHandicap === 0) {
+          if ((apiSpreadHandicap === 0 && apiSpreadRate === 0 && apiTotalsHandicap === 1 && apiTotalsRate === 0) || apiTotalsHandicap === 0) {
             // 讓分 0 rate 0, 大小分 1 rate 0 API 錯誤
             apiErrorFlag = 1;
           }
