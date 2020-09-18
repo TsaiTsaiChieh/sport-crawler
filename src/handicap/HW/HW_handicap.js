@@ -124,7 +124,7 @@ async function getHandicap() {
             } else {
               const time = Date.now();
               try {
-                Match.upsert({
+                await Match.upsert({
                   bets_id: ele[j].bets_id,
                   spread_id: `${data.result.data_list[k].gsn}${time}1`
                 });
@@ -132,7 +132,7 @@ async function getHandicap() {
                 return (`${err.stack} by DY`);
               }
               try {
-                Spread.upsert({
+                await Spread.upsert({
                   spread_id: `${data.result.data_list[k].gsn}${time}1`,
                   match_id: ele[j].bets_id,
                   league_id: ele[j].league_id,
@@ -159,7 +159,7 @@ async function getHandicap() {
             } else {
               const time = Date.now();
               try {
-                Match.upsert({
+                await Match.upsert({
                   bets_id: ele[j].bets_id,
                   totals_id: `${data.result.data_list[k].gsn}${time}2`
                 });
@@ -167,7 +167,7 @@ async function getHandicap() {
                 return (`${err.stack} by DY`);
               }
               try {
-                Totals.upsert({
+                await Totals.upsert({
                   totals_id: `${data.result.data_list[k].gsn}${time}2`,
                   match_id: ele[j].bets_id,
                   league_id: ele[j].league_id,

@@ -31,7 +31,6 @@ schedule.scheduleJob('*/10 * * * * *', async function() {
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
   try {
     // console.log(`NBA_livescore was supposed to run at ${taipeiDate(new Date())}`);
-    //await NBA_livescore();
     // await NBA_livescore();
   } catch (err) {
     console.log(err);
@@ -51,8 +50,8 @@ schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
 });
 schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
   try {
-    //await NBA_match();
     // console.log(`Status run at ${taipeiDate(new Date())}`);
+    // await NBA_match();
     // await MLB_status();
     // await KBO_status();
   } catch (err) {
