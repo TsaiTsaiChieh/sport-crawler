@@ -73,10 +73,11 @@ async function getHandicap() {
     const ele = await queryForMatches(leagueId);
     // -------------------------- //
     for (let j = 0; j < ele.length; j++) {
+      // for -> SQL 中有的賽事
       let hwSpreadFlag = 0;
       let hwTotalsFlag = 0;
       let apiErrorFlag = 0;
-      // for -> SQL 中有的賽事
+
       const sqlTime = ele[j].scheduled * 1000;
       const sqlHomeId = ele[j].home_id;
       const sqlAwayId = ele[j].away_id;
@@ -107,7 +108,7 @@ async function getHandicap() {
           const apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
           const apiSpreadTw = String(data.result.data_list[k].proffer_two_A) === '平' ? `${Math.abs(apiSpreadHandicap)}平` : apiSpreadHandicap === 0 && apiSpreadRate === 0 ? 0 : `${Math.abs(apiSpreadHandicap)}${String(data.result.data_list[k].proffer_two_A)}`;
           const apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
-          if (apiSpreadHandicap === 0 && apiSpreadRate === '0' && apiTotalsHandicap === 1 && apiTotalsRate === '0') {
+          if ((apiSpreadHandicap === 0 && apiSpreadRate === 0 && apiTotalsHandicap === 1 && apiTotalsRate === 0) || apiTotalsHandicap === 0) {
             // 讓分 0 rate 0, 大小分 1 rate 0 API 錯誤
             apiErrorFlag = 1;
           }
@@ -122,22 +123,30 @@ async function getHandicap() {
               hwSpreadFlag = 1;
             } else {
               const time = Date.now();
-              await Match.upsert({
-                bets_id: ele[j].bets_id,
-                spread_id: `${data.result.data_list[k].gsn}${time}1`
-              });
-              await Spread.upsert({
-                spread_id: `${data.result.data_list[k].gsn}${time}1`,
-                match_id: ele[j].bets_id,
-                league_id: ele[j].league_id,
-                handicap: apiSpreadHandicap,
-                rate: apiSpreadRate,
-                home_odd: data.result.data_list[k].visit_A_compensate,
-                away_odd: data.result.data_list[k].main_A_compensate,
-                home_tw: apiSpreadStatus === '1' ? apiSpreadTw : null,
-                away_tw: apiSpreadStatus === '2' ? apiSpreadTw : null,
-                add_time: time
-              });
+              try {
+                await Match.upsert({
+                  bets_id: ele[j].bets_id,
+                  spread_id: `${data.result.data_list[k].gsn}${time}1`
+                });
+              } catch (err) {
+                return (`${err.stack} by DY`);
+              }
+              try {
+                await Spread.upsert({
+                  spread_id: `${data.result.data_list[k].gsn}${time}1`,
+                  match_id: ele[j].bets_id,
+                  league_id: ele[j].league_id,
+                  handicap: apiSpreadHandicap,
+                  rate: apiSpreadRate,
+                  home_odd: data.result.data_list[k].visit_A_compensate,
+                  away_odd: data.result.data_list[k].main_A_compensate,
+                  home_tw: apiSpreadStatus === '1' ? apiSpreadTw : null,
+                  away_tw: apiSpreadStatus === '2' ? apiSpreadTw : null,
+                  add_time: time
+                });
+              } catch (err) {
+                return (`${err.stack} by DY`);
+              }
               hwSpreadFlag = 1;
             }
             if (
@@ -149,21 +158,29 @@ async function getHandicap() {
               hwTotalsFlag = 1;
             } else {
               const time = Date.now();
-              await Match.upsert({
-                bets_id: ele[j].bets_id,
-                totals_id: `${data.result.data_list[k].gsn}${time}2`
-              });
-              await Totals.upsert({
-                totals_id: `${data.result.data_list[k].gsn}${time}2`,
-                match_id: ele[j].bets_id,
-                league_id: ele[j].league_id,
-                handicap: apiTotalsHandicap,
-                rate: apiTotalsRate,
-                over_odd: data.result.data_list[k].visit_bs_compensate,
-                under_odd: data.result.data_list[k].main_bs_compensate,
-                over_tw: apiTotalsTw,
-                add_time: time
-              });
+              try {
+                await Match.upsert({
+                  bets_id: ele[j].bets_id,
+                  totals_id: `${data.result.data_list[k].gsn}${time}2`
+                });
+              } catch (err) {
+                return (`${err.stack} by DY`);
+              }
+              try {
+                await Totals.upsert({
+                  totals_id: `${data.result.data_list[k].gsn}${time}2`,
+                  match_id: ele[j].bets_id,
+                  league_id: ele[j].league_id,
+                  handicap: apiTotalsHandicap,
+                  rate: apiTotalsRate,
+                  over_odd: data.result.data_list[k].visit_bs_compensate,
+                  under_odd: data.result.data_list[k].main_bs_compensate,
+                  over_tw: apiTotalsTw,
+                  add_time: time
+                });
+              } catch (err) {
+                return (`${err.stack} by DY`);
+              }
               hwTotalsFlag = 1;
             }
           }
@@ -171,7 +188,7 @@ async function getHandicap() {
         }
       }
       if (hwSpreadFlag === 0 || hwTotalsFlag === 0) {
-        await getHandicapFromBets(ele[j], ele[j].league_id, sportId, hwSpreadFlag, hwTotalsFlag);
+        getHandicapFromBets(ele[j], ele[j].league_id, sportId, hwSpreadFlag, hwTotalsFlag);
       }
     }
   }
