@@ -26,7 +26,7 @@ async function invokeAPI(matchData) {
       const URL = `${scheduleAPI}?sportId=${sportId}&date=${date}&leagueId=${leagueId}&hydrate=${hydrate}&useLatestGames=${useLatestGames}`;
       const data = await getData(URL);
       const matchChunk = await repackageMatchData(data);
-      await updateStatus2MySQL(matchChunk, matchData);
+      await updateStatusOrScore2MySQL(matchChunk, matchData);
     });
 
     return Promise.resolve();
@@ -38,14 +38,20 @@ async function invokeAPI(matchData) {
 function repackageMatchData(matchData) {
   try {
     const data = [];
-    matchData.dates[0].games.map(function(ele, i) {
+    matchData.dates[0].games.map(function(ele) {
       const matchId = String(ele.gamePk);
       const detailedStatus = ele.status.detailedState; // 詳細描述
       const codedGameState = ele.status.codedGameState;
       const abstractGameCode = ele.status.abstractGameCode;
+      let homeScore = 0;
+      let awayScore = 0;
+      homeScore = ele.teams.home.score;
+      awayScore = ele.teams.away.score;
       data.push({
         matchId,
-        status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode })
+        status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode }),
+        homeScore,
+        awayScore
       });
       // startTimeTBD 為 true，可能開打中或未開打或結束或根本沒開始過
       // if (ele.status.startTimeTBD === true) data[i].scheduled = momentUtil.date2timestamp(ele.gameDate);
@@ -58,13 +64,13 @@ function repackageMatchData(matchData) {
   }
 }
 
-async function updateStatus2MySQL(games, matches) {
+async function updateStatusOrScore2MySQL(games, matches) {
   try {
     const { INPLAY, END, TBD } = MATCH_STATUS;
     games.map(function(game) {
       matches.map(async function(match) {
+        if (game.matchId === match.matchId && game.status === END) await mysql.Match.update({ status: game.status, home_points: game.homeScore, away_points: game.awayScore }, { where: { bets_id: game.matchId } });
         if ((game.matchId === match.matchId && game.status === INPLAY) ||
-         (game.matchId === match.matchId && game.status === END) ||
          (game.matchId === match.matchId && game.status === TBD)) await mysql.Match.update({ status: game.status }, { where: { bets_id: game.matchId } });
       });
     });
