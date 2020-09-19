@@ -43,13 +43,14 @@ function repackageMatchData(matchData) {
       const detailedStatus = ele.status.detailedState; // 詳細描述
       const codedGameState = ele.status.codedGameState;
       const abstractGameCode = ele.status.abstractGameCode;
+      const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
       let homeScore = 0;
       let awayScore = 0;
-      homeScore = ele.teams.home.score;
-      awayScore = ele.teams.away.score;
+      if (ele.teams.home.score) homeScore = ele.teams.home.score;
+      if (ele.teams.away.score) awayScore = ele.teams.away.score;
       data.push({
         matchId,
-        status: MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode }),
+        status,
         homeScore,
         awayScore
       });
