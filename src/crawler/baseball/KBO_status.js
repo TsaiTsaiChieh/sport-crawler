@@ -45,7 +45,6 @@ async function repackageMatchData(gameData) {
         const replaceText = inningText.replace(/\n/g, '');
         if (ele.child[5].child[1].child[1].child) awayScore = ele.child[5].child[1].child[1].child[0].text;
         if (ele.child[5].child[1].child[3].child) homeScore = ele.child[5].child[1].child[3].child[0].text;
-        console.log(replaceText);
         if (replaceText) status = MATCH_STATUS.INPLAY;
         if (replaceText.includes('Final')) status = MATCH_STATUS.END;
         data.push({
