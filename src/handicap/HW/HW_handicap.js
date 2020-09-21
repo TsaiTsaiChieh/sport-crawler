@@ -87,8 +87,8 @@ async function getHandicap() {
         const apiHomeId = leagueName2Id(data.result.data_list[k].main_team);
         const apiAwayId = leagueName2Id(data.result.data_list[k].visit_team);
         if (
-          data.result.data_list[k].roll === '滾球場' &&
-					data.result.data_list[k].transType === '全場' &&
+          // data.result.data_list[k].roll === '滾球場' &&
+          data.result.data_list[k].transType === '全場' &&
 					sqlTime <= apiTime + timeTolerance &&
 					sqlTime >= apiTime - timeTolerance &&
 					sqlHomeId === apiHomeId &&
