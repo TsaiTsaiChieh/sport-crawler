@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
-const HW = require('./src/handicap/HW/HW_handicap');
 const NBA_match = require('./src/invoke/basketball/NBA_match');
 const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
 const MLB_match = require('./src/invoke/baseball/MLB_match');
@@ -17,11 +16,6 @@ const { PORT } = process.env;
 const app = express();
 
 app.use(Have.haven());
-
-schedule.scheduleJob('*/10 * * * * *', async function() {
-  // 取得盤口
-  await HW.getHandicap();
-});
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
   try {
