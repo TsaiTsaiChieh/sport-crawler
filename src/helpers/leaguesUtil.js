@@ -100,7 +100,8 @@ function leagueCodebook(league) {
       return {
         id: '347',
         name_ch: '日本職棒',
-        hw_ball: '2'
+        hw_ball: '2',
+        ori_league_id: '347'
       };
     case 'CPBL':
       return {

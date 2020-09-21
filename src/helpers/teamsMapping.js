@@ -260,9 +260,50 @@ function KBO_teamName2id(name) {
       throw new Error(`KBO Invalid parameter: ${name}`);
   }
 }
-
+function NPB_teamName2id(name) {
+  name = name.toLowerCase().trim();
+  switch (name) {
+    case 'オリックス': {
+      return '8025';
+    }
+    case '西武': {
+      return '2387';
+    }
+    case 'ソフトバンク': {
+      return '2386';
+    }
+    case 'ヤクルト': {
+      return '10216';
+    }
+    case '楽天': {
+      return '5438';
+    }
+    case '広島': {
+      return '3324';
+    }
+    case 'dena': {
+      return '3323';
+    }
+    case '巨人': {
+      return '45295';
+    }
+    case '中日': {
+      return '3318';
+    }
+    case '阪神': {
+      return '3317';
+    }
+    case '日本ハム': {
+      return '10078';
+    }
+    case 'ロッテ': {
+      return '6650';
+    }
+  }
+}
 module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
-  KBO_teamName2id
+  KBO_teamName2id,
+  NPB_teamName2id
 };

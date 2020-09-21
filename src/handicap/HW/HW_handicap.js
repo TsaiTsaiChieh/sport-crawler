@@ -1440,7 +1440,19 @@ function leagueName2Id(leagueName) {
       return '43806';
     }
 
-    // 英超 剩 8 組
+    // 英超 剩 4 組
+    case '狼隊': {
+      return '17383';
+    }
+    case '曼城': {
+      return '708';
+    }
+    case '阿斯頓維拉': {
+      return '43850';
+    }
+    case '謝菲爾德聯': {
+      return '3013';
+    }
     case '富勒姆': {
       return '17170';
     }
