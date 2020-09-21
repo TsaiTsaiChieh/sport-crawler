@@ -87,8 +87,8 @@ async function getHandicap() {
         const apiHomeId = leagueName2Id(data.result.data_list[k].main_team);
         const apiAwayId = leagueName2Id(data.result.data_list[k].visit_team);
         if (
-          data.result.data_list[k].roll === '滾球場' &&
-					data.result.data_list[k].transType === '全場' &&
+          // data.result.data_list[k].roll === '滾球場' &&
+          data.result.data_list[k].transType === '全場' &&
 					sqlTime <= apiTime + timeTolerance &&
 					sqlTime >= apiTime - timeTolerance &&
 					sqlHomeId === apiHomeId &&
@@ -1506,6 +1506,9 @@ function leagueName2Id(leagueName) {
     case '洛里昂': {
       return '27255';
     }
+    case '里昂': {
+      return '19668';
+    }
     case '史特拉斯堡': {
       return '44251';
     }
@@ -1586,9 +1589,15 @@ function leagueName2Id(leagueName) {
 
     // 義甲 尚未開打
 
-    // 德甲 尚未開打
+    // 德甲 尚未開打 剩 16 組
+    case '拜仁慕尼黑': {
+      return '9943';
+    }
+    case '史浩克04': {
+      return '9942';
+    }
 
-    // 荷甲 剩 4 組
+    // 荷甲 剩 3 組
     case '海倫維恩': {
       return '29096';
     }
@@ -1612,6 +1621,9 @@ function leagueName2Id(leagueName) {
     }
     case '芬洛': {
       return '9913';
+    }
+    case '烏德勒支': {
+      return '4241';
     }
     case '鹿特丹斯巴達': {
       return '43860';
@@ -1638,7 +1650,19 @@ function leagueName2Id(leagueName) {
       return '43996';
     }
 
-    // 葡超 尚未開打
+    // 葡超 剩 4 組
+    case '費馬利卡奧': {
+      return '923';
+    }
+    case '本菲卡': {
+      return '9987';
+    }
+    case '甘馬雷斯': {
+      return '31105';
+    }
+    case '比蘭尼塞斯': {
+      return '19658';
+    }
 
     // 澳足 尚未開打
 

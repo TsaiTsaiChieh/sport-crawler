@@ -1,21 +1,12 @@
-const { MATCH_STATUS, leagueCodebook } = require('../../helpers/leaguesUtil');
-const { Sequelize } = require('sequelize');
-const { Op } = Sequelize;
+const configs = require('../../configs/league/NBA_configs');
+const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
+const { MATCH_STATUS } = require('../../helpers/leaguesUtil');
 const { set2realtime } = require('../../helpers/firebaseUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 // The status of NBA live API
 const matchStatus = { 3: 'ended', 2: 'inprogress', 1: 'scheduled', end: 3 };
 const mysql = require('../../helpers/mysqlUtil');
-
-const configs = {
-  league: 'NBA',
-  sport: 'basketball',
-  liveAPI: 'https://tw.global.nba.com/stats2/game/playbyplay.json',
-  teamComparisonAPI: 'https://tw.global.nba.com/stats2/game/snapshot.json',
-  period: 0,
-  locale: process.env.locale
-};
 
 /*
 * 1. Select matches from MySQL which status is scheduled and inplay,
@@ -27,30 +18,12 @@ const configs = {
 async function main() {
   try {
     // XXX Consider redis implement
+    const { league_id } = configs;
     const nowUnix = Math.floor(Date.now() / 1000);
-    const matchData = await getMatchDataFromMySQL(nowUnix);
+    const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await updateMatchInplayStatus2MySQL(matchData);
     await liveTextStart(matchData);
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-}
-
-async function getMatchDataFromMySQL(nowUnix) {
-  try {
-    const leagueId = leagueCodebook(configs.league).id;
-    // Index is range, taking about 170ms
-    const result = await mysql.Match.findAll({
-      attributes: [['bets_id', 'matchId'], 'status'],
-      where: {
-        league_id: leagueId,
-        status: { [Op.or]: [MATCH_STATUS.SCHEDULED, MATCH_STATUS.INPLAY] },
-        scheduled: { [Op.lte]: nowUnix }
-      },
-      raw: true
-    });
-    return Promise.resolve(result);
+    return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
   }
@@ -105,13 +78,14 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     if (playByPlays.length) {
       await updateTeamsStat(teamStatData, path);
       const { status } = payload.boxscore;
-      await updateMatchEndStatus2DB(status, gameId, path);
+      const awayTotalPoints = payload.boxscore.awayScore;
+      const homeTotalPoints = payload.boxscore.homeScore;
+      await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
       const nowPeriod = payload.boxscore.period;
       const clock = !payload.boxscore.periodClock ? '00:00' : payload.boxscore.periodClock;
       const eventOrderAtNowPeriod = payload.playByPlays[0].events.length;
       const statusDes = matchStatus[payload.boxscore.status];
-      const awayTotalPoints = payload.boxscore.awayScore;
-      const homeTotalPoints = payload.boxscore.homeScore;
+
       await set2realtime(`${path}/Now_periods`, nowPeriod);
       await set2realtime(`${path}/Now_clock`, clock);
       await set2realtime(`${path}/Now_event_order`, eventOrderAtNowPeriod);
@@ -151,11 +125,16 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
   }
 }
 
-async function updateMatchEndStatus2DB(status, gameId, path) {
+async function updateMatchEndStatus2MySQL(matchData, path) {
   try {
+    const { status, gameId, awayTotalPoints, homeTotalPoints } = matchData;
     if (parseInt(status) === matchStatus.end) {
       await mysql.Match.update(
-        { status: MATCH_STATUS.END },
+        {
+          status: MATCH_STATUS.END,
+          home_points: homeTotalPoints,
+          away_points: awayTotalPoints
+        },
         { where: { bets_id: gameId } });
       await set2realtime(`${path}/status`, { status: matchStatus['3'] });
     }
