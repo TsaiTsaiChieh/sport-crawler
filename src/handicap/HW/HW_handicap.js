@@ -89,6 +89,7 @@ async function getHandicap() {
         if (
           // data.result.data_list[k].roll === '滾球場' &&
           data.result.data_list[k].transType === '全場' &&
+					data.result.data_list[k].league_name === 'MLB 美國職棒' &&
 					sqlTime <= apiTime + timeTolerance &&
 					sqlTime >= apiTime - timeTolerance &&
 					sqlHomeId === apiHomeId &&
