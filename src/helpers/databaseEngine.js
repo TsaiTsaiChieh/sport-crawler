@@ -6,13 +6,17 @@ const { MATCH_STATUS } = require('./statusUtil');
 
 async function getScheduledAndInplayMatchesFromMySQL(nowUnix, leagueId) {
   try {
+    const yesterday = nowUnix - 24 * 60 * 60;
     // Index is range, taking about 170ms
     const result = await mysql.Match.findAll({
       attributes: [['bets_id', 'matchId'], 'status'],
       where: {
         league_id: leagueId,
         status: { [Op.or]: [MATCH_STATUS.SCHEDULED, MATCH_STATUS.INPLAY] },
-        scheduled: { [Op.lte]: nowUnix }
+        scheduled: {
+          [Op.lte]: nowUnix,
+          [Op.gte]: yesterday
+        }
       },
       raw: true
     });
