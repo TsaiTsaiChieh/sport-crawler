@@ -1,5 +1,5 @@
-function NBA_teamName2id(team) {
-  switch (team) {
+function NBA_teamName2id(name) {
+  switch (name) {
     case 'CLE Cavaliers':
     case 'CLE':
       return '55277';
@@ -91,7 +91,7 @@ function NBA_teamName2id(team) {
     case 'DEN':
       return '54378';
     default:
-      throw new Error('Invalid parameter');
+      throw new Error(`NBA Invalid parameter: ${name}`);
   }
 }
 
@@ -204,8 +204,60 @@ function MLB_teamName2id(name) {
     case 'nym':
       return { statId: '121', id: '1113' };
     default:
+      throw new Error(`MLB Invalid parameter: ${name}`);
+  }
+}
 
-      return 'Unknown team name in MLB';
+function KBO_teamName2id(name) {
+  name = name.toLowerCase().trim();
+  switch (name) {
+    case 'lotte giants':
+    case 'lotte':
+    case 'lt':
+    case 'lot':
+      return '2408';
+    case 'samsung lions':
+    case 'samsung':
+    case 'ss':
+    case 'sam':
+      return '3356';
+    case 'kia tigers':
+    case 'ht':
+    case 'kia':
+      return '4202';
+    case 'doosan bears':
+    case 'doosan':
+    case 'ob':
+    case 'doo':
+      return '2406';
+    case 'hanwha eagles':
+    case 'hanwha':
+    case 'hh':
+    case 'han':
+      return '2405';
+    case 'sk wyverns':
+    case 'sk':
+      return '8043';
+    case 'lg twins':
+    case 'lg':
+      return '2407';
+    case 'kiwoom heroes':
+    case 'kiwoom':
+    case 'wo':
+    case 'kiw':
+      return '269103';
+    case 'nc':
+    case 'nc dinos':
+    case 'ncd':
+      return '3353';
+    case 'kt wiz':
+    case 'kt':
+    case 'ktw':
+      return '3354';
+    case 'fa': // free agent
+      return '0';
+    default:
+      throw new Error(`KBO Invalid parameter: ${name}`);
   }
 }
 
@@ -229,5 +281,6 @@ function CPBL_teamName2id(name) {
 module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
-  CPBL_teamName2id
+  CPBL_teamName2id,
+  KBO_teamName2id
 };
