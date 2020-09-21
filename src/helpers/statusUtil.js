@@ -6,6 +6,7 @@ function MLB_statusMapping(matchId, status) {
   else if (abstractGameCode === 'L') return MATCH_STATUS.INPLAY;
   else if ((abstractGameCode === 'F' && codedGameState === 'F') || (abstractGameCode === 'F' && codedGameState === 'O')) return MATCH_STATUS.END;
   else if (abstractGameCode === 'F' && codedGameState === 'D') return MATCH_STATUS.POSTPONED;
+  // else return MATCH_STATUS.TBD;
   throw new Error(`MLB 比賽編號: ${matchId} 的未知狀態: ${abstractGameCode}(${detailedStatus})`);
 }
 
