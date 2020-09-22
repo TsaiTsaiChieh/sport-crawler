@@ -322,7 +322,7 @@ function NPB_teamName2id(name) {
 module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
-	KBO_teamName2id,
-	CPBL_teamName2id,
+  KBO_teamName2id,
+  CPBL_teamName2id,
   NPB_teamName2id
 };

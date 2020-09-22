@@ -17,8 +17,8 @@ const KBO = {
   status: require('./src/crawler/baseball/KBO_status')
 };
 const CPBL = {
-	match: require('./src/invoke/baseball/CPBL_match')
-}
+  match: require('./src/invoke/baseball/CPBL_match')
+};
 const NPB = {
   match: require('./src/crawler/baseball/NPB_match'),
   livescore: require('./src/crawler/baseball/NPB_livescore')
