@@ -18,7 +18,7 @@ function crawler(URL) {
       const $ = cheerio.load(data); // load in the HTML
       return resolve($);
     } catch (err) {
-      return Promise.reject(new ServerErrors.AxiosGetMethodError(err.stack));
+      return Promise.reject(new ServerErrors.CrawlerError(err.stack));
     }
   });
 }
