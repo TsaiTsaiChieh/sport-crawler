@@ -87,28 +87,187 @@ async function getHandicap() {
         const apiHomeId = leagueName2Id(data.result.data_list[k].main_team);
         const apiAwayId = leagueName2Id(data.result.data_list[k].visit_team);
         if (
-          // data.result.data_list[k].roll === '滾球場' &&
-          data.result.data_list[k].transType === '全場' &&
-					data.result.data_list[k].league_name === 'MLB 美國職棒' &&
+          (
+            (data.result.data_list[k].roll === '滾球場' && data.result.data_list[k].transType === '全場') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽-季後賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽-季後賽')
+
+          // 比賽名稱尚未確定
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '澳洲職業足球聯賽') ||
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '澳洲職業足球聯賽-季後賽') ||
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '歐冠杯') ||
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '歐冠杯-季後賽') ||
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '歐洲杯') ||
+          // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '歐洲杯-季後賽') ||
+          ) &&
 					sqlTime <= apiTime + timeTolerance &&
 					sqlTime >= apiTime - timeTolerance &&
 					sqlHomeId === apiHomeId &&
 					sqlAwayId === apiAwayId
         ) {
           // match 到場次 檢查盤口是否有更新
+          // for 足球盤口轉換
+          let firstHandicap;
+          let secondHandicap;
+          let spreadTw;
+          let totalsTw;
+          if (sportId === 1) {
+            // 讓分
+            if (data.result.data_list[k].proffer_one_A.indexOf('/') >= 0) {
+              firstHandicap = data.result.data_list[k].proffer_one_A.split('/')[0];
+              secondHandicap = data.result.data_list[k].proffer_one_A.split('/')[1];
+              firstHandicap = firstHandicap.replace('平手', '0');
+              firstHandicap = firstHandicap.replace('半球', '0.5');
+              firstHandicap = firstHandicap.replace('一球', '1');
+              firstHandicap = firstHandicap.replace('兩球', '2');
+              firstHandicap = firstHandicap.replace('三球', '3');
+              firstHandicap = firstHandicap.replace('四球', '4');
+              firstHandicap = firstHandicap.replace('五球', '5');
+              secondHandicap = secondHandicap.replace('平手', '0');
+              secondHandicap = secondHandicap.replace('半球', '0.5');
+              secondHandicap = secondHandicap.replace('一球', '1');
+              secondHandicap = secondHandicap.replace('兩球', '2');
+              secondHandicap = secondHandicap.replace('三球', '3');
+              secondHandicap = secondHandicap.replace('四球', '4');
+              secondHandicap = secondHandicap.replace('五球', '5');
+              firstHandicap = firstHandicap.replace('半', '.5');
+              secondHandicap = secondHandicap.replace('半', '.1');
+              data.result.data_list[k].proffer_one_A = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
+              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') || String(data.result.data_list[k].proffer_one_A).indexOf('.5')) {
+                data.result.data_list[k].proffer_two_A = '-100';
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75')) {
+                data.result.data_list[k].proffer_two_A = '50';
+              } else {
+                data.result.data_list[k].proffer_two_A = '0';
+              }
+              spreadTw = `${parseFloat(firstHandicap)}/${parseFloat(secondHandicap)}`;
+            } else {
+              firstHandicap = data.result.data_list[k].proffer_one_A;
+              firstHandicap = firstHandicap.replace('平手', '0');
+              firstHandicap = firstHandicap.replace('半球', '0.5');
+              firstHandicap = firstHandicap.replace('一球', '1');
+              firstHandicap = firstHandicap.replace('兩球', '2');
+              firstHandicap = firstHandicap.replace('三球', '3');
+              firstHandicap = firstHandicap.replace('四球', '4');
+              firstHandicap = firstHandicap.replace('五球', '5');
+              firstHandicap = firstHandicap.replace('半', '.5');
+              data.result.data_list[k].proffer_one_A = firstHandicap;
+              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') >= 0 || String(data.result.data_list[k].proffer_one_A).indexOf('.5') >= 0) {
+                data.result.data_list[k].proffer_two_A = '-100';
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75') >= 0) {
+                data.result.data_list[k].proffer_two_A = '50';
+              } else {
+                data.result.data_list[k].proffer_two_A = '0';
+              }
+              spreadTw = `${parseFloat(firstHandicap)}`;
+            }
+            // 大小分
+            if (data.result.data_list[k].proffer_one_bs.indexOf('/') >= 0) {
+              firstHandicap = data.result.data_list[k].proffer_one_bs.split('/')[0];
+              secondHandicap = data.result.data_list[k].proffer_one_bs.split('/')[1];
+              firstHandicap = firstHandicap.replace('平手', '0');
+              firstHandicap = firstHandicap.replace('半球', '0.5');
+              firstHandicap = firstHandicap.replace('一球', '1');
+              firstHandicap = firstHandicap.replace('兩球', '2');
+              firstHandicap = firstHandicap.replace('三球', '3');
+              firstHandicap = firstHandicap.replace('四球', '4');
+              firstHandicap = firstHandicap.replace('五球', '5');
+              secondHandicap = secondHandicap.replace('平手', '0');
+              secondHandicap = secondHandicap.replace('半球', '0.5');
+              secondHandicap = secondHandicap.replace('一球', '1');
+              secondHandicap = secondHandicap.replace('兩球', '2');
+              secondHandicap = secondHandicap.replace('三球', '3');
+              secondHandicap = secondHandicap.replace('四球', '4');
+              secondHandicap = secondHandicap.replace('五球', '5');
+              firstHandicap = firstHandicap.replace('半', '.5');
+              secondHandicap = secondHandicap.replace('半', '.1');
+              data.result.data_list[k].proffer_one_bs = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
+              if (String(data.result.data_list[k].proffer_one_bs).indexOf('.25') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.75') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '50';
+              } else {
+                data.result.data_list[k].proffer_two_bs = '0';
+              }
+              totalsTw = `${parseFloat(firstHandicap)}/${parseFloat(secondHandicap)}`;
+            } else {
+              firstHandicap = data.result.data_list[k].proffer_one_bs;
+              firstHandicap = firstHandicap.replace('平手', '0');
+              firstHandicap = firstHandicap.replace('半球', '0.5');
+              firstHandicap = firstHandicap.replace('一球', '1');
+              firstHandicap = firstHandicap.replace('兩球', '2');
+              firstHandicap = firstHandicap.replace('三球', '3');
+              firstHandicap = firstHandicap.replace('四球', '4');
+              firstHandicap = firstHandicap.replace('五球', '5');
+
+              if (String(data.result.data_list[k].proffer_one_bs).indexOf('.25') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.75') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '50';
+              } else {
+                data.result.data_list[k].proffer_two_bs = '0';
+              }
+              totalsTw = `${parseFloat(firstHandicap)}`;
+            }
+          }
           const sqlSpreadStatus = ele[j].spreads_handicap >= 0 ? '1' : '2';
           const sqlSpreadHandicap = ele[j].spreads_handicap;
           const sqlSpreadRate = (ele[j].spreads_rate);
           const sqlTotalsHandicap = ele[j].totals_handicap;
           const sqlTotalsRate = (ele[j].totals_rate);
+          let apiSpreadStatus;
+          let apiSpreadHandicap;
+          let apiSpreadRate;
+          let apiTotalsHandicap;
+          let apiTotalsRate;
+          let apiSpreadTw;
+          let apiTotalsTw;
+          if (sportId === 1) {
+            apiSpreadStatus = data.result.data_list[k].proffer_mode;
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            apiSpreadRate = String(data.result.data_list[k].proffer_two_A);
+            apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
+            apiTotalsRate = String(data.result.data_list[k].proffer_two_bs);
+            apiSpreadTw = String(spreadTw);
+            apiTotalsTw = String(totalsTw);
+          } else {
+            apiSpreadStatus = data.result.data_list[k].proffer_mode;
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            apiSpreadRate = String(data.result.data_list[k].proffer_two_A) === '平' || String(data.result.data_list[k].proffer_two_A) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_A);
+            apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
+            apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
+            apiSpreadTw = String(data.result.data_list[k].proffer_two_A) === '平' ? `${Math.abs(apiSpreadHandicap)}平` : apiSpreadHandicap === 0 && apiSpreadRate === 0 ? 0 : `${Math.abs(apiSpreadHandicap)}${String(data.result.data_list[k].proffer_two_A)}`;
+            apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
+          }
 
-          const apiSpreadStatus = data.result.data_list[k].proffer_mode;
-          const apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
-          const apiSpreadRate = String(data.result.data_list[k].proffer_two_A) === '平' || String(data.result.data_list[k].proffer_two_A) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_A);
-          const apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
-          const apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
-          const apiSpreadTw = String(data.result.data_list[k].proffer_two_A) === '平' ? `${Math.abs(apiSpreadHandicap)}平` : apiSpreadHandicap === 0 && apiSpreadRate === 0 ? 0 : `${Math.abs(apiSpreadHandicap)}${String(data.result.data_list[k].proffer_two_A)}`;
-          const apiTotalsTw = String(data.result.data_list[k].proffer_two_bs) === '平' ? `${Math.abs(apiTotalsHandicap)}平` : apiTotalsHandicap === 0 && apiTotalsRate === 0 ? 0 : `${Math.abs(apiTotalsHandicap)}${String(data.result.data_list[k].proffer_two_bs)}`;
           if ((apiSpreadHandicap === 0 && apiSpreadRate === 0 && apiTotalsHandicap === 1 && apiTotalsRate === 0) || apiTotalsHandicap === 0) {
             // 讓分 0 rate 0, 大小分 1 rate 0 API 錯誤
             apiErrorFlag = 1;
@@ -120,7 +279,6 @@ async function getHandicap() {
               sqlSpreadRate === apiSpreadRate // 讓分 rate
             ) {
             // 讓分盤口無變化
-            // console.log(ele[j].bets_id + ' spread is the same');
               hwSpreadFlag = 1;
             } else {
               const time = Date.now();
@@ -155,7 +313,6 @@ async function getHandicap() {
               sqlTotalsRate === apiTotalsRate // 大小分 rate
             ) {
             // 大小分盤口無變化
-            // console.log(ele[j].bets_id + ' total is the same');
               hwTotalsFlag = 1;
             } else {
               const time = Date.now();
