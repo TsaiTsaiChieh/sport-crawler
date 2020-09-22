@@ -2,13 +2,23 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
-const NBA_match = require('./src/invoke/basketball/NBA_match');
-const NBA_livescore = require('./src/invoke/basketball/NBA_livescore');
-const MLB_match = require('./src/invoke/baseball/MLB_match');
-const MLB_status = require('./src/invoke/baseball/MLB_status');
-const KBO_match = require('./src/crawler/baseball/KBO_match');
-const KBO_status = require('./src/crawler/baseball/KBO_status');
-const NPB_match = require('./src/crawler/baseball/NPB_match');
+
+const NBA = {
+  match: require('./src/invoke/basketball/NBA_match'),
+  livescore: require('./src/invoke/basketball/NBA_livescore')
+};
+const MLB = {
+  match: require('./src/invoke/baseball/MLB_match'),
+  status: require('./src/invoke/baseball/MLB_status'),
+  livescore: require('./src/invoke/baseball/MLB_livescore')
+};
+const KBO = {
+  match: require('./src/crawler/baseball/KBO_match'),
+  status: require('./src/crawler/baseball/KBO_status')
+};
+const NPB = {
+  match: require('./src/crawler/baseball/NPB_match')
+};
 const { zone_tw } = process.env;
 const { PORT } = process.env;
 // const connection = require('./src/helpers/connection');
@@ -19,7 +29,8 @@ app.use(Have.haven());
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
   try {
-    await NBA_livescore();
+    await NBA.livescore();
+    await MLB.livescore();
     return;
   } catch (err) {
     console.log(err);
@@ -29,10 +40,11 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 
 schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
   try {
-    await NBA_match();
-    await MLB_match();
-    await KBO_match();
-    await NPB_match();
+    await NPB.match();
+    await NBA.match();
+    await MLB.match();
+    await KBO.match();
+    return;
   } catch (err) {
     console.log(err);
     return err;
@@ -40,8 +52,8 @@ schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
 });
 schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
   try {
-    await MLB_status();
-    await KBO_status();
+    await MLB.status();
+    await KBO.status();
     return;
   } catch (err) {
     console.log(err);
