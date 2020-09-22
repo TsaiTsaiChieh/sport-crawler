@@ -13,7 +13,11 @@
   "description": "",
   "dependencies": {
     "axios": "0.20.0",
+<<<<<<< HEAD
     "cheerio": "^1.0.0-rc.3",
+=======
+    "cheerio": "1.0.0-rc.3",
+>>>>>>> develop
     "domain-haven": "0.0.111",
     "dotenv": "8.2.0",
     "express": "4.17.1",

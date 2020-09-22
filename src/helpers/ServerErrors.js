@@ -37,7 +37,7 @@ class RealtimeError extends ExtendableError {
 }
 
 class CrawlerError extends ExtendableError {
-  constructor(message = 'Crawler 錯誤', status = 50004, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+  constructor(message = '爬蟲錯誤', status = 50004, isPublic = true, code = INTERNAL_SERVER_ERROR) {
     super(message, status, isPublic, code);
   }
 }
