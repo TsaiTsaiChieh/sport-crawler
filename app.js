@@ -44,11 +44,8 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 
 schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
   try {
-<<<<<<< HEAD
     await CPBL.match();
-=======
     await NPB.match();
->>>>>>> develop
     await NBA.match();
     await MLB.match();
     await KBO.match();
