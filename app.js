@@ -34,7 +34,7 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
   }
 });
 
-schedule.scheduleJob('賽程', '0 */4 * * *', zone_tw, async function() {
+schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
   try {
     await NBA.match();
     await MLB.match();
