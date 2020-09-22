@@ -1,5 +1,6 @@
 const axios = require('axios');
 const ServerErrors = require('./ServerErrors');
+const cheerio = require('cheerio');
 
 async function getData(URL) {
   try {
@@ -10,6 +11,19 @@ async function getData(URL) {
   }
 }
 
+function crawler(URL) {
+  return new Promise(async function(resolve, reject) {
+    try {
+      const { data } = await axios.get(URL);
+      const $ = cheerio.load(data); // load in the HTML
+      return resolve($);
+    } catch (err) {
+      return Promise.reject(new ServerErrors.AxiosGetMethodError(err.stack));
+    }
+  });
+}
+
 module.exports = {
-  getData
+  getData,
+  crawler
 };

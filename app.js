@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
+
 const NBA = {
   match: require('./src/invoke/basketball/NBA_match'),
   livescore: require('./src/invoke/basketball/NBA_livescore')
@@ -14,6 +15,10 @@ const MLB = {
 const KBO = {
   match: require('./src/crawler/baseball/KBO_match'),
   status: require('./src/crawler/baseball/KBO_status')
+};
+const NPB = {
+  match: require('./src/crawler/baseball/NPB_match'),
+  livescore: require('./src/crawler/baseball/NPB_livescore')
 };
 const { zone_tw } = process.env;
 const { PORT } = process.env;
@@ -36,6 +41,7 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 
 schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
   try {
+    await NPB.match();
     await NBA.match();
     await MLB.match();
     await KBO.match();
