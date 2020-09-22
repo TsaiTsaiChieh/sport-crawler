@@ -161,7 +161,9 @@ async function getHandicap() {
               firstHandicap = firstHandicap.replace('半', '.5');
               secondHandicap = secondHandicap.replace('半', '.1');
               data.result.data_list[k].proffer_one_A = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
-              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') || String(data.result.data_list[k].proffer_one_A).indexOf('.5')) {
+              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25')) {
+                data.result.data_list[k].proffer_two_A = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.5')) {
                 data.result.data_list[k].proffer_two_A = '-100';
               } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75')) {
                 data.result.data_list[k].proffer_two_A = '50';
@@ -180,7 +182,9 @@ async function getHandicap() {
               firstHandicap = firstHandicap.replace('五球', '5');
               firstHandicap = firstHandicap.replace('半', '.5');
               data.result.data_list[k].proffer_one_A = firstHandicap;
-              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') >= 0 || String(data.result.data_list[k].proffer_one_A).indexOf('.5') >= 0) {
+              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') >= 0) {
+                data.result.data_list[k].proffer_two_A = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.5') >= 0) {
                 data.result.data_list[k].proffer_two_A = '-100';
               } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75') >= 0) {
                 data.result.data_list[k].proffer_two_A = '50';
@@ -212,6 +216,8 @@ async function getHandicap() {
               data.result.data_list[k].proffer_one_bs = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
               if (String(data.result.data_list[k].proffer_one_bs).indexOf('.25') >= 0) {
                 data.result.data_list[k].proffer_two_bs = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.5') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '-100';
               } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.75') >= 0) {
                 data.result.data_list[k].proffer_two_bs = '50';
               } else {
@@ -230,6 +236,8 @@ async function getHandicap() {
 
               if (String(data.result.data_list[k].proffer_one_bs).indexOf('.25') >= 0) {
                 data.result.data_list[k].proffer_two_bs = '-50';
+              } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.5') >= 0) {
+                data.result.data_list[k].proffer_two_bs = '-100';
               } else if (String(data.result.data_list[k].proffer_one_bs).indexOf('.75') >= 0) {
                 data.result.data_list[k].proffer_two_bs = '50';
               } else {
