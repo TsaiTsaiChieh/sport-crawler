@@ -7,8 +7,8 @@ const NBA = {
   livescore: require('./src/invoke/basketball/NBA_livescore')
 };
 const KBO = {
-  match: require('./src/crawler/baseball/KBO_match'),
-  status: require('./src/crawler/baseball/KBO_status')
+  match: require('./src/invoke/baseball/KBO_match'),
+  status: require('./src/invoke/baseball/KBO_status')
 };
 const { zone_tw } = process.env;
 const { APP2_PORT } = process.env;
