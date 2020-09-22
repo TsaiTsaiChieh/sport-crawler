@@ -253,9 +253,9 @@ async function getHandicap() {
           if (sportId === 1) {
             apiSpreadStatus = data.result.data_list[k].proffer_mode;
             apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
-            apiSpreadRate = String(data.result.data_list[k].proffer_two_A);
-            apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
-            apiTotalsRate = String(data.result.data_list[k].proffer_two_bs);
+            apiSpreadRate = parseFloat(data.result.data_list[k].proffer_two_A);
+            apiTotalsHandicap = parseFloat(data.result.data_list[k].proffer_one_bs);
+            apiTotalsRate = parseFloat(data.result.data_list[k].proffer_two_bs);
             apiSpreadTw = String(spreadTw);
             apiTotalsTw = String(totalsTw);
           } else {
