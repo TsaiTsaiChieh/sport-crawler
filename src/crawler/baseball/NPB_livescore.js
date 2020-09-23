@@ -76,10 +76,11 @@ async function crawlerInningsOfMatch() {
   const apiAwayTeam = [];
   const matchState = [];
   data('.score_table_wrap .team1 img').each(function(index) {
-    apiHomeTeam.push(data(this).attr('src'));
+    // apiHomeTeam.push(data(this).attr('src'));
+    apiHomeTeam.push(data(this).attr('src').split('logo_')[1].split('_')[0]);
   });
   data('.score_table_wrap .team2 img').each(function(index) {
-    apiAwayTeam.push(data(this).attr('src'));
+    apiAwayTeam.push(data(this).attr('src').split('logo_')[1].split('_')[0]);
   });
   data('.score_table_wrap .state').each(function(index) {
     let temp = data(this).text().replace(/\r/g, '');
@@ -94,7 +95,19 @@ async function crawlerInningsOfMatch() {
       }
     }
   });
-
+  data('.wrap').each(function(index) {
+    let temp = data(this).text().replace(/\r/g, '');
+    temp = temp.replace(/\n/g, '');
+    temp = temp.replace(/\t/g, ' ');
+    temp = temp.split(' ');
+    for (let i = 0; i < temp.length; i++) {
+      if (temp[i] === '') {
+        continue;
+      } else {
+        matchState.push(temp[i].trim());
+      }
+    }
+  });
   // 表 = 上半場
   // 裏 = 下半場
   const result = [];
@@ -103,6 +116,8 @@ async function crawlerInningsOfMatch() {
   for (let i = 0; i < apiHomeTeam.length; i++) {
     if (matchState[i].indexOf('表') === -1 || matchState[i].indexOf('裏') === -1) {
       // 表示未開賽
+      inningsNow = 0;
+      halfsNow = '0';
     } else if (matchState[i].indexOf('表') >= 0) {
       // x回表
       inningsNow = matchState[i].split('回')[0];
@@ -113,8 +128,8 @@ async function crawlerInningsOfMatch() {
       halfsNow = '1';
     }
     result[i] = {
-      api_home_id: apiHomeTeam[i],
-      api_away_id: apiAwayTeam[i],
+      api_home_name: apiHomeTeam[i],
+      api_away_name: apiAwayTeam[i],
       Now_innings: inningsNow,
       Now_halfs: halfsNow
     };
@@ -122,8 +137,7 @@ async function crawlerInningsOfMatch() {
   return result;
 }
 
-async function NPBpbpInplay(totalData) {
-  // const sqlHomeID = totalData.home_id;
-  // const sqlAwayID = totalData.away_id;
+async function NPBpbpInplay(totalData, inningsInfo) {
+  console.log(totalData);
 }
 module.exports = main;

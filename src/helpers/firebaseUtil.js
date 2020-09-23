@@ -6,7 +6,7 @@ const realtime = initialize().database();
 function initialize() {
   if (admin.apps.length === 0) {
     console.log('initializing firebase database');
-    const cert = require(process.env.certPath);
+    const cert = require(envValues.cert);
     return admin.initializeApp({
       credential: admin.credential.cert(cert),
       databaseURL: envValues.firebaseConfig.databaseURL,
