@@ -16,7 +16,7 @@ const { APP2_PORT } = process.env;
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
+schedule.scheduleJob('文字直播', '*/5 * * * * *', zone_tw, async function() {
   try {
     await NBA.livescore();
     return;
@@ -67,5 +67,5 @@ schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async funct
 // });
 
 app.listen(APP2_PORT, function() {
-  console.log(`KBO & MLB crawler on port: ${APP2_PORT}`);
+  console.log(`KBO & NBA crawler on port: ${APP2_PORT}`);
 });
