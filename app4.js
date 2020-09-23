@@ -3,14 +3,14 @@ const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
 const { zone_tw } = process.env;
-const { APP3_PORT } = process.env;
+const { APP4_PORT } = process.env;
 
 const app = express();
 app.use(Have.haven());
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
   try {
-    console.log(process.env);
+    console.log(process.env.status);
     return;
   } catch (err) {
     console.log(err);
@@ -18,6 +18,6 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
   }
 });
 
-app.listen(APP3_PORT, function() {
-  console.log(`KBO & MLB crawler on port: ${APP3_PORT}`);
+app.listen(APP4_PORT, function() {
+  console.log(`Handicap crawler on port: ${APP4_PORT}`);
 });
