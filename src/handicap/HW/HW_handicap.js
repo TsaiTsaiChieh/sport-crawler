@@ -19,8 +19,8 @@ async function getToken() {
       method: 'post',
       url: URL,
       data: {
-        l_no: process.env.hw_no,
-        l_pwd: process.env.hw_pwd
+        l_no: envValues.hwAccount.no,
+        l_pwd: envValues.hwAccount.pwd
       }
     }
   );
