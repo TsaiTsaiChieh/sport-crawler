@@ -19,8 +19,8 @@ async function getToken() {
       method: 'post',
       url: URL,
       data: {
-        l_no: process.env.hw_no,
-        l_pwd: process.env.hw_pwd
+        l_no: envValues.hwAccount.no,
+        l_pwd: envValues.hwAccount.pwd
       }
     }
   );
@@ -1606,7 +1606,19 @@ function leagueName2Id(leagueName) {
       return '43806';
     }
 
-    // 英超 剩 8 組
+    // 英超 剩 4 組
+    case '狼隊': {
+      return '17383';
+    }
+    case '曼城': {
+      return '708';
+    }
+    case '阿斯頓維拉': {
+      return '43850';
+    }
+    case '謝菲爾德聯': {
+      return '3013';
+    }
     case '富勒姆': {
       return '17170';
     }

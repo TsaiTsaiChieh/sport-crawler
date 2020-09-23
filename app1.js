@@ -2,35 +2,19 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
-
-const NBA = {
-  match: require('./src/invoke/basketball/NBA_match'),
-  livescore: require('./src/invoke/basketball/NBA_livescore')
-};
 const MLB = {
   match: require('./src/invoke/baseball/MLB_match'),
   status: require('./src/invoke/baseball/MLB_status'),
   livescore: require('./src/invoke/baseball/MLB_livescore')
 };
-const KBO = {
-  match: require('./src/invoke/baseball/KBO_match'),
-  status: require('./src/invoke/baseball/KBO_status')
-};
-const NPB = {
-  match: require('./src/crawler/baseball/NPB_match'),
-  livescore: require('./src/crawler/baseball/NPB_livescore')
-};
 const { zone_tw } = process.env;
-const { PORT } = process.env;
-// const connection = require('./src/helpers/connection');
+const { APP1_PORT } = process.env;
 
 const app = express();
-
 app.use(Have.haven());
 
 schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
   try {
-    await NBA.livescore();
     await MLB.livescore();
     return;
   } catch (err) {
@@ -41,10 +25,7 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 
 schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
   try {
-    await NPB.match();
-    await NBA.match();
     await MLB.match();
-    await KBO.match();
     return;
   } catch (err) {
     console.log(err);
@@ -54,7 +35,6 @@ schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
 schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
   try {
     await MLB.status();
-    await KBO.status();
     return;
   } catch (err) {
     console.log(err);
@@ -72,6 +52,6 @@ schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async funct
 //   }
 // });
 
-app.listen(PORT, function() {
-  console.log(`Crawler on port: ${PORT}`);
+app.listen(APP1_PORT, function() {
+  console.log(`MLB crawler on port: ${APP1_PORT}`);
 });

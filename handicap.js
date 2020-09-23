@@ -10,15 +10,6 @@ const { HANDICAP_PORT } = process.env;
 
 handicapApp.use(Have.haven());
 
-// schedule.scheduleJob('取得 Token','0 0 11 * * *', zone_tw,async function() {
-//   try {
-//     await HW.getToken();
-//   } catch (err) {
-//     console.log(err);
-//     return err;
-//   }
-// });
-
 schedule.scheduleJob('取得盤口', '*/10 * * * * *', zone_tw, async function() {
   try {
     await HW.getHandicap();
