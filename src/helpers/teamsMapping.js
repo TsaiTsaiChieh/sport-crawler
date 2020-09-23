@@ -281,39 +281,51 @@ function CPBL_teamName2id(name) {
 function NPB_teamName2id(name) {
   name = name.toLowerCase().trim();
   switch (name) {
+    case 'b' :
     case 'オリックス': {
       return '8025';
     }
+    case 'l' :
     case '西武': {
       return '2387';
     }
+    case 'h' :
     case 'ソフトバンク': {
       return '2386';
     }
+    case 's':
     case 'ヤクルト': {
       return '10216';
     }
+    case 'e':
     case '楽天': {
       return '5438';
     }
+    case 'c':
     case '広島': {
       return '3324';
     }
+    case 'db':
     case 'dena': {
       return '3323';
     }
+    case 'g':
     case '巨人': {
       return '45295';
     }
+    case 'd':
     case '中日': {
       return '3318';
     }
+    case 't':
     case '阪神': {
       return '3317';
     }
+    case 'f' :
     case '日本ハム': {
       return '10078';
     }
+    case 'm':
     case 'ロッテ': {
       return '6650';
     }
