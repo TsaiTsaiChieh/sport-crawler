@@ -13,8 +13,13 @@ const firebaseConfig = {
 };
 const betsToken = '46719-gZEnjYySo0cLKx';
 const cert = isEmulator ? env['test-certPath'] : env['product-certPath'];
+const hwAccount = {
+  no: isEmulator ? env['test-hw_no'] : env['product-hw_no'],
+  pwd: isEmulator ? env['test-hw_pwd'] : env['product-hw_pwd']
+};
 module.exports = {
   firebaseConfig,
   betsToken,
-  cert
+  cert,
+  hwAccount
 };
