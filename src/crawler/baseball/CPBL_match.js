@@ -74,7 +74,7 @@ async function main() {
       scheduleTime = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix();
 
       await mysql.Match.upsert({
-        bets_id: `${aimYear}${aimMonth}${aimDay}${league_id}${matchID}`,
+        bets_id: `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`,
         league_id: league_id,
         sport_id: sport_id,
         home_id: homeID[i],

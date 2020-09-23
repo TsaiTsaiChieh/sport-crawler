@@ -16,9 +16,7 @@ const KBO = {
   match: require('./src/invoke/baseball/KBO_match'),
   status: require('./src/invoke/baseball/KBO_status')
 };
-const CPBL = {
-  match: require('./src/invoke/baseball/CPBL_match')
-};
+
 const NPB = {
   match: require('./src/crawler/baseball/NPB_match'),
   livescore: require('./src/crawler/baseball/NPB_livescore')
@@ -44,7 +42,6 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 
 schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
   try {
-    await CPBL.match();
     await NPB.match();
     await NBA.match();
     await MLB.match();
