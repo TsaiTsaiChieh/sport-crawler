@@ -120,8 +120,13 @@ async function crawlerInningsOfMatch() {
   const result = [];
   let inningsNow;
   let halfsNow;
-  for (let i = 0; i < apiHomeTeam.length; i++) {
-    if (matchState[i].indexOf('表') === -1 || matchState[i].indexOf('裏') === -1) {
+  let apiHomeTeamCount = 0;
+  let apiAwayTeamCount = 0;
+  for (let i = 0; i < matchState.length; i++) {
+    if (i % 2 === 0) {
+      continue;
+    }
+    if (matchState[i].indexOf('表') === -1 && matchState[i].indexOf('裏') === -1) {
       // 表示未開賽
       inningsNow = 0;
       halfsNow = '0';
@@ -134,15 +139,18 @@ async function crawlerInningsOfMatch() {
       inningsNow = matchState[i].split('回')[0];
       halfsNow = '1';
     }
-    result[i] = {
-      apiMatchID: matchLinks[i],
-      apiHomeID: NPB_teamName2id(apiHomeTeam[i]),
-      apiAwayID: NPB_teamName2id(apiAwayTeam[i]),
+    result[apiHomeTeamCount] = {
+      apiMatchID: matchLinks[apiHomeTeamCount],
+      apiHomeID: NPB_teamName2id(apiHomeTeam[apiHomeTeamCount]),
+      apiAwayID: NPB_teamName2id(apiAwayTeam[apiAwayTeamCount]),
       inningsNow: inningsNow,
       halfsNow: halfsNow,
       aimDate: aimDate
     };
+    apiHomeTeamCount = apiHomeTeamCount + 1;
+    apiAwayTeamCount = apiAwayTeamCount + 1;
   }
+
   return result;
 }
 
