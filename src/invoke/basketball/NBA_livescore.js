@@ -193,7 +193,7 @@ async function updateTeamsStat(data, path) {
         ft_point_percent: homeStats.ftpct,
         fg_point_attempts: homeStats.fga,
         fg_point_scored: homeStats.fgm,
-        fg_percent: homeStats.fgpct,
+        fg_point_percent: homeStats.fgpct,
         three_point_attempts: homeStats.tpa,
         three_point_scored: homeStats.tpm,
         three_point_percent: homeStats.tppct,
