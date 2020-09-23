@@ -2,16 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
-const { zone_tw } = process.env;
-const { APP4_PORT } = process.env;
 const envValues = require('./src/configs/envValues');
+const { APP4_PORT } = process.env;
+const connection = require('./src/helpers/connection');
 
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
+schedule.scheduleJob('*/10 * * * * *', async function() {
   try {
-    console.log(envValues.cert);
+    await connection();
+    console.log(`firebaseConfig: ${JSON.stringify(envValues.firebaseConfig)}`);
+    console.log(`cert: ${envValues.cert}`);
+    console.log(`hwAccount: ${JSON.stringify(envValues.hwAccount)}`);
+    console.log(`MySQL host: ${envValues.MySQL_host}`);
     return;
   } catch (err) {
     console.log(err);
@@ -20,5 +24,5 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
 });
 
 app.listen(APP4_PORT, function() {
-  console.log(`Handicap crawler on port: ${APP4_PORT}`);
+  console.log(`Test parameter on port: ${APP4_PORT}`);
 });
