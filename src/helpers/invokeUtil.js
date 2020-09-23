@@ -11,16 +11,14 @@ async function getData(URL) {
   }
 }
 
-function crawler(URL) {
-  return new Promise(async function(resolve, reject) {
-    try {
-      const { data } = await axios.get(URL);
-      const $ = cheerio.load(data); // load in the HTML
-      return resolve($);
-    } catch (err) {
-      return Promise.reject(new ServerErrors.CrawlerError(err.stack));
-    }
-  });
+async function crawler(URL) {
+  try {
+    const { data } = await axios.get(URL);
+    const $ = cheerio.load(data); // load in the HTML
+    return Promise.resolve($);
+  } catch (err) {
+    return Promise.reject(new ServerErrors.CrawlerError(err.stack));
+  }
 }
 
 module.exports = {

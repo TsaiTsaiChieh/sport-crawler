@@ -13,8 +13,8 @@ const MLB = {
   livescore: require('./src/invoke/baseball/MLB_livescore')
 };
 const KBO = {
-  match: require('./src/crawler/baseball/KBO_match'),
-  status: require('./src/crawler/baseball/KBO_status')
+  match: require('./src/invoke/baseball/KBO_match'),
+  status: require('./src/invoke/baseball/KBO_status')
 };
 const CPBL = {
   match: require('./src/invoke/baseball/CPBL_match')
