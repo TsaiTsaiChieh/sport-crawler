@@ -17,9 +17,12 @@ const hwAccount = {
   no: isEmulator ? env['test-hw_no'] : env['product-hw_no'],
   pwd: isEmulator ? env['test-hw_pwd'] : env['product-hw_pwd']
 };
+const MySQL_host = '35.188.137.1';
+
 module.exports = {
   firebaseConfig,
   betsToken,
   cert,
-  hwAccount
+  hwAccount,
+  MySQL_host
 };
