@@ -1,4 +1,4 @@
-// The NODE_ENV of VM is [launching]，localhost is undefined
+// The NODE_ENV of test VM or localhost is [test], production is [production]
 const isEmulator = process.env.NODE_ENV === 'test';
 const { env } = process;
 const firebaseConfig = {
