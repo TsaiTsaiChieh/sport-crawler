@@ -107,6 +107,7 @@ function leagueCodebook(league) {
       return {
         id: '11235',
         name_ch: '中華職棒',
+        ori_league_id: '11235',
         hw_ball: '3'
       };
     case 'KBO':

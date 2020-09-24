@@ -260,6 +260,24 @@ function KBO_teamName2id(name) {
       throw new Error(`KBO Invalid parameter: ${name}`);
   }
 }
+
+function CPBL_teamName2id(name) {
+  switch (name) {
+    case 'AJL011': {
+      return '329121';
+    }
+    case 'E02': {
+      return '230422';
+    }
+    case 'L01': {
+      return '224095';
+    }
+    case 'B04': {
+      return '224094';
+    }
+  }
+}
+
 function NPB_teamName2id(name) {
   name = name.toLowerCase().trim();
   switch (name) {
@@ -317,5 +335,6 @@ module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
   KBO_teamName2id,
+  CPBL_teamName2id,
   NPB_teamName2id
 };
