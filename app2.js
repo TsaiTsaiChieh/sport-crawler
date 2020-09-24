@@ -8,7 +8,8 @@ const NBA = {
 };
 const KBO = {
   match: require('./src/invoke/baseball/KBO_match'),
-  status: require('./src/invoke/baseball/KBO_status')
+  status: require('./src/invoke/baseball/KBO_status'),
+  livescore: require('./src/invoke/baseball/KBO_livescore')
 };
 const { zone_tw } = process.env;
 const { APP2_PORT } = process.env;
@@ -16,9 +17,19 @@ const { APP2_PORT } = process.env;
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('文字直播', '*/5 * * * * *', zone_tw, async function() {
+schedule.scheduleJob('NBA 文字直播', '*/5 * * * * *', zone_tw, async function() {
   try {
     await NBA.livescore();
+    return;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+});
+
+schedule.scheduleJob('KBO 文字直播', '*/5 * * * * *', zone_tw, async function() {
+  try {
+    await KBO.livescore();
     return;
   } catch (err) {
     console.log(err);
@@ -55,16 +66,6 @@ schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async funct
     return err;
   }
 });
-
-// schedule.scheduleJob('*/10 * * * * *', async function(fireDate) {
-//   try {
-//     await connection();
-//     return;
-//   } catch (err) {
-//     console.log(err);
-//     return err;
-//   }
-// });
 
 app.listen(APP2_PORT, function() {
   console.log(`KBO & NBA crawler on port: ${APP2_PORT}`);
