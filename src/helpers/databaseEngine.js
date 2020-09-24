@@ -1,5 +1,3 @@
-const { Sequelize } = require('sequelize');
-const { Op } = Sequelize;
 const mysql = require('./mysqlUtil');
 const ServerErrors = require('./ServerErrors');
 const { MATCH_STATUS } = require('./statusUtil');
@@ -8,17 +6,25 @@ async function getScheduledAndInplayMatchesFromMySQL(nowUnix, leagueId) {
   try {
     const yesterday = nowUnix - 24 * 60 * 60;
     // Index is range, taking about 170ms
-    const result = await mysql.Match.findAll({
-      attributes: [['bets_id', 'matchId'], 'status'],
-      where: {
+    const result = await mysql.sequelize.query(`
+    SELECT game.bets_id AS matchId, game.status, game.scheduled, game.scheduled_tw, 
+	         home.team_id AS homeId, home.alias AS homeAlias, 
+	         away.team_id AS awayId, away.alias AS awayAlias
+      FROM matches AS game
+ LEFT JOIN match__teams AS home ON game.home_id = home.team_id
+ LEFT JOIN match__teams AS away ON game.away_id = away.team_id
+     WHERE game.league_id = :league_id
+       AND (status = :SCHEDULED OR status = :INPLAY)
+       AND (scheduled <= :nowUnix AND scheduled >= :yesterday)`, {
+      replacements: {
         league_id: leagueId,
-        status: { [Op.or]: [MATCH_STATUS.SCHEDULED, MATCH_STATUS.INPLAY] },
-        scheduled: {
-          [Op.lte]: nowUnix,
-          [Op.gte]: yesterday
-        }
+        SCHEDULED: MATCH_STATUS.SCHEDULED,
+        INPLAY: MATCH_STATUS.INPLAY,
+        nowUnix,
+        yesterday
       },
-      raw: true
+      raw: true,
+      type: mysql.sequelize.QueryTypes.SELECT
     });
     return Promise.resolve(result);
   } catch (err) {
