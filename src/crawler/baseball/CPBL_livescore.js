@@ -115,15 +115,15 @@ async function CPBLpbpInplay(path, totalData, date) {
   let inningsNow;
   let halfsNow;
   for (let i = 0; i < awayScore.length; i++) {
-    if (awayScore[i] !== '' && homeScore[i] === '') {
+    if (awayScore[i] !== 'X' && homeScore[i] === 'X') {
       // 現在為 i + 1 局上半
       inningsNow = i + 1;
       halfsNow = '0';
-    } else if (awayScore[i] !== '' && homeScore[i] !== '') {
+    } else if (awayScore[i] !== 'X' && homeScore[i] !== 'X') {
       // 現在為 i + 1 局下半
       inningsNow = i + 1;
       halfsNow = '1';
-    } else if (awayScore[i] === '' && homeScore[i] === '') {
+    } else if (awayScore[i] === 'X' && homeScore[i] === 'X') {
       break;
     }
   }
