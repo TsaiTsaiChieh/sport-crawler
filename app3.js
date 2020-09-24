@@ -30,7 +30,7 @@ schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
 schedule.scheduleJob('即時比分', '*/5 * * * * *', zone_tw, async function() {
   try {
     await NPB.livescore();
-    // await CPBL.livescore();
+    await CPBL.livescore();
     return;
   } catch (err) {
     console.log(err);
