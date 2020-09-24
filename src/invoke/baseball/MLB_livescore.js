@@ -106,8 +106,12 @@ async function repackageLivescore(matchData, livescoreData) {
             if (linescore.offense.second) temp.secondBase = 1;
             if (linescore.offense.third) temp.thirdBase = 1;
             temp.halfs = linescore.inningHalf === 'Top' ? '0' : '1';
-            temp.home[`Innings${inning.num}`] = { runs: inning.home.runs || inning.home.runs === 0 ? String(inning.home.runs) : 'X' };
-            temp.away[`Innings${inning.num}`] = { runs: inning.away.runs || inning.away.runs === 0 ? String(inning.away.runs) : 'X' };
+            if (inning.home.runs || inning.home.runs === 0)temp.home[`Innings${inning.num}`] = String(inning.home.runs);
+            if (inning.away.runs || inning.away.runs === 0)temp.away[`Innings${inning.num}`] = String(inning.away.runs);
+            if (status === MATCH_STATUS.END) {
+              temp.home[`Innings${inning.num}`] = { runs: inning.home.runs || inning.home.runs === 0 ? String(inning.home.runs) : 'X' };
+              temp.away[`Innings${inning.num}`] = { runs: inning.away.runs || inning.away.runs === 0 ? String(inning.away.runs) : 'X' };
+            }
             data.push(temp);
           });
         }
