@@ -11,8 +11,15 @@ function MLB_statusMapping(matchId, status) {
   throw new Error(`MLB 比賽編號: ${matchId} 的未知狀態: ${abstractGameCode}(${detailedStatus})`);
 }
 
+function KBO_statusMapping(matchId, status) {
+  if (status === 2) return MATCH_STATUS.SCHEDULED;
+  else if (status === 3 || status === 4) return MATCH_STATUS.END;
+  throw new Error(`KBO 比賽編號: ${matchId} 的未知狀態: ${status}`);
+}
+
 module.exports = {
   MATCH_STATUS,
   MATCH_STATUS_REALTIME,
-  MLB_statusMapping
+  MLB_statusMapping,
+  KBO_statusMapping
 };

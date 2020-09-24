@@ -4,7 +4,7 @@ const { getData } = require('../../helpers/invokeUtil');
 const { timestamp2date } = require('../../helpers/momentUtil');
 const { KBO_id2Alias, KBO_teamName2id } = require('../../helpers/teamsMapping');
 const ServerErrors = require('../../helpers/ServerErrors');
-const { MATCH_STATUS, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
+const { MATCH_STATUS, MATCH_STATUS_REALTIME, KBO_statusMapping } = require('../../helpers/statusUtil');
 const moment = require('moment');
 require('moment-timezone');
 const { set2realtime } = require('../../helpers/firebaseUtil');
@@ -76,7 +76,7 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
         firstBase: 0,
         secondBase: 0,
         thirdBase: 0,
-        status: MATCH_STATUS_REALTIME[MATCH_STATUS.INPLAY],
+        status: MATCH_STATUS_REALTIME[2],
         home: { },
         away: { },
         Total: { home: { R: 0, H: 0, E: 0 }, away: { R: 0, H: 0, E: 0 } }
@@ -109,6 +109,8 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
           temp.gameId = game.gameId;
           const { gameInfo } = game;
+          const status = KBO_statusMapping(game.statusNum);
+          temp.status = MATCH_STATUS_REALTIME[status];
           const homeByInning = gameInfo.home_team_score_by_inning;
           const awayByInning = gameInfo.away_team_score_by_inning;
           const homeRHE = gameInfo.home_team_rheb;
@@ -120,6 +122,8 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
           temp.Total.away.R = scoreBoard.away.R;
           temp.Total.away.H = scoreBoard.away.H;
           temp.Total.away.E = scoreBoard.away.E;
+          if (status === MATCH_STATUS.END && scoreBoard.home.runs === '-') scoreBoard.home.runs = 'X';
+          if (status === MATCH_STATUS.END && scoreBoard.away.runs === '-') scoreBoard.away.runs = 'X';
           temp.home[`Innings${scoreBoard.inning}`] = { runs: scoreBoard.home.runs };
           temp.away[`Innings${scoreBoard.inning}`] = { runs: scoreBoard.away.runs };
         }
@@ -159,7 +163,7 @@ function currentInningScore(currentInning, str) {
   const indices = [];
   for (let i = 0; i < str.length; i++) if (str[i] === ',') indices.push(i);
   let score = str.substring(indices[currentInning - 2] + 1, indices[currentInning - 1]).trim();
-  if (score === '-') score = '0';
+  if (score === '-' && currentInning !== '9') score = '0';
   return score;
 }
 
