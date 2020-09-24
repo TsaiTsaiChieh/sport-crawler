@@ -3,9 +3,11 @@ const { getData } = require('../../helpers/invokeUtil');
 const momentUtil = require('../../helpers/momentUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const html2json = require('html2json').html2json;
-const { MATCH_STATUS } = require('../../helpers/statusUtil');
+const { MATCH_STATUS, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
 const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
+// const realtime = require('../../helpers/firebaseUtil').initialize.database();
+const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
   try {
@@ -82,8 +84,11 @@ async function updateStatus2MySQL(gameData, matchData) {
 async function updateScore2MySQL(matchData) {
   try {
     matchData.map(async function(ele) {
+      const { sport, league } = configs;
       if (ele.status === MATCH_STATUS.END) {
         await mysql.Match.update({ home_points: ele.homeScore, away_points: ele.awayScore }, { where: { bets_id: ele.matchId } });
+        const path = `${sport}/${league}/${ele.matchId}/Summary`;
+        await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.END]);
       }
     });
     return Promise.resolve();
