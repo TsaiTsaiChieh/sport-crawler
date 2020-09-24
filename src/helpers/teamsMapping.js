@@ -278,6 +278,33 @@ function CPBL_teamName2id(name) {
   }
 }
 
+function KBO_id2Alias(id) {
+  switch (id) {
+    case '3354':
+      return 'KT';
+    case '2408':
+      return 'LT';
+    case '2405':
+      return 'HH';
+    case '2406':
+      return 'OB';
+    case '2407':
+      return 'LG';
+    case '8043':
+      return 'SK';
+    case '3353':
+      return 'NC';
+    case '3356':
+      return 'SS';
+    case '4202':
+      return 'HT';
+    case '269103':
+      return 'WO';
+    default:
+      throw new Error(`KBO Invalid parameter: ${id}`);
+  }
+}
+
 function NPB_teamName2id(name) {
   name = name.toLowerCase().trim();
   switch (name) {
@@ -331,10 +358,12 @@ function NPB_teamName2id(name) {
     }
   }
 }
+
 module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
   KBO_teamName2id,
+  KBO_id2Alias,
   CPBL_teamName2id,
   NPB_teamName2id
 };

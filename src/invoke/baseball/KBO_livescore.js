@@ -14,16 +14,6 @@ async function main() {
     const { league_id } = configs;
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
-    // const matchData = [{
-    //   matchId: '8204',
-    //   status: 3,
-    //   scheduled: 1600939800,
-    //   scheduled_tw: '2020-09-24T09:30:00.000Z',
-    //   homeId: '269103',
-    //   homeAlias: 'Kiwoom Heroes',
-    //   awayId: '8043',
-    //   awayAlias: 'SK Wyverns'
-    // }];
     await livescoreStart(matchData);
   } catch (err) {
     return Promise.reject(err.stack);
