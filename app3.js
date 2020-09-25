@@ -8,8 +8,8 @@ const NPB = {
 };
 const CPBL = {
   match: require('./src/crawler/baseball/CPBL_match'),
-  status: require('./src/crawler/baseball/CPBL_status'),
-  livescore: require('./src/crawler/baseball/CPBL_livescore')
+  status: require('./src/invoke/baseball/CPBL_status'),
+  livescore: require('./src/invoke/baseball/CPBL_livescore')
 };
 const { zone_tw } = process.env;
 const { APP3_PORT } = process.env;

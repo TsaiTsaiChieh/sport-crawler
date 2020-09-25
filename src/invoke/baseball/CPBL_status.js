@@ -15,6 +15,7 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     if (matchData.length) await invokeAPI(matchData);
+    return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
   }
@@ -46,7 +47,7 @@ function repackageMatchData(date, gameData, matchData) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
           data.push({
             matchId: match.matchId,
-            status: CPBL_statusMapping(game.status),
+            status: CPBL_statusMapping(game.gameid, game.status),
             homeScore: game.score_a,
             awayScore: game.score_b
           });
@@ -65,6 +66,7 @@ async function updateStatusOrScore2MySQL(matchChunk) {
     matchChunk.map(async function(match) {
       if (match.status === END) await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
       if (match.status === INPLAY) await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
+      console.log(`CPBL 完賽 at ${new Date()}`);
     });
     return Promise.resolve();
   } catch (err) {
