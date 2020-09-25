@@ -1,5 +1,5 @@
 const configs = require('../../configs/league/KBO_configs');
-const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
+const { getScheduledAndInplayMatchesFromMySQL, updateLiveAndTeamData } = require('../../helpers/databaseEngine');
 const { getData } = require('../../helpers/invokeUtil');
 const { timestamp2date } = require('../../helpers/momentUtil');
 const { KBO_id2Alias, KBO_teamName2id } = require('../../helpers/teamsMapping');
@@ -7,7 +7,6 @@ const ServerErrors = require('../../helpers/ServerErrors');
 const { MATCH_STATUS, MATCH_STATUS_REALTIME, KBO_statusMapping } = require('../../helpers/statusUtil');
 const moment = require('moment');
 require('moment-timezone');
-const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
   try {
@@ -15,6 +14,7 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await livescoreStart(matchData);
+    return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
   }
@@ -29,7 +29,7 @@ async function livescoreStart(matchData) {
       const baseData = await getData(`${baseURL}?leId=${leId}&srId=${srId}&date=${date}`);
       const livescoreData = await tuneSeasonYearData(matchData, today);
       const livescoreChunk = await repackageLivescore(matchData, livescoreData, baseData);
-      await updateLiveAndTeamData(livescoreChunk);
+      await updateLiveAndTeamData(livescoreChunk, configs);
     }
     return Promise.resolve();
   } catch (err) {
@@ -179,30 +179,4 @@ function returnRHE(str) {
   return { R, H, E };
 }
 
-async function updateLiveAndTeamData(livescoreData) {
-  const { sport, league } = configs;
-  livescoreData.map(async function(ele) {
-    const path = `${sport}/${league}/${ele.matchId}/Summary`;
-    await set2realtime(`${path}/Now_innings`, ele.innings);
-    // 壘板
-    await set2realtime(`${path}/Now_firstbase`, ele.firstBase);
-    await set2realtime(`${path}/Now_secondbase`, ele.secondBase);
-    await set2realtime(`${path}/Now_thirdbase`, ele.thirdBase);
-    // 計分板
-    await set2realtime(`${path}/Now_balls`, ele.balls);
-    await set2realtime(`${path}/Now_outs`, ele.outs);
-    await set2realtime(`${path}/Now_strikes`, ele.strikes);
-    await set2realtime(`${path}/Now_halfs`, ele.halfs);
-    await set2realtime(`${path}/status`, String(ele.status));
-    await set2realtime(`${path}/info/home/Total/points`, String(ele.Total.home.R));
-    await set2realtime(`${path}/info/away/Total/points`, String(ele.Total.away.R));
-    await set2realtime(`${path}/info/home/Total/hits`, String(ele.Total.home.H));
-    await set2realtime(`${path}/info/away/Total/hits`, String(ele.Total.away.H));
-    await set2realtime(`${path}/info/home/Total/errors`, String(ele.Total.home.E));
-    await set2realtime(`${path}/info/away/Total/errors`, String(ele.Total.away.E));
-
-    for (const key in ele.home) await set2realtime(`${path}/info/home/${key}/scoring/runs`, ele.home[key].runs);
-    for (const key in ele.away) await set2realtime(`${path}/info/away/${key}/scoring/runs`, ele.away[key].runs);
-  });
-}
 module.exports = main;
