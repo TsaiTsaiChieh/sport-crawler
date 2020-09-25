@@ -25,10 +25,18 @@ function CPBL_statusMapping(matchId, status) {
   throw new Error(`CPBL 比賽編號: ${matchId} 的未知狀態: ${status}`);
 }
 
+function NPB_statusMapping(matchId, status) {
+  if (status === 'X') return MATCH_STATUS.SCHEDULED;
+  else if (status === 'S') return MATCH_STATUS.INPLAY;
+  else if (status === 'E') return MATCH_STATUS.END;
+  throw new Error(`NPB 比賽編號: ${matchId} 的未知狀態: ${status}`);
+}
+
 module.exports = {
   MATCH_STATUS,
   MATCH_STATUS_REALTIME,
   MLB_statusMapping,
   KBO_statusMapping,
-  CPBL_statusMapping
+  CPBL_statusMapping,
+  NPB_statusMapping
 };

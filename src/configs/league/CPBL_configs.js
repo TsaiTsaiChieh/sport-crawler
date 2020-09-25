@@ -3,7 +3,7 @@ const { league2Sport, leagueCodebook } = require('../../helpers/leaguesUtil');
 
 /**
  * * livescoreURL example: (獵分網)
- * * https://score.com.tw/dbjson.php?date=2020-09-25&sporttype=bb&union=bb_2
+ * * https://score.com.tw/dbjson.php?date=2020-09-25&sporttype=bb&union=tw_12
 */
 
 const configs = {
