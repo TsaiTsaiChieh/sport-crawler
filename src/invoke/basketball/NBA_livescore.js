@@ -82,12 +82,12 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
       const homeTotalPoints = payload.boxscore.homeScore;
       await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
       const nowPeriod = payload.boxscore.period;
-      const clock = !payload.boxscore.periodClock ? '00:00' : payload.boxscore.periodClock;
+      // const clock = !payload.boxscore.periodClock ? '00:00' : payload.boxscore.periodClock;
       const eventOrderAtNowPeriod = payload.playByPlays[0].events.length;
       const statusDes = matchStatus[payload.boxscore.status];
 
       await set2realtime(`${path}/Now_periods`, nowPeriod);
-      await set2realtime(`${path}/Now_clock`, clock);
+      // await set2realtime(`${path}/Now_clock`, clock);
       await set2realtime(`${path}/Now_event_order`, eventOrderAtNowPeriod);
       await set2realtime(`${path}/status`, statusDes);
       await set2realtime(`${path}/info/away/Total/points`, awayTotalPoints);
@@ -106,12 +106,14 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
         await set2realtime(`${path}/info/home/periods${period}/points`, String(homeScore));
         for (let j = playByPlays[i].events.length; j > 0; j--) {
           const event = playByPlays[i].events[j - 1];
+          const clock = event.gameClock;
+          await set2realtime(`${path}/Now_clock`, clock);
           let descriptionCh = filterSymbol(event.description, ']');
           if (event.messageType === '12') descriptionCh = replaceDescription(period, '開始');
           if (event.messageType === '13') descriptionCh = replaceDescription(period, '結束');
           const specificPath = `${path}/periods${period}/events${playByPlays[i].events.length - j + 1}`;
           await set2realtime(`${specificPath}/Period`, period);
-          await set2realtime(`${specificPath}/Clock`, event.gameClock);
+          await set2realtime(`${specificPath}/Clock`, clock);
           await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
           await set2realtime(`${specificPath}/description_ch`, descriptionCh);
           console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
