@@ -2,20 +2,22 @@ const league = 'CPBL';
 const { league2Sport, leagueCodebook } = require('../../helpers/leaguesUtil');
 
 /**
- * * livescoreURL example: (全球即時比分網)
- * * https://web2.sa8888.net/sport/Games.aspx?lang=3&device=pc&ball=tw
+ * * livescoreURL example: (獵分網)
+ * * https://score.com.tw/dbjson.php?date=2020-09-25&sporttype=bb&union=bb_2
 */
 
 const configs = {
   league,
-  livescoreURL: 'https://web2.sa8888.net/sport/Games.aspx',
+  livescoreURL: 'https://score.com.tw/dbjson.php',
   // livescoreURL
-  lang: 3, // 1 is tw, 3 is english
-  ball: 'tw', // 台棒
+  date: '',
+  sporttype: 'bb',
+  union: 'tw_13', // 台棒
   sport: league2Sport(league).sport,
   league_id: leagueCodebook(league).id,
   sport_id: league2Sport(league).sport_id,
-  ori_league_id: leagueCodebook(league).ori_league_id
+  ori_league_id: leagueCodebook(league).ori_league_id,
+  taiwanZone: process.env.zone_tw
 };
 
 module.exports = configs;
