@@ -48,7 +48,6 @@ async function main() {
       }
     }
   }
-  console.log('NPB_livescore success');
 }
 
 async function queryForEvents(leagueID, nowTime) {
