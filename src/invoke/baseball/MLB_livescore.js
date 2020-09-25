@@ -81,10 +81,8 @@ async function repackageLivescore(matchData, livescoreData) {
       };
       livescoreData.dates[0].games.map(function(game) {
         const gamePk = String(game.gamePk);
-        const detailedStatus = game.status.detailedState;
-        const codedGameState = game.status.codedGameState;
-        const abstractGameCode = game.status.abstractGameCode;
-        const status = MLB_statusMapping(gamePk, { detailedStatus, codedGameState, abstractGameCode });
+        const { detailedStatus, codedGameState, abstractGameCode, statusCode } = game.status;
+        const status = MLB_statusMapping(gamePk, { detailedStatus, codedGameState, abstractGameCode, statusCode });
 
         if (match.matchId === gamePk && game.linescore.currentInning > 0) {
           temp.status = MATCH_STATUS_REALTIME[status];
