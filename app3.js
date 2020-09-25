@@ -4,7 +4,8 @@ const Have = require('domain-haven');
 const schedule = require('node-schedule-tz');
 const NPB = {
   match: require('./src/crawler/baseball/NPB_match'),
-  livescore: require('./src/crawler/baseball/NPB_livescore')
+  status: require('./src/invoke/baseball/NPB_status'),
+  livescore: require('./src/invoke/baseball/NPB_livescore')
 };
 const CPBL = {
   match: require('./src/crawler/baseball/CPBL_match'),
@@ -20,6 +21,16 @@ app.use(Have.haven());
 schedule.scheduleJob('NPB 賽程', '0 */1 * * *', zone_tw, async function() {
   try {
     await NPB.match();
+    return;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+});
+
+schedule.scheduleJob('NPB 監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
+  try {
+    await NPB.status();
     return;
   } catch (err) {
     console.log(err);
