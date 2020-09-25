@@ -263,18 +263,18 @@ function KBO_teamName2id(name) {
 
 function CPBL_teamName2id(name) {
   switch (name) {
-    case 'AJL011': {
+    case 'AJL011':
+    case '樂天桃猿':
       return '329121';
-    }
-    case 'E02': {
+    case 'E02':
+    case '中信兄弟':
       return '230422';
-    }
-    case 'L01': {
+    case 'L01':
+    case '統一獅':
       return '224095';
-    }
-    case 'B04': {
+    case '富邦悍將':
+    case 'B04':
       return '224094';
-    }
   }
 }
 
