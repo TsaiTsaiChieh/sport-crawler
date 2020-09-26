@@ -16,8 +16,7 @@ const configs = {
   sport: league2Sport(league).sport,
   league_id: leagueCodebook(league).id,
   sport_id: league2Sport(league).sport_id,
-  ori_league_id: leagueCodebook(league).ori_league_id,
-  japanZone: 'Asia/Tokyo'
+  ori_league_id: leagueCodebook(league).ori_league_id
 };
 
 module.exports = configs;
