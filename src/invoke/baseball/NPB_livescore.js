@@ -64,7 +64,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
         const homeId = NPB_teamName2id(game.home);
         const awayId = NPB_teamName2id(game.away);
         const time = game.runtime;
-        const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.japanZone).unix();
+        const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
           temp.gameId = gameId;
           temp.status = MATCH_STATUS_REALTIME[status];

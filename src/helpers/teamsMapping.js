@@ -334,7 +334,7 @@ function NPB_teamName2id(name) {
       return '3324';
     case 'db':
     case 'dena':
-    case '橫濱DeNA灣星':
+    case '橫濱dena灣星':
       return '3323';
     case 'g':
     case '巨人':
