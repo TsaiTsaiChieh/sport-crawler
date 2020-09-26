@@ -66,7 +66,7 @@ async function liveTextStart(data) {
   }
 }
 
-// 全部更新
+// 部分更新
 async function updateLiveAndTeamData(matchData, gameId, path) {
   try {
     const { liveData, teamStatData } = matchData;
@@ -74,53 +74,48 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     const { payload } = liveData;
     let playByPlays = [];
     if (payload) playByPlays = payload.playByPlays;
+    if (!playByPlays.length) return Promise.resolve();
 
-    if (playByPlays.length) {
-      await updateTeamsStat(teamStatData, path);
-      const { status } = payload.boxscore;
-      const awayTotalPoints = payload.boxscore.awayScore;
-      const homeTotalPoints = payload.boxscore.homeScore;
-      await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
-      const nowPeriod = payload.boxscore.period;
-      // const clock = !payload.boxscore.periodClock ? '00:00' : payload.boxscore.periodClock;
-      const eventOrderAtNowPeriod = payload.playByPlays[0].events.length;
-      const statusDes = matchStatus[payload.boxscore.status];
+    await updateTeamsStat(teamStatData, path);
+    const { status } = payload.boxscore;
+    const awayTotalPoints = payload.boxscore.awayScore;
+    const homeTotalPoints = payload.boxscore.homeScore;
+    await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
+    const nowPeriod = payload.boxscore.period;
+    const clock = playByPlays[0].events[0].gameClock;
+    const nowEvent = playByPlays[0].events.length;
+    const eventOrderAtNowPeriod = playByPlays[0].events.length;
+    const statusDes = matchStatus[payload.boxscore.status];
 
-      await set2realtime(`${path}/Now_periods`, nowPeriod);
-      // await set2realtime(`${path}/Now_clock`, clock);
-      await set2realtime(`${path}/Now_event_order`, eventOrderAtNowPeriod);
-      await set2realtime(`${path}/status`, statusDes);
-      await set2realtime(`${path}/info/away/Total/points`, awayTotalPoints);
-      await set2realtime(`${path}/info/home/Total/points`, homeTotalPoints);
-      const awayId = payload.gameProfile.awayTeamId;
-      const homeId = payload.gameProfile.homeTeamId;
+    await set2realtime(`${path}/Now_periods`, nowPeriod);
+    await set2realtime(`${path}/Now_clock`, clock);
+    await set2realtime(`${path}/Now_event_order`, eventOrderAtNowPeriod);
+    await set2realtime(`${path}/status`, statusDes);
+    await set2realtime(`${path}/info/away/Total/points`, awayTotalPoints);
+    await set2realtime(`${path}/info/home/Total/points`, homeTotalPoints);
+    const awayId = payload.gameProfile.awayTeamId;
+    const homeId = payload.gameProfile.homeTeamId;
 
-      for (let i = 0; i < playByPlays.length; i++) {
-        const period = playByPlays[i].period;
-        // Subtract the points from the previous round
-        const awayScoreTmp = parseInt(playByPlays[i].events[playByPlays[i].events.length - 1].awayScore);
-        const homeScoreTmp = parseInt(playByPlays[i].events[playByPlays[i].events.length - 1].homeScore);
-        const awayScore = parseInt(playByPlays[i].events[0].awayScore) - awayScoreTmp;
-        const homeScore = parseInt(playByPlays[i].events[0].homeScore) - homeScoreTmp;
-        await set2realtime(`${path}/info/away/periods${period}/points`, String(awayScore));
-        await set2realtime(`${path}/info/home/periods${period}/points`, String(homeScore));
-        for (let j = playByPlays[i].events.length; j > 0; j--) {
-          const event = playByPlays[i].events[j - 1];
-          const clock = event.gameClock;
-          await set2realtime(`${path}/Now_clock`, clock);
-          let descriptionCh = filterSymbol(event.description, ']');
-          if (event.messageType === '12') descriptionCh = replaceDescription(period, '開始');
-          if (event.messageType === '13') descriptionCh = replaceDescription(period, '結束');
-          const specificPath = `${path}/periods${period}/events${playByPlays[i].events.length - j + 1}`;
-          await set2realtime(`${specificPath}/Period`, period);
-          await set2realtime(`${specificPath}/Clock`, clock);
-          await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
-          await set2realtime(`${specificPath}/description_ch`, descriptionCh);
-          console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
-        }
-      }
+    for (let i = 0; i < playByPlays.length; i++) {
+      const period = playByPlays[i].period;
+      // Subtract the points from the previous round
+      const awayScoreTmp = parseInt(playByPlays[i].events[playByPlays[i].events.length - 1].awayScore);
+      const homeScoreTmp = parseInt(playByPlays[i].events[playByPlays[i].events.length - 1].homeScore);
+      const awayScore = parseInt(playByPlays[i].events[0].awayScore) - awayScoreTmp;
+      const homeScore = parseInt(playByPlays[i].events[0].homeScore) - homeScoreTmp;
+      await set2realtime(`${path}/info/away/periods${period}/points`, String(awayScore));
+      await set2realtime(`${path}/info/home/periods${period}/points`, String(homeScore));
     }
-
+    const event = playByPlays[0].events[0]; // newest
+    let descriptionCh = filterSymbol(event.description, ']');
+    if (event.messageType === '12') descriptionCh = replaceDescription(nowPeriod, '開始');
+    if (event.messageType === '13') descriptionCh = replaceDescription(nowPeriod, '結束');
+    const specificPath = `${path}/periods${nowPeriod}/events${nowEvent}`;
+    await set2realtime(`${specificPath}/Period`, nowPeriod);
+    await set2realtime(`${specificPath}/Clock`, clock);
+    await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
+    await set2realtime(`${specificPath}/description_ch`, descriptionCh);
+    console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
