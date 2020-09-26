@@ -223,6 +223,7 @@ async function getHandicap() {
               } else {
                 data.result.data_list[k].proffer_two_bs = '0';
               }
+              // 兩個盤口
               totalsTw = `${parseFloat(firstHandicap)}/${parseFloat(secondHandicap)}`;
             } else {
               firstHandicap = data.result.data_list[k].proffer_one_bs;
@@ -260,7 +261,8 @@ async function getHandicap() {
           let apiTotalsTw;
           if (sportId === 1) {
             apiSpreadStatus = data.result.data_list[k].proffer_mode;
-            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            // 需注意讓零分時 盤口會呈現 PK 或讓 0 分
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' || parseFloat(data.result.data_list[k].proffer_one_A) === 0 ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
             apiSpreadRate = parseFloat(data.result.data_list[k].proffer_two_A);
             apiTotalsHandicap = parseFloat(data.result.data_list[k].proffer_one_bs);
             apiTotalsRate = parseFloat(data.result.data_list[k].proffer_two_bs);
@@ -268,7 +270,8 @@ async function getHandicap() {
             apiTotalsTw = String(totalsTw);
           } else {
             apiSpreadStatus = data.result.data_list[k].proffer_mode;
-            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            // 需注意讓零分時 盤口會呈現 PK 或讓 0 分
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' || parseFloat(data.result.data_list[k].proffer_one_A) === 0 ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
             apiSpreadRate = String(data.result.data_list[k].proffer_two_A) === '平' || String(data.result.data_list[k].proffer_two_A) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_A);
             apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
             apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
