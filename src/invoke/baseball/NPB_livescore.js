@@ -102,12 +102,13 @@ async function repackageLivescore(date, matchData, livescoreData) {
 
 function getCurrentInning(scoreboard) {
   const index = [];
+
   for (let i = 0; i < scoreboard.length; i++) if (scoreboard[i] === ',') index.push(i);
   for (let i = 0; i < index.length - 1; i++) {
     const temp = index[i + 1];
     if (index[i] + 1 === temp) return i + 1;
   }
-  return index.length + 1;
+  return index.length;
 }
 
 function baseMapping(base) {
