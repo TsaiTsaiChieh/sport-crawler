@@ -260,50 +260,110 @@ function KBO_teamName2id(name) {
       throw new Error(`KBO Invalid parameter: ${name}`);
   }
 }
+
+function CPBL_teamName2id(name) {
+  switch (name) {
+    case 'AJL011':
+    case '樂天桃猿':
+      return '329121';
+    case 'E02':
+    case '中信兄弟':
+      return '230422';
+    case 'L01':
+    case '統一獅':
+      return '224095';
+    case '富邦悍將':
+    case 'B04':
+      return '224094';
+  }
+}
+
+function KBO_id2Alias(id) {
+  switch (id) {
+    case '3354':
+      return 'KT';
+    case '2408':
+      return 'LT';
+    case '2405':
+      return 'HH';
+    case '2406':
+      return 'OB';
+    case '2407':
+      return 'LG';
+    case '8043':
+      return 'SK';
+    case '3353':
+      return 'NC';
+    case '3356':
+      return 'SS';
+    case '4202':
+      return 'HT';
+    case '269103':
+      return 'WO';
+    default:
+      throw new Error(`KBO Invalid parameter: ${id}`);
+  }
+}
+
 function NPB_teamName2id(name) {
   name = name.toLowerCase().trim();
   switch (name) {
-    case 'オリックス': {
+    case 'b' :
+    case 'オリックス':
+    case '歐力士猛牛':
       return '8025';
-    }
-    case '西武': {
+    case 'l' :
+    case '西武獅':
+    case '西武':
       return '2387';
-    }
-    case 'ソフトバンク': {
+    case 'h' :
+    case 'ソフトバンク':
+    case '福岡軟銀鷹':
       return '2386';
-    }
-    case 'ヤクルト': {
+    case 's':
+    case 'ヤクルト':
+    case '養樂多燕子':
       return '10216';
-    }
-    case '楽天': {
+    case 'e':
+    case '楽天':
+    case '東北樂天鷹':
       return '5438';
-    }
-    case '広島': {
+    case 'c':
+    case '広島':
+    case '廣島鯉魚':
       return '3324';
-    }
-    case 'dena': {
+    case 'db':
+    case 'dena':
+    case '橫濱DeNA灣星':
       return '3323';
-    }
-    case '巨人': {
+    case 'g':
+    case '巨人':
+    case '讀賣巨人':
       return '45295';
-    }
-    case '中日': {
+    case '中日龍':
+    case 'd':
+    case '中日':
       return '3318';
-    }
-    case '阪神': {
+    case 't':
+    case '阪神':
+    case '阪神虎':
       return '3317';
-    }
-    case '日本ハム': {
+    case 'f' :
+    case '日本ハム':
+    case '日本火腿':
       return '10078';
-    }
-    case 'ロッテ': {
+    case 'm':
+    case 'ロッテ':
+    case '千葉羅德':
       return '6650';
-    }
   }
 }
+
 module.exports = {
   NBA_teamName2id,
   MLB_teamName2id,
   KBO_teamName2id,
+  KBO_id2Alias,
+  CPBL_teamName2id,
   NPB_teamName2id
 };

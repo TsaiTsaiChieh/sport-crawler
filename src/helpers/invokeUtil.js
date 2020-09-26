@@ -1,6 +1,6 @@
 const axios = require('axios');
-const ServerErrors = require('./ServerErrors');
 const cheerio = require('cheerio');
+const ServerErrors = require('./ServerErrors');
 
 async function getData(URL) {
   try {
