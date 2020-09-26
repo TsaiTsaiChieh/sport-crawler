@@ -42,7 +42,7 @@ function repackageMatchData(date, gameData, matchData) {
       const homeId = NPB_teamName2id(game.home);
       const awayId = NPB_teamName2id(game.away);
       const time = game.runtime;
-      const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.japanZone).unix();
+      const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
           data.push({
@@ -65,9 +65,11 @@ async function updateStatusOrScore2MySQL(matchChunk) {
   try {
     const { INPLAY, END } = MATCH_STATUS;
     matchChunk.map(async function(match) {
-      if (match.status === END) await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
-      if (match.status === INPLAY) await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId, radar_id: match.gameId } });
-      console.log(`NPB 完賽 at ${new Date()}`);
+      if (match.status === END) {
+        await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
+        console.log(`NPB 完賽 at ${new Date()}`);
+      }
+      if (match.status === INPLAY) await mysql.Match.update({ status: match.status, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
     });
     return Promise.resolve();
   } catch (err) {
