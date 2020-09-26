@@ -1,74 +1,33 @@
-const configs = require('../../configs/league/NBA_configs');
-const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
-const { MATCH_STATUS } = require('../../helpers/leaguesUtil');
-const { set2realtime } = require('../../helpers/firebaseUtil');
-const { getData } = require('../../helpers/invokeUtil');
-const ServerErrors = require('../../helpers/ServerErrors');
+const configs = require('../configs/league/NBA_configs');
+const { MATCH_STATUS } = require('../helpers/statusUtil');
+const { set2realtime } = require('../helpers/firebaseUtil');
+const { getData } = require('../helpers/invokeUtil');
+const ServerErrors = require('../helpers/ServerErrors');
 // The status of NBA live API
 const matchStatus = { 3: 'ended', 2: 'inprogress', 1: 'scheduled', end: 3 };
-const mysql = require('../../helpers/mysqlUtil');
+const mysql = require('../helpers/mysqlUtil');
 
-/*
-* 1. Select matches from MySQL which status is scheduled and inplay,
-*    and scheduled time is less or equal then now unix time.
-* 2. Get the step 1 data, if the status of match is scheduled,
-*    change its status to inplay and update this match data to MySQL.
-*/
-
-async function main() {
+async function livescore(req, res) {
   try {
-    // XXX Consider redis implement
-    const { league_id } = configs;
-    const nowUnix = Math.floor(Date.now() / 1000);
-    const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
-    await updateMatchInplayStatus2MySQL(matchData);
-    await liveTextStart(matchData);
-    return Promise.resolve();
+    const { match_id } = req.query;
+    const { league, sport, liveAPI, teamComparisonAPI, locale } = configs;
+    const gameId = match_id;
+    const liveURL = `${liveAPI}?gameId=${gameId}&locale=${locale}`;
+    const teamComparisonURL = `${teamComparisonAPI}?gameId=${gameId}`;
+    const liveData = await getData(liveURL);
+    const teamStatData = await getData(teamComparisonURL);
+    const path = `${sport}/${league}/${gameId}/Summary`;
+    const result = await updateLiveAndTeamData({ liveData, teamStatData }, gameId, path);
+    return res.json(result);
   } catch (err) {
-    return Promise.reject(err.stack);
+    return res.status(500).json(err.stack);
   }
 }
 
-async function updateMatchInplayStatus2MySQL(data) {
-  try {
-    if (data.length) {
-      data.map(async function(ele) {
-        if (ele.status === MATCH_STATUS.SCHEDULED) {
-          await mysql.Match.update(
-            { status: MATCH_STATUS.INPLAY },
-            { where: { bets_id: ele.matchId } });
-        }
-      });
-    }
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(err.stack);
-  }
-}
-
-async function liveTextStart(data) {
-  try {
-    if (data.length) {
-      data.map(async function(ele) {
-        const { league, sport, liveAPI, teamComparisonAPI, locale } = configs;
-        const gameId = ele.matchId;
-        const liveURL = `${liveAPI}?gameId=${gameId}&locale=${locale}`;
-        const teamComparisonURL = `${teamComparisonAPI}?gameId=${gameId}`;
-        const liveData = await getData(liveURL);
-        const teamStatData = await getData(teamComparisonURL);
-        const path = `${sport}/${league}/${gameId}/Summary`;
-        await updateLiveAndTeamData({ liveData, teamStatData }, gameId, path);
-      });
-    }
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(err.stack);
-  }
-}
-
-// 部分更新
+// 全部更新
 async function updateLiveAndTeamData(matchData, gameId, path) {
   try {
+    const result = [];
     const { liveData, teamStatData } = matchData;
 
     const { payload } = liveData;
@@ -83,8 +42,7 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
     const nowPeriod = payload.boxscore.period;
     const clock = playByPlays[0].events[0].gameClock;
-    const nowEvent = playByPlays[0].events.length;
-    const eventOrderAtNowPeriod = playByPlays[0].events.length;
+    const eventOrderAtNowPeriod = payload.playByPlays[0].events.length;
     const statusDes = matchStatus[payload.boxscore.status];
 
     await set2realtime(`${path}/Now_periods`, nowPeriod);
@@ -105,17 +63,21 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
       const homeScore = parseInt(playByPlays[i].events[0].homeScore) - homeScoreTmp;
       await set2realtime(`${path}/info/away/periods${period}/points`, String(awayScore));
       await set2realtime(`${path}/info/home/periods${period}/points`, String(homeScore));
+
+      for (let j = playByPlays[i].events.length; j > 0; j--) {
+        const event = playByPlays[i].events[j - 1];
+        let descriptionCh = filterSymbol(event.description, ']');
+        if (event.messageType === '12') descriptionCh = replaceDescription(period, '開始');
+        if (event.messageType === '13') descriptionCh = replaceDescription(period, '結束');
+        const specificPath = `${path}/periods${period}/events${playByPlays[i].events.length - j + 1}`;
+        await set2realtime(`${specificPath}/Period`, period);
+        await set2realtime(`${specificPath}/Clock`, clock);
+        await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
+        await set2realtime(`${specificPath}/description_ch`, descriptionCh);
+        const logging = `更新 NBA 文字直播: ${gameId} - ${descriptionCh}`;
+        result.push(logging);
+      }
     }
-    const event = playByPlays[0].events[0]; // newest
-    let descriptionCh = filterSymbol(event.description, ']');
-    if (event.messageType === '12') descriptionCh = replaceDescription(nowPeriod, '開始');
-    if (event.messageType === '13') descriptionCh = replaceDescription(nowPeriod, '結束');
-    const specificPath = `${path}/periods${nowPeriod}/events${nowEvent}`;
-    await set2realtime(`${specificPath}/Period`, nowPeriod);
-    await set2realtime(`${specificPath}/Clock`, clock);
-    await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
-    await set2realtime(`${specificPath}/description_ch`, descriptionCh);
-    console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
@@ -212,4 +174,4 @@ async function updateTeamsStat(data, path) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
 }
-module.exports = main;
+module.exports = livescore;
