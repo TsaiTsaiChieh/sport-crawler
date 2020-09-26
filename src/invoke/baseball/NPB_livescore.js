@@ -107,7 +107,7 @@ function getCurrentInning(scoreboard) {
     const temp = index[i + 1];
     if (index[i] + 1 === temp) return i + 1;
   }
-  return index.length + 1;
+  return index.length;
 }
 
 function baseMapping(base) {
