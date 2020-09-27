@@ -82,8 +82,8 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     const homeTotalPoints = payload.boxscore.homeScore;
     await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
     const nowPeriod = payload.boxscore.period;
+
     const clock = playByPlays[0].events[0].gameClock;
-    const nowEvent = playByPlays[0].events.length;
     const eventOrderAtNowPeriod = playByPlays[0].events.length;
     const statusDes = matchStatus[payload.boxscore.status];
 
@@ -95,6 +95,7 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     await set2realtime(`${path}/info/home/Total/points`, homeTotalPoints);
     const awayId = payload.gameProfile.awayTeamId;
     const homeId = payload.gameProfile.homeTeamId;
+    await updateLiveTextByPeriod({ gameId, awayId, homeId }, path);
 
     for (let i = 0; i < playByPlays.length; i++) {
       const period = playByPlays[i].period;
@@ -106,22 +107,37 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
       await set2realtime(`${path}/info/away/periods${period}/points`, String(awayScore));
       await set2realtime(`${path}/info/home/periods${period}/points`, String(homeScore));
     }
-    const event = playByPlays[0].events[0]; // newest
-    let descriptionCh = filterSymbol(event.description, ']');
-    if (event.messageType === '12') descriptionCh = replaceDescription(nowPeriod, '開始');
-    if (event.messageType === '13') descriptionCh = replaceDescription(nowPeriod, '結束');
-    const specificPath = `${path}/periods${nowPeriod}/events${nowEvent}`;
-    await set2realtime(`${specificPath}/Period`, nowPeriod);
-    await set2realtime(`${specificPath}/Clock`, clock);
-    await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
-    await set2realtime(`${specificPath}/description_ch`, descriptionCh);
-    console.log(`更新 NBA 文字直播: ${gameId} - ${descriptionCh}`);
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
 }
 
+async function updateLiveTextByPeriod(gameInformation, path) {
+  try {
+    const { liveAPI, locale } = configs;
+    const { gameId, nowPeriod, homeId, awayId } = gameInformation;
+    const liveByPeriodURL = `${liveAPI}?gameId=${gameId}&locale=${locale}&period=${nowPeriod}`;
+    const liveByPeriod = await getData(liveByPeriodURL);
+    const nowPeriodPlayByPlays = liveByPeriod.payload.playByPlays[0];
+
+    for (let j = nowPeriodPlayByPlays.events.length; j > 0; j--) {
+      const event = nowPeriodPlayByPlays.events[j - 1];
+      let descriptionCh = filterSymbol(event.description, ']');
+      if (event.messageType === '12') descriptionCh = replaceDescription(nowPeriod, '開始');
+      if (event.messageType === '13') descriptionCh = replaceDescription(nowPeriod, '結束');
+      const specificPath = `${path}/periods${nowPeriod}/events${nowPeriodPlayByPlays.events.length - j + 1}`;
+      await set2realtime(`${specificPath}/Period`, nowPeriod);
+      await set2realtime(`${specificPath}/Clock`, event.gameClock);
+      await set2realtime(`${specificPath}/attribution`, messageTypeMapping(event.teamId, awayId, homeId));
+      await set2realtime(`${specificPath}/description_ch`, descriptionCh);
+      // const logging = `更新 NBA 文字直播: ${gameId} - ${descriptionCh}`;
+      // console.log(logging);
+    }
+  } catch (err) {
+    return Promise.reject(new ServerErrors.RepackageError(err.stack));
+  }
+}
 async function updateMatchEndStatus2MySQL(matchData, path) {
   try {
     const { status, gameId, awayTotalPoints, homeTotalPoints } = matchData;
