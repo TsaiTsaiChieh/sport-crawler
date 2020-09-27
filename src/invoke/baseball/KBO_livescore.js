@@ -14,7 +14,7 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await livescoreStart(matchData);
-    
+
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
