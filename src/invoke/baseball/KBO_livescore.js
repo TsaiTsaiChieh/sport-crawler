@@ -15,6 +15,8 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await livescoreStart(matchData);
+
+    return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
   }
@@ -109,7 +111,7 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
           temp.gameId = game.gameId;
           const { gameInfo } = game;
-          const status = KBO_statusMapping(game.statusNum);
+          const status = KBO_statusMapping(game.gameId, game.statusNum);
           temp.status = MATCH_STATUS_REALTIME[status];
           const homeByInning = gameInfo.home_team_score_by_inning;
           const awayByInning = gameInfo.away_team_score_by_inning;
