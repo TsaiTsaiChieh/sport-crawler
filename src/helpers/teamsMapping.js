@@ -263,18 +263,18 @@ function KBO_teamName2id(name) {
 
 function CPBL_teamName2id(name) {
   switch (name) {
-    case 'AJL011': {
+    case 'AJL011':
+    case '樂天桃猿':
       return '329121';
-    }
-    case 'E02': {
+    case 'E02':
+    case '中信兄弟':
       return '230422';
-    }
-    case 'L01': {
+    case 'L01':
+    case '統一獅':
       return '224095';
-    }
-    case 'B04': {
+    case '富邦悍將':
+    case 'B04':
       return '224094';
-    }
   }
 }
 
@@ -309,53 +309,53 @@ function NPB_teamName2id(name) {
   name = name.toLowerCase().trim();
   switch (name) {
     case 'b' :
-    case 'オリックス': {
+    case 'オリックス':
+    case '歐力士猛牛':
       return '8025';
-    }
     case 'l' :
-    case '西武': {
+    case '西武獅':
+    case '西武':
       return '2387';
-    }
     case 'h' :
-    case 'ソフトバンク': {
+    case 'ソフトバンク':
+    case '福岡軟銀鷹':
       return '2386';
-    }
     case 's':
-    case 'ヤクルト': {
+    case 'ヤクルト':
+    case '養樂多燕子':
       return '10216';
-    }
     case 'e':
-    case '楽天': {
+    case '楽天':
+    case '東北樂天鷹':
       return '5438';
-    }
     case 'c':
-    case '広島': {
+    case '広島':
+    case '廣島鯉魚':
       return '3324';
-    }
     case 'db':
-    case 'dena': {
+    case 'dena':
+    case '橫濱dena灣星':
       return '3323';
-    }
     case 'g':
-    case '巨人': {
+    case '巨人':
+    case '讀賣巨人':
       return '45295';
-    }
+    case '中日龍':
     case 'd':
-    case '中日': {
+    case '中日':
       return '3318';
-    }
     case 't':
-    case '阪神': {
+    case '阪神':
+    case '阪神虎':
       return '3317';
-    }
     case 'f' :
-    case '日本ハム': {
+    case '日本ハム':
+    case '日本火腿':
       return '10078';
-    }
     case 'm':
-    case 'ロッテ': {
+    case 'ロッテ':
+    case '千葉羅德':
       return '6650';
-    }
   }
 }
 

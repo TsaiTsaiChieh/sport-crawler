@@ -30,11 +30,9 @@ async function repackageMatches(matchData) {
       const awayId = MLB_teamName2id(ele.teams.away.team.teamCode).id;
       const homeAlias = ele.teams.home.team.abbreviation;
       const awayAlias = ele.teams.away.team.abbreviation;
-      const detailedStatus = ele.status.detailedStatus;
-      const codedGameState = ele.status.codedGameState;
-      const abstractGameCode = ele.status.abstractGameCode;
+      const { detailedStatus, codedGameState, abstractGameCode, statusCode } = ele.status;
+      const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode, statusCode });
       const scheduled = momentUtil.date2timestamp(ele.gameDate);
-      const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
       if (ele.status.startTimeTBD === true) {
         const matchTBD = await repackageTBDMatches(matchData, { matchId, scheduled, homeId, homeAlias, awayId, awayAlias, status });
         data.push(matchTBD);

@@ -1,18 +1,22 @@
 const configs = require('../../configs/league/MLB_configs');
-const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
+const { getScheduledAndInplayMatchesFromMySQL, updateLiveAndTeamData } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const momentUtil = require('../../helpers/momentUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { MATCH_STATUS, MATCH_STATUS_REALTIME, MLB_statusMapping } = require('../../helpers/statusUtil');
-const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
-  const { league_id } = configs;
-  const nowUnix = Math.floor(Date.now() / 1000);
-  const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
-  await updateMatchInplayStatus2MySQL(matchData);
-  await livescoreStart(matchData);
+  try {
+    const { league_id } = configs;
+    const nowUnix = Math.floor(Date.now() / 1000);
+    const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
+    await updateMatchInplayStatus2MySQL(matchData);
+    await livescoreStart(matchData);
+    return Promise.resolve();
+  } catch (err) {
+    return Promise.reject(err.stack);
+  }
 }
 
 async function updateMatchInplayStatus2MySQL(data) {
@@ -38,7 +42,7 @@ async function livescoreStart(matchData) {
       const livescoreURL = concatURL();
       const livescoreData = await getData(livescoreURL);
       const livescoreChunk = await repackageLivescore(matchData, livescoreData);
-      await updateLiveAndTeamData(livescoreChunk);
+      await updateLiveAndTeamData(livescoreChunk, configs);
     }
     return Promise.resolve();
   } catch (err) {
@@ -81,10 +85,8 @@ async function repackageLivescore(matchData, livescoreData) {
       };
       livescoreData.dates[0].games.map(function(game) {
         const gamePk = String(game.gamePk);
-        const detailedStatus = game.status.detailedState;
-        const codedGameState = game.status.codedGameState;
-        const abstractGameCode = game.status.abstractGameCode;
-        const status = MLB_statusMapping(gamePk, { detailedStatus, codedGameState, abstractGameCode });
+        const { detailedStatus, codedGameState, abstractGameCode, statusCode } = game.status;
+        const status = MLB_statusMapping(gamePk, { detailedStatus, codedGameState, abstractGameCode, statusCode });
 
         if (match.matchId === gamePk && game.linescore.currentInning > 0) {
           temp.status = MATCH_STATUS_REALTIME[status];
@@ -124,30 +126,4 @@ async function repackageLivescore(matchData, livescoreData) {
   }
 }
 
-async function updateLiveAndTeamData(livescoreData) {
-  const { sport, league } = configs;
-  livescoreData.map(async function(ele) {
-    const path = `${sport}/${league}/${ele.matchId}/Summary`;
-    await set2realtime(`${path}/Now_innings`, ele.innings);
-    // 壘板
-    await set2realtime(`${path}/Now_firstbase`, ele.firstBase);
-    await set2realtime(`${path}/Now_secondbase`, ele.secondBase);
-    await set2realtime(`${path}/Now_thirdbase`, ele.thirdBase);
-    // 計分板
-    await set2realtime(`${path}/Now_balls`, ele.balls);
-    await set2realtime(`${path}/Now_outs`, ele.outs);
-    await set2realtime(`${path}/Now_strikes`, ele.strikes);
-    await set2realtime(`${path}/Now_halfs`, ele.halfs);
-    await set2realtime(`${path}/status`, String(ele.status));
-    await set2realtime(`${path}/info/home/Total/points`, String(ele.Total.home.R));
-    await set2realtime(`${path}/info/away/Total/points`, String(ele.Total.away.R));
-    await set2realtime(`${path}/info/home/Total/hits`, String(ele.Total.home.H));
-    await set2realtime(`${path}/info/away/Total/hits`, String(ele.Total.away.H));
-    await set2realtime(`${path}/info/home/Total/errors`, String(ele.Total.home.E));
-    await set2realtime(`${path}/info/away/Total/errors`, String(ele.Total.away.E));
-
-    for (const key in ele.home) await set2realtime(`${path}/info/home/${key}/scoring/runs`, ele.home[key].runs);
-    for (const key in ele.away) await set2realtime(`${path}/info/away/${key}/scoring/runs`, ele.away[key].runs);
-  });
-}
 module.exports = main;
