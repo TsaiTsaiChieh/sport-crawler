@@ -1559,7 +1559,7 @@ function leagueName2Id(leagueName) {
       return '51658';
     }
 
-    // 中超
+    // 中國超級聯賽
     case '石家莊永昌': {
       return '49388';
     }
@@ -1609,7 +1609,7 @@ function leagueName2Id(leagueName) {
       return '43806';
     }
 
-    // 英超 剩 4 組
+    // 英超 剩 3 組
     case '狼隊': {
       return '17383';
     }
@@ -1657,6 +1657,12 @@ function leagueName2Id(leagueName) {
     }
     case '愛華頓': {
       return '44249';
+    }
+    case '般尼': {
+      return '17159';
+    }
+    case '車路士': {
+      return '44000';
     }
 
     // 法甲
@@ -1768,17 +1774,35 @@ function leagueName2Id(leagueName) {
       return '1056';
     }
 
-    // 義甲 尚未開打
+    // 意大利甲組聯賽 剩 20 組
+    case '費倫天拿': {
+      return '1280';
+    }
+    case '拖連奴': {
+      return '1230';
+    }
+    case '維羅納': {
+      return '7311';
+    }
+    case '羅馬': {
+      return '1273';
+    }
 
-    // 德甲 尚未開打 剩 16 組
+    // 德國甲組聯賽 尚未開打 剩 14 組
     case '拜仁慕尼黑': {
       return '9943';
     }
     case '史浩克04': {
       return '9942';
     }
+    case '柏林赫塔': {
+      return '475';
+    }
+    case '法蘭克福': {
+      return '16016';
+    }
 
-    // 荷甲 剩 3 組
+    // 荷蘭甲組聯賽 剩 3 組
     case '海倫維恩': {
       return '29096';
     }
@@ -1831,7 +1855,7 @@ function leagueName2Id(leagueName) {
       return '43996';
     }
 
-    // 葡超 剩 4 組
+    // 葡萄牙超級聯賽 剩 2 組
     case '費馬利卡奧': {
       return '923';
     }
@@ -1843,6 +1867,12 @@ function leagueName2Id(leagueName) {
     }
     case '比蘭尼塞斯': {
       return '19658';
+    }
+    case '布拉加': {
+      return '44094';
+    }
+    case '聖塔克萊拉': {
+      return '1166';
     }
 
     // 澳足 尚未開打
