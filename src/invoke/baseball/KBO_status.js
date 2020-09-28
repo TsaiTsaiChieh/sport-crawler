@@ -95,6 +95,7 @@ async function updateScore2MySQL(matchData) {
         await mysql.Match.update({ home_points: ele.homeScore, away_points: ele.awayScore }, { where: { bets_id: ele.matchId } });
         const path = `${sport}/${league}/${ele.matchId}/Summary`;
         await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.END]);
+        console.log(`KBO - ${ele.matchId} 完賽 at ${new Date()}`);
       }
     });
     return Promise.resolve();
