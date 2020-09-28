@@ -72,9 +72,9 @@ async function main() {
       }
       let scheduleTime = `${aimYear}-${aimMonth}-${aimDay} ${scheduled}:00`;
       scheduleTime = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix();
-
+      const gameId = `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`;
       await mysql.Match.upsert({
-        bets_id: `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`,
+        bets_id: gameId,
         league_id: league_id,
         sport_id: sport_id,
         home_id: homeID[i],
@@ -86,7 +86,7 @@ async function main() {
         ori_league_id: ori_league_id,
         ori_sport_id: sport_id
       });
-      logResult(league, `${aimYear}${aimMonth}${aimDay}${league_id}${matchID}`, homeID[i], awayID[i]);
+      logResult(league, gameId, homeID[i], awayID[i]);
     }
     return Promise.resolve();
   } catch (err) {
