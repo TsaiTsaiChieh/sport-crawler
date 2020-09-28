@@ -72,21 +72,24 @@ async function main() {
       }
       let scheduleTime = `${aimYear}-${aimMonth}-${aimDay} ${scheduled}:00`;
       scheduleTime = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix();
-      const gameId = `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`;
-      await mysql.Match.upsert({
-        bets_id: gameId,
-        league_id: league_id,
-        sport_id: sport_id,
-        home_id: homeID[i],
-        away_id: awayID[i],
-        scheduled: scheduleTime,
-        scheduled_tw: scheduleTime * 1000,
-        flag_prematch: MATCH_STATUS.VALID,
-        status: MATCH_STATUS.SCHEDULED,
-        ori_league_id: ori_league_id,
-        ori_sport_id: sport_id
-      });
-      logResult(league, gameId, homeID[i], awayID[i]);
+      if (matchID !== '' && matchID !== null) {
+        await mysql.Match.upsert({
+          bets_id: `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`,
+          league_id: league_id,
+          sport_id: sport_id,
+          home_id: homeID[i],
+          away_id: awayID[i],
+          scheduled: scheduleTime,
+          scheduled_tw: scheduleTime * 1000,
+          flag_prematch: MATCH_STATUS.VALID,
+          status: MATCH_STATUS.SCHEDULED,
+          ori_league_id: ori_league_id,
+          ori_sport_id: sport_id
+        });
+        logResult(league, `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`, homeID[i], awayID[i]);
+      } else {
+        console.log(`${aimYear}-${aimMonth}-${aimDay} is no match`);
+      }
     }
     return Promise.resolve();
   } catch (err) {
