@@ -39,8 +39,8 @@ async function livescoreStart(matchData) {
 
 async function repackageLivescore(date, matchData, livescoreData) {
   try {
-    if (!livescoreData.data.length) return Promise.resolve();
     const data = [];
+    if (!livescoreData.data.length) return Promise.resolve(data);
     matchData.map(function(match) {
       const temp = {
         matchId: match.matchId,
