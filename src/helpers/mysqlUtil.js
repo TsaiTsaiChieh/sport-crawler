@@ -1588,6 +1588,32 @@ const Service_Contact = sequelize.define('service__contact', {
 });
 
 /*
+ * 首頁 即時比分輪播聯盟
+ */
+const Home_Livescore = sequelize.define('home__livescore', {
+  league_id: {
+    type: Sequelize.STRING
+  },
+  sport_id: {
+    type: Sequelize.STRING
+  },
+  start_time: {
+    type: Sequelize.INTEGER
+  },
+  end_time: {
+    type: Sequelize.INTEGER
+  },
+  createdAt: {
+    type: Sequelize.DATE(3),
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
+  },
+  updatedAt: {
+    type: Sequelize.DATE(3),
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)')
+  }
+});
+
+/*
  * 首頁 排行榜預設值
  */
 const Home_List = sequelize.define('home__list', {
@@ -2898,6 +2924,7 @@ const dbUtil = {
   Topic_FavoriteArticle,
   Home_Banner,
   Home_List,
+  Home_Livescore,
   Service_Contact,
   UserBuy,
   UserBuyFake,
