@@ -24,6 +24,7 @@ async function main() {
 async function repackageMatches(matchData) {
   try {
     const data = [];
+    if (!matchData.dates.length) return Promise.resolve(data);
     matchData.dates[0].games.map(async function(ele) {
       const matchId = String(ele.gamePk);
       const homeId = MLB_teamName2id(ele.teams.home.team.teamCode).id;
