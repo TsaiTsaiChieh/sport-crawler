@@ -223,6 +223,7 @@ async function getHandicap() {
               } else {
                 data.result.data_list[k].proffer_two_bs = '0';
               }
+              // 兩個盤口
               totalsTw = `${parseFloat(firstHandicap)}/${parseFloat(secondHandicap)}`;
             } else {
               firstHandicap = data.result.data_list[k].proffer_one_bs;
@@ -260,7 +261,8 @@ async function getHandicap() {
           let apiTotalsTw;
           if (sportId === 1) {
             apiSpreadStatus = data.result.data_list[k].proffer_mode;
-            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            // 需注意讓零分時 盤口會呈現 PK 或讓 0 分
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' || parseFloat(data.result.data_list[k].proffer_one_A) === 0 ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
             apiSpreadRate = parseFloat(data.result.data_list[k].proffer_two_A);
             apiTotalsHandicap = parseFloat(data.result.data_list[k].proffer_one_bs);
             apiTotalsRate = parseFloat(data.result.data_list[k].proffer_two_bs);
@@ -268,7 +270,8 @@ async function getHandicap() {
             apiTotalsTw = String(totalsTw);
           } else {
             apiSpreadStatus = data.result.data_list[k].proffer_mode;
-            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
+            // 需注意讓零分時 盤口會呈現 PK 或讓 0 分
+            apiSpreadHandicap = data.result.data_list[k].proffer_one_A === 'PK' || parseFloat(data.result.data_list[k].proffer_one_A) === 0 ? 0 : apiSpreadStatus === '1' ? parseFloat(data.result.data_list[k].proffer_one_A) : -parseFloat(data.result.data_list[k].proffer_one_A);
             apiSpreadRate = String(data.result.data_list[k].proffer_two_A) === '平' || String(data.result.data_list[k].proffer_two_A) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_A);
             apiTotalsHandicap = data.result.data_list[k].proffer_one_bs;
             apiTotalsRate = String(data.result.data_list[k].proffer_two_bs) === '平' || String(data.result.data_list[k].proffer_two_bs) === '' ? 0 : parseFloat(data.result.data_list[k].proffer_two_bs);
@@ -1556,7 +1559,7 @@ function leagueName2Id(leagueName) {
       return '51658';
     }
 
-    // 中超
+    // 中國超級聯賽
     case '石家莊永昌': {
       return '49388';
     }
@@ -1606,7 +1609,10 @@ function leagueName2Id(leagueName) {
       return '43806';
     }
 
-    // 英超 剩 4 組
+    // 英超 剩 2 組
+    case '白禮頓': {
+      return '17161';
+    }
     case '狼隊': {
       return '17383';
     }
@@ -1654,6 +1660,12 @@ function leagueName2Id(leagueName) {
     }
     case '愛華頓': {
       return '44249';
+    }
+    case '般尼': {
+      return '17159';
+    }
+    case '車路士': {
+      return '44000';
     }
 
     // 法甲
@@ -1721,7 +1733,22 @@ function leagueName2Id(leagueName) {
       return '9919';
     }
 
-    // 西甲 剩 6 組
+    // 西班牙甲組聯賽 剩 1/20 組
+    case '基達菲': {
+      return '2971';
+    }
+    case '巴塞隆拿': {
+      return '1211';
+    }
+    case '艾爾切': {
+      return '6364';
+    }
+    case '皇家馬德里': {
+      return '17163';
+    }
+    case '馬德里體育會': {
+      return '10269';
+    }
     case '伊巴': {
       return '4442';
     }
@@ -1744,7 +1771,7 @@ function leagueName2Id(leagueName) {
       return '974';
     }
     case '皇家貝迪斯': {
-      return '17164';
+      return '43940';
     }
     case '巴拉多利德': {
       return '1291';
@@ -1765,17 +1792,122 @@ function leagueName2Id(leagueName) {
       return '1056';
     }
 
-    // 義甲 尚未開打
+    // 意大利甲組聯賽 剩 3/20 組
+    case '博洛尼亞': {
+      return '1231';
+    }
+    case '拿玻里': {
+      return '29126';
+    }
+    case '熱拿亞': {
+      return '1275';
+    }
+    case '克努托内': {
+      return '1274';
+    }
+    case 'AC米蘭': {
+      return '43866';
+    }
+    case '烏甸尼斯': {
+      return '1238';
+    }
+    case '費倫天拿': {
+      return '1280';
+    }
+    case '拖連奴': {
+      return '1230';
+    }
+    case '維羅納': {
+      return '7311';
+    }
+    case '羅馬': {
+      return '1273';
+    }
+    case '祖雲達斯': {
+      return '22228';
+    }
+    case '斯佩齊亞': {
+      return '7315';
+    }
+    case '薩斯索羅': {
+      return '1278';
+    }
+    case '卡利亞里': {
+      return '1272';
+    }
+    case '拉素': {
+      return '43865';
+    }
+    case '森多利亞': {
+      return '1276';
+    }
+    case '班尼雲度': {
+      return '7317';
+    }
+    case '阿特蘭大': {
+      return '1277';
+    }
+    case '國際米蘭': {
+      return '890';
+    }
 
-    // 德甲 尚未開打 剩 16 組
+    // 德國甲組聯賽 剩 1/18 組
+    case '慕遜加柏': {
+      return '4806';
+    }
+    case '柏林聯': {
+      return '258';
+    }
+    case '美因茨05': {
+      return '4283';
+    }
+    case '斯圖加特': {
+      return '9821';
+    }
+    case '勒沃庫森': {
+      return '15897';
+    }
+    case 'RB萊比錫': {
+      return '823';
+    }
+    case '比勒費爾德': {
+      return '257';
+    }
+    case '科隆': {
+      return '16006';
+    }
+    case '奧斯堡': {
+      return '43933';
+    }
+    case '多特蒙德': {
+      return '23475';
+    }
+    case '費雷堡': {
+      return '476';
+    }
+    case '沃爾夫斯堡': {
+      return '16005';
+    }
+    case '霍芬海姆': {
+      return '822';
+    }
     case '拜仁慕尼黑': {
       return '9943';
     }
     case '史浩克04': {
       return '9942';
     }
+    case '柏林赫塔': {
+      return '475';
+    }
+    case '法蘭克福': {
+      return '16016';
+    }
 
-    // 荷甲 剩 3 組
+    // 荷蘭甲組聯賽 剩 2/18 組
+    case '阿爾克馬爾': {
+      return '698';
+    }
     case '海倫維恩': {
       return '29096';
     }
@@ -1828,7 +1960,7 @@ function leagueName2Id(leagueName) {
       return '43996';
     }
 
-    // 葡超 剩 4 組
+    // 葡萄牙超級聯賽 剩 2 組
     case '費馬利卡奧': {
       return '923';
     }
@@ -1840,6 +1972,12 @@ function leagueName2Id(leagueName) {
     }
     case '比蘭尼塞斯': {
       return '19658';
+    }
+    case '布拉加': {
+      return '44094';
+    }
+    case '聖塔克萊拉': {
+      return '1166';
     }
 
     // 澳足 尚未開打
