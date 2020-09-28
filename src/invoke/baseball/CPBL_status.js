@@ -47,7 +47,7 @@ function repackageMatchData(date, gameData, matchData) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
           data.push({
             matchId: match.matchId,
-            status: CPBL_statusMapping(game.gameid, game.status),
+            status: CPBL_statusMapping(game),
             homeScore: game.score_a,
             awayScore: game.score_b
           });
@@ -62,11 +62,17 @@ function repackageMatchData(date, gameData, matchData) {
 
 async function updateStatusOrScore2MySQL(matchChunk) {
   try {
-    const { INPLAY, END } = MATCH_STATUS;
+    const { INPLAY, END, POSTPONED } = MATCH_STATUS;
     matchChunk.map(async function(match) {
-      if (match.status === END) await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
+      if (match.status === END) {
+        await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
+        console.log(`CPBL 完賽 at ${new Date()}`);
+      }
       if (match.status === INPLAY) await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
-      console.log(`CPBL 完賽 at ${new Date()}`);
+      if (match.status === POSTPONED) {
+        await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
+        console.log(`CPBL 延賽 at ${new Date()}`);
+      }
     });
     return Promise.resolve();
   } catch (err) {
