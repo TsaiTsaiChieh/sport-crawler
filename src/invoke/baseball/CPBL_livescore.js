@@ -60,7 +60,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
 
       livescoreData.data.map(function(game) {
         const gameId = String(game.gameid);
-        const status = CPBL_statusMapping(gameId, game.status);
+        const status = CPBL_statusMapping(game);
         const homeId = CPBL_teamName2id(game.home);
         const awayId = CPBL_teamName2id(game.away);
         const time = game.runtime;
