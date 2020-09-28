@@ -85,7 +85,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
           temp.firstBase = base.first;
           temp.secondBase = base.second;
           temp.thirdBase = base.third;
-          temp.halfs = game.runinn.includes('上') ? '0' : '1';
+          temp.halfs = game.runinn.includes('下') ? '1' : '0';
           const homeScore = currentInningScore(currentInning, game.db);
           const awayScore = currentInningScore(currentInning, game.da);
           temp.home[`Innings${currentInning}`] = { runs: homeScore };
