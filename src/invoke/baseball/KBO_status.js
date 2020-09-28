@@ -1,12 +1,13 @@
 const configs = require('../../configs/league/KBO_configs');
 const { getData } = require('../../helpers/invokeUtil');
 const momentUtil = require('../../helpers/momentUtil');
+const moment = require('moment');
+require('moment-timezone');
 const ServerErrors = require('../../helpers/ServerErrors');
 const html2json = require('html2json').html2json;
 const { MATCH_STATUS, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
 const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
-// const realtime = require('../../helpers/firebaseUtil').initialize.database();
 const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
@@ -28,15 +29,17 @@ async function invokeAPI(matchData) {
   date = momentUtil.timestamp2date(Date.now(), { format: 'YYYY-MM-DD' });
   const URL = `${matchURL}${date}`;
   const data = await getData(URL);
-  const gameData = await repackageMatchData(data);
+  const gameData = await repackageMatchData(date, data);
   await updateStatus2MySQL(gameData, matchData);
   await updateScore2MySQL(gameData);
 }
 
-async function repackageMatchData(gameData) {
+async function repackageMatchData(date, gameData) {
   try {
     const data = [];
     const json = html2json(gameData);
+    if (!json.child.length) return Promise.resolve(data);
+
     let awayScore = 0;
     let homeScore = 0;
     json.child.map(function(ele, i) {
@@ -45,6 +48,8 @@ async function repackageMatchData(gameData) {
         const matchId = hrefReplacement(ele.attr.href);
         const inningText = ele.child[5].child[3].child[0].text;
         const replaceText = inningText.replace(/\n/g, '');
+        const time = ele.child[5].child[1].child[3].child[0].text;
+        const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD h:mm A', configs.KoreaZone).unix();
         if (ele.child[5].child[1].child[1].child) awayScore = ele.child[5].child[1].child[1].child[0].text;
         if (ele.child[5].child[1].child[3].child) homeScore = ele.child[5].child[1].child[3].child[0].text;
         if (replaceText) status = MATCH_STATUS.INPLAY;
@@ -53,7 +58,8 @@ async function repackageMatchData(gameData) {
           matchId,
           status,
           awayScore,
-          homeScore
+          homeScore,
+          scheduled
         });
       }
     });
@@ -72,7 +78,7 @@ async function updateStatus2MySQL(gameData, matchData) {
   try {
     gameData.map(async function(game) {
       matchData.map(async function(match) {
-        if (game.matchId === match.matchId && game.status !== match.status) await mysql.Match.update({ status: game.status }, { where: { bets_id: game.matchId } });
+        if (game.matchId === match.matchId && game.status !== match.status) await mysql.Match.update({ status: game.status, scheduled: game.scheduled, scheduled_tw: game.scheduled * 1000 }, { where: { bets_id: game.matchId } });
       });
     });
     return Promise.resolve();

@@ -26,6 +26,7 @@ async function repackageMatch(matchData) {
   try {
     const data = [];
     const json = html2json(matchData);
+    if (!json.child.length) return Promise.resolve(data);
     json.child.map(function(ele, i) {
       if (i % 2 === 0) {
         const matchId = hrefReplacement(ele.attr.href);
