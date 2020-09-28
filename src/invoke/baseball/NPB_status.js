@@ -70,11 +70,11 @@ async function updateStatusOrScore2MySQL(matchChunk) {
     matchChunk.map(async function(match) {
       if (match.status === END) {
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
-        console.log(`NPB 完賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 完賽 at ${new Date()}`);
       }
       if (match.status === INPLAY) {
         await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        console.log(`NPB 開賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 開賽 at ${new Date()}`);
       }
     });
     return Promise.resolve();
