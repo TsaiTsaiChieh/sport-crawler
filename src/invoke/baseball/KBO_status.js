@@ -47,14 +47,14 @@ async function repackageMatchData(date, gameData, matchData) {
       const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
-          const gameId = game.gameid;
+          const status = checkMatchStatus(game, matchData);
           data.push({
             matchId: match.matchId,
-            gameId,
-            status: KBO_statusMapping(gameId, game.status),
+            scheduled,
+            gameId: game.gameid,
+            status,
             homeScore: game.score_a,
-            awayScore: game.score_b,
-            scheduled
+            awayScore: game.score_b
           });
         }
       });
@@ -63,6 +63,14 @@ async function repackageMatchData(date, gameData, matchData) {
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
+}
+function checkMatchStatus(game, matchData) {
+  let status = KBO_statusMapping(game.gameid, game.status);
+  matchData.map(function(match) {
+    // now > 開賽時間且 API 偵測未開打
+    if (match.matchId === game.gameid && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
+  });
+  return status;
 }
 
 async function updateStatusOrScore2MySQL(matchChunk) {
