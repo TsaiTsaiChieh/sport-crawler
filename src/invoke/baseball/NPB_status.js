@@ -68,9 +68,8 @@ function repackageMatchData(date, gameData, matchData) {
 function checkMatchStatus(game, matchData) {
   let status = NPB_statusMapping(game.gameid, game.status);
   matchData.map(function(match) {
-    console.log(match.matchId, game.gameid, Date.now(), match.scheduled * 1000);
     // now > 開賽時間且 API 偵測未開打
-    if (match.matchId === game.gameid && (Date.now() >= match.scheduled * 1000 && status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
+    if (match.matchId === game.gameid && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
   });
   return status;
 }
