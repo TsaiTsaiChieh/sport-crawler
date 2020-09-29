@@ -288,6 +288,20 @@ function KBO_id2Alias(id) {
   }
 }
 
+function KBO_teamIncludes2id(name) {
+  if (name.includes('鬥山熊')) return '2406';
+  else if (name.includes('英雄')) return '269103';
+  else if (name.includes('華老鷹')) return '2405';
+  else if (name.includes('恐龍')) return '3353';
+  else if (name.includes('巫師')) return '3354';
+  else if (name.includes('雙子')) return '2407';
+  else if (name.includes('起亞老虎')) return '4202';
+  else if (name.includes('樂天巨人')) return '2408';
+  else if (name.includes('三星獅子')) return '3356';
+  else if (name.includes('飛龍')) return '8043';
+  else throw new Error(`KBO Invalid parameter: ${name}`);
+}
+
 function CPBL_teamName2id(name) {
   switch (name) {
     case 'AJL011':
@@ -392,6 +406,7 @@ module.exports = {
   MLB_teamName2id,
   KBO_teamName2id,
   KBO_id2Alias,
+  KBO_teamIncludes2id,
   CPBL_teamName2id,
   CPBL_teamIncludes2id,
   NPB_teamName2id,

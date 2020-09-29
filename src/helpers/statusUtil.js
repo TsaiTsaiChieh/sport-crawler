@@ -13,8 +13,9 @@ function MLB_statusMapping(matchId, status) {
 }
 
 function KBO_statusMapping(matchId, status) {
-  if (status === 2) return MATCH_STATUS.SCHEDULED;
-  else if (status === 3 || status === 4) return MATCH_STATUS.END;
+  if (status === 2 || status === 'X') return MATCH_STATUS.SCHEDULED;
+  else if (status === 3 || status === 4 || status === 'E') return MATCH_STATUS.END;
+  else if (status === 'S') return MATCH_STATUS.INPLAY;
   throw new Error(`KBO 比賽編號: ${matchId} 的未知狀態: ${status}`);
 }
 
