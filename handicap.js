@@ -10,7 +10,7 @@ const { HANDICAP_PORT } = process.env;
 
 handicapApp.use(Have.haven());
 
-schedule.scheduleJob('取得盤口', '*/30 * * * *', zone_tw, async function() {
+schedule.scheduleJob('取得盤口', '12,24,36,48 * * * *', zone_tw, async function() {
   try {
     await HW.getHandicap();
   } catch (err) {
