@@ -4,8 +4,8 @@ const momentUtil = require('../../helpers/momentUtil');
 const moment = require('moment');
 require('moment-timezone');
 const ServerErrors = require('../../helpers/ServerErrors');
-const html2json = require('html2json').html2json;
-const { MATCH_STATUS, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
+const { KBO_teamIncludes2id } = require('../../helpers/teamsMapping');
+const { MATCH_STATUS, MATCH_STATUS_REALTIME, KBO_statusMapping } = require('../../helpers/statusUtil');
 const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
 const { set2realtime } = require('../../helpers/firebaseUtil');
@@ -25,43 +25,39 @@ async function main() {
 }
 
 async function invokeAPI(matchData) {
-  let { matchURL, date } = configs;
+  let { statusAPI, date, sporttype, union } = configs;
   date = momentUtil.timestamp2date(Date.now(), { format: 'YYYY-MM-DD' });
-  const URL = `${matchURL}${date}`;
+  const URL = `${statusAPI}?date=${date}&sporttype=${sporttype}&union=${union}`;
   const data = await getData(URL);
-  const gameData = await repackageMatchData(date, data);
-  await updateStatus2MySQL(gameData, matchData);
-  await updateScore2MySQL(gameData);
+  const matchChunk = await repackageMatchData(date, data, matchData);
+  await updateStatusOrScore2MySQL(matchChunk);
+  return Promise.resolve();
 }
 
-async function repackageMatchData(date, gameData) {
+async function repackageMatchData(date, gameData, matchData) {
   try {
     const data = [];
-    const json = html2json(gameData);
-    if (!json.child.length) return Promise.resolve(data);
+    if (!gameData.data.length) return Promise.resolve(data);
 
-    let awayScore = 0;
-    let homeScore = 0;
-    json.child.map(function(ele, i) {
-      if (i % 2 === 0) {
-        let status = MATCH_STATUS.SCHEDULED;
-        const matchId = hrefReplacement(ele.attr.href);
-        const inningText = ele.child[5].child[3].child[0].text;
-        const replaceText = inningText.replace(/\n/g, '');
-        const time = ele.child[5].child[1].child[3].child[0].text;
-        const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD h:mm A', configs.KoreaZone).unix();
-        if (ele.child[5].child[1].child[1].child) awayScore = ele.child[5].child[1].child[1].child[0].text;
-        if (ele.child[5].child[1].child[3].child) homeScore = ele.child[5].child[1].child[3].child[0].text;
-        if (replaceText) status = MATCH_STATUS.INPLAY;
-        if (replaceText.includes('Final')) status = MATCH_STATUS.END;
-        data.push({
-          matchId,
-          status,
-          awayScore,
-          homeScore,
-          scheduled
-        });
-      }
+    gameData.data.map(function(game) {
+      const homeId = KBO_teamIncludes2id(game.home);
+      const awayId = KBO_teamIncludes2id(game.away);
+
+      const time = game.runtime;
+      const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
+      matchData.map(function(match) {
+        if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
+          const gameId = game.gameid;
+          data.push({
+            matchId: match.matchId,
+            gameId,
+            status: KBO_statusMapping(gameId, game.status),
+            homeScore: game.score_a,
+            awayScore: game.score_b,
+            scheduled
+          });
+        }
+      });
     });
     return Promise.resolve(data);
   } catch (err) {
@@ -69,33 +65,27 @@ async function repackageMatchData(date, gameData) {
   }
 }
 
-function hrefReplacement(str) {
-  const index = str.indexOf('-');
-  return str.substring(7, index);
-}
-
-async function updateStatus2MySQL(gameData, matchData) {
+async function updateStatusOrScore2MySQL(matchChunk) {
   try {
-    gameData.map(async function(game) {
-      matchData.map(async function(match) {
-        if (game.matchId === match.matchId && game.status !== match.status) await mysql.Match.update({ status: game.status, scheduled: game.scheduled, scheduled_tw: game.scheduled * 1000 }, { where: { bets_id: game.matchId } });
-      });
-    });
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new ServerErrors.MySQLError(err.stack));
-  }
-}
+    const { INPLAY, END, POSTPONED } = MATCH_STATUS;
+    const { sport, league } = configs;
 
-async function updateScore2MySQL(matchData) {
-  try {
-    matchData.map(async function(ele) {
-      const { sport, league } = configs;
-      if (ele.status === MATCH_STATUS.END) {
-        await mysql.Match.update({ home_points: ele.homeScore, away_points: ele.awayScore }, { where: { bets_id: ele.matchId } });
-        const path = `${sport}/${league}/${ele.matchId}/Summary`;
+    matchChunk.map(async function(match) {
+      if (match.status === END) {
+        await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
+        const path = `${sport}/${league}/${match.matchId}/Summary`;
         await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.END]);
-        console.log(`KBO - ${ele.matchId} 完賽 at ${new Date()}`);
+        console.log(`KBO - ${match.matchId} 完賽 at ${new Date()}`);
+      }
+      if (match.status === INPLAY) {
+        await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
+        const path = `${sport}/${league}/${match.matchId}/Summary`;
+        await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.INPLAY]);
+        console.log(`KBO - ${match.matchId} 開賽 at ${new Date()}`);
+      }
+      if (match.status === POSTPONED) {
+        await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
+        console.log(`KBO - ${match.matchId} 延賽 at ${new Date()}`);
       }
     });
     return Promise.resolve();
@@ -103,4 +93,5 @@ async function updateScore2MySQL(matchData) {
     return Promise.reject(new ServerErrors.MySQLError(err.stack));
   }
 }
+
 module.exports = main;
