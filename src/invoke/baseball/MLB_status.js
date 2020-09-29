@@ -39,6 +39,8 @@ async function invokeAPI(matchData) {
 function repackageMatchData(matchData) {
   try {
     const data = [];
+    if (!matchData.dates.length) return Promise.resolve(data);
+
     matchData.dates[0].games.map(function(ele) {
       const matchId = String(ele.gamePk);
       const detailedStatus = ele.status.detailedState; // 詳細描述

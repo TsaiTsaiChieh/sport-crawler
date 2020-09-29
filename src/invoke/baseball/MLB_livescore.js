@@ -65,8 +65,8 @@ function concatURL() {
 
 async function repackageLivescore(matchData, livescoreData) {
   try {
-    if (!livescoreData.dates[0].games.length) return Promise.resolve();
     const data = [];
+    if (!livescoreData.dates[0].games.length) return Promise.resolve(data);
     matchData.map(function(match) {
       const temp = {
         matchId: match.matchId,
