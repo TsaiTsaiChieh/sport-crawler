@@ -1609,38 +1609,49 @@ function leagueName2Id(leagueName) {
       return '43806';
     }
 
-    // 英超 剩 2 組
+    // 英超
+    case '曼聯': {
+      return '10899';
+    }
     case '白禮頓': {
+      // 布萊頓
       return '17161';
     }
     case '狼隊': {
       return '17383';
     }
     case '曼城': {
+      // 曼城
       return '708';
     }
     case '阿斯頓維拉': {
+      // 阿斯頓維拉
       return '43850';
     }
     case '謝菲爾德聯': {
       return '3013';
     }
     case '富勒姆': {
+      // 富勒姆
       return '17170';
     }
     case '阿仙奴': {
+      // 兵工廠
       return '17230';
     }
     case '水晶宮': {
+      // 水晶宮
       return '17189';
     }
     case '修咸頓': {
       return '17231';
     }
     case '利物浦': {
+      // 利物浦
       return '23451';
     }
     case '列斯聯': {
+      // 里茲聯
       return '17175';
     }
     case '韋斯咸': {
@@ -1653,18 +1664,22 @@ function leagueName2Id(leagueName) {
       return '331';
     }
     case '李斯特城': {
+      // 萊斯特城
       return '23452';
     }
     case '托特納姆熱刺': {
       return '17212';
     }
     case '愛華頓': {
+      // 艾佛頓
       return '44249';
     }
     case '般尼': {
+      // 伯恩利
       return '17159';
     }
     case '車路士': {
+      // 切爾西
       return '44000';
     }
 
@@ -1733,20 +1748,28 @@ function leagueName2Id(leagueName) {
       return '9919';
     }
 
-    // 西班牙甲組聯賽 剩 1/20 組
+    // 西班牙甲組聯賽
+    case '西維爾': {
+      // 塞維利亞
+      return '1375';
+    }
     case '基達菲': {
+      // 赫塔費
       return '2971';
     }
     case '巴塞隆拿': {
+      // 巴塞隆納
       return '1211';
     }
     case '艾爾切': {
       return '6364';
     }
     case '皇家馬德里': {
+      // 皇家馬德里
       return '17163';
     }
     case '馬德里體育會': {
+      // 馬德里競技
       return '10269';
     }
     case '伊巴': {
@@ -1786,76 +1809,100 @@ function leagueName2Id(leagueName) {
       return '1060';
     }
     case '華倫西亞': {
+      // 瓦倫西亞
       return '43939';
     }
     case '利雲特': {
       return '1056';
     }
 
-    // 意大利甲組聯賽 剩 3/20 組
+    // 意大利甲組聯賽 剩 19/20 組
     case '博洛尼亞': {
+      // 波隆那
       return '1231';
     }
     case '拿玻里': {
+      // 拿玻里
       return '29126';
     }
     case '熱拿亞': {
+      // 熱拿亞
       return '1275';
     }
     case '克努托内': {
+      // 克羅托內
       return '1274';
     }
     case 'AC米蘭': {
+      // AC米蘭
       return '43866';
     }
     case '烏甸尼斯': {
+      // 烏甸尼斯
       return '1238';
     }
     case '費倫天拿': {
+      // 費倫天拿
       return '1280';
     }
     case '拖連奴': {
+      // 拖連奴
       return '1230';
     }
     case '維羅納': {
+      // 維羅納
       return '7311';
     }
     case '羅馬': {
+      // 羅馬
       return '1273';
     }
     case '祖雲達斯': {
+      // 尤文圖斯
       return '22228';
     }
     case '斯佩齊亞': {
+      // 斯佩齊亞
       return '7315';
     }
     case '薩斯索羅': {
+      // 薩斯索羅
       return '1278';
     }
     case '卡利亞里': {
+      // 卡利亞里
       return '1272';
     }
     case '拉素': {
+      // 拉齊奧
       return '43865';
     }
     case '森多利亞': {
+      // 森多利亞
       return '1276';
     }
     case '班尼雲度': {
+      // 賓尼雲圖
       return '7317';
     }
     case '阿特蘭大': {
+      // 亞特蘭大
       return '1277';
     }
     case '國際米蘭': {
+      // 國際米蘭
       return '890';
     }
+    // ---
+    // 帕爾馬
+    // ---
 
-    // 德國甲組聯賽 剩 1/18 組
+    // 德國甲組聯賽 剩 17/18 組
     case '慕遜加柏': {
       return '4806';
     }
     case '柏林聯': {
+      // 柏林聯盟
       return '258';
     }
     case '美因茨05': {
@@ -1871,12 +1918,14 @@ function leagueName2Id(leagueName) {
       return '823';
     }
     case '比勒費爾德': {
+      // 阿米尼亞比勒費爾德
       return '257';
     }
     case '科隆': {
       return '16006';
     }
     case '奧斯堡': {
+      // 奧格斯堡
       return '43933';
     }
     case '多特蒙德': {
@@ -1898,91 +1947,213 @@ function leagueName2Id(leagueName) {
       return '9942';
     }
     case '柏林赫塔': {
+      // 柏林赫塔
       return '475';
     }
     case '法蘭克福': {
       return '16016';
     }
 
-    // 荷蘭甲組聯賽 剩 2/18 組
+    // ---
+    // 雲達不萊梅
+    // ---
+
+    // 荷蘭甲組聯賽
     case '阿爾克馬爾': {
+      // 阿爾克馬爾
       return '698';
     }
     case '海倫維恩': {
+      // 海倫芬
       return '29096';
     }
     case '威廉二世': {
+      // 威廉二世
       return '23727';
     }
     case '茲沃勒': {
+      // 茲沃勒
       return '23654';
     }
     case '費耶諾德': {
+      // 費耶諾德
       return '43767';
     }
     case '特溫特': {
+      // 純特
       return '29097';
     }
     case '錫塔德命運': {
+      // 福圖納斯塔德
       return '44253';
     }
     case '埃門': {
+      // 埃門
       return '9910';
     }
     case '芬洛': {
+      // 芬洛
       return '9913';
     }
     case '烏德勒支': {
+      // 烏德勒支
       return '4241';
     }
     case '鹿特丹斯巴達': {
+      // 鹿特丹斯巴達
       return '43860';
     }
     case '阿賈克斯': {
+      // 阿賈克斯
       return '344';
     }
     case '赫拉克勒斯': {
+      // 赫拉克勒斯
       return '342';
     }
     case '海牙': {
+      // 海牙
       return '341';
     }
     case '格羅寧根': {
+      // 格羅寧根
       return '220';
     }
     case 'PSV埃因霍溫': {
+      // PSV恩荷芬
       return '219';
     }
     case '瓦爾維克': {
+      // 瓦爾維克
       return '9917';
     }
     case '維迪斯': {
+      // 維特斯
       return '43996';
     }
 
-    // 葡萄牙超級聯賽 剩 2 組
+    // 葡萄牙超級聯賽 剩 14/18 組
+    case '博阿維斯塔': {
+      // 博阿維斯塔
+      return '700';
+    }
+    case '波爾圖': {
+      // 波爾圖
+      return '1047';
+    }
+    case '波蒂蒙尼斯': {
+      // 樸迪莫倫斯
+      return '728';
+    }
+    case '費雷拉': {
+      // 費雷拉
+      return '43770';
+    }
+    case '莫雷倫斯': {
+      // 莫雷倫斯
+      return '704';
+    }
+    case '法倫斯': {
+      // 法倫斯
+      return '973';
+    }
     case '費馬利卡奧': {
+      // 法馬利卡奧
       return '923';
     }
     case '本菲卡': {
+      // 班菲卡
       return '9987';
     }
     case '甘馬雷斯': {
+      // 吉馬良斯
       return '31105';
     }
     case '比蘭尼塞斯': {
+      // 貝倫人
       return '19658';
     }
     case '布拉加': {
+      // 布拉加
       return '44094';
     }
     case '聖塔克萊拉': {
+      // 辛達卡拉
       return '1166';
     }
+    case '托德拉': {
+      // 唐迪拉
+      return '44255';
+    }
+    case '里奧阿維': {
+      // 里奧艾維
+      return '1336';
+    }
+
+    // ---
+    // 士砵亭
+    // 艾維斯
+    // 馬里迪莫
+    // 塞圖巴爾
+    // ---
 
     // 澳足 尚未開打
 
-    // 日甲
+    // 日本J1聯賽 日甲
+    case '大分三神': {
+      return '43650';
+    }
+    case '廣島三箭': {
+      return '3366';
+    }
+    case '東京': {
+      return '3399';
+    }
+    case '大阪櫻花': {
+      return '5653';
+    }
+    case '鹿島鹿角': {
+      return '5620';
+    }
+    case '湘南比馬': {
+      return '5657';
+    }
+    case '神護勝利船': {
+      return '3368';
+    }
+    case '名古屋鯨魚': {
+      return '5562';
+    }
+    case '北海道札幌岡薩多': {
+      return '5395';
+    }
+    case '大阪飛腳': {
+      return '3367';
+    }
+    case '鳥栖沙岩': {
+      return '5654';
+    }
+    case '橫濱水手': {
+      return '3365';
+    }
+    case '柏雷素爾': {
+      return '5560';
+    }
+    case '川崎前鋒': {
+      return '5640';
+    }
+    case '橫濱': {
+      return '5619';
+    }
+    case '清水心跳': {
+      return '43733';
+    }
+    case '浦和紅鑽': {
+      return '3369';
+    }
+    case '仙台維加泰': {
+      return '5644';
+    }
 
     // 韓足
     case '首爾': {
