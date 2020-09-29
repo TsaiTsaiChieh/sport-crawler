@@ -70,10 +70,10 @@ function repackageMatchData(matchData, gameData) {
 
 function checkMatchStatus(matchData, matchId, statusObj) {
   const { detailedStatus, codedGameState, abstractGameCode } = statusObj;
-  let status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
+  const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
-    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
+    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && status === MATCH_STATUS.SCHEDULED)) match.status = MATCH_STATUS.INPLAY;
   });
   return status;
 }
