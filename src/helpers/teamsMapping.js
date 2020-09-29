@@ -261,23 +261,6 @@ function KBO_teamName2id(name) {
   }
 }
 
-function CPBL_teamName2id(name) {
-  switch (name) {
-    case 'AJL011':
-    case '樂天桃猿':
-      return '329121';
-    case 'E02':
-    case '中信兄弟':
-      return '230422';
-    case 'L01':
-    case '統一獅':
-      return '224095';
-    case '富邦悍將':
-    case 'B04':
-      return '224094';
-  }
-}
-
 function KBO_id2Alias(id) {
   switch (id) {
     case '3354':
@@ -303,6 +286,33 @@ function KBO_id2Alias(id) {
     default:
       throw new Error(`KBO Invalid parameter: ${id}`);
   }
+}
+
+function CPBL_teamName2id(name) {
+  switch (name) {
+    case 'AJL011':
+    case '樂天桃猿':
+      return '329121';
+    case 'E02':
+    case '中信兄弟':
+      return '230422';
+    case 'L01':
+    case '統一獅':
+      return '224095';
+    case '富邦悍將':
+    case 'B04':
+      return '224094';
+    default:
+      throw new Error(`CPBL Invalid parameter: ${name}`);
+  }
+}
+
+function CPBL_teamIncludes2id(name) {
+  if (name.includes('樂天桃猿')) return '329121';
+  else if (name.includes('中信兄弟')) return '230422';
+  else if (name.includes('統一獅')) return '224095';
+  else if (name.includes('富邦悍將')) return '230422';
+  else throw new Error(`CPBL Invalid parameter: ${name}`);
 }
 
 function NPB_teamName2id(name) {
@@ -356,7 +366,25 @@ function NPB_teamName2id(name) {
     case 'ロッテ':
     case '千葉羅德':
       return '6650';
+    default:
+      throw new Error(`NPB Invalid parameter: ${name}`);
   }
+}
+
+function NPB_teamIncludes2id(name) {
+  if (name.includes('福岡軟銀鷹')) return '2386';
+  else if (name.includes('歐力士猛牛')) return '8025';
+  else if (name.includes('西武獅')) return '2387';
+  else if (name.includes('日本火腿')) return '10078';
+  else if (name.includes('東北樂天鷹')) return '5438';
+  else if (name.includes('千葉羅德')) return '6650';
+  else if (name.includes('橫濱DeNA灣星')) return '3323';
+  else if (name.includes('讀賣巨人')) return '45295';
+  else if (name.includes('中日龍')) return '3318';
+  else if (name.includes('阪神虎')) return '3317';
+  else if (name.includes('養樂多燕子')) return '10216';
+  else if (name.includes('廣島鯉魚')) return '3324';
+  else throw new Error(`NPB Invalid parameter: ${name}`);
 }
 
 module.exports = {
@@ -365,5 +393,7 @@ module.exports = {
   KBO_teamName2id,
   KBO_id2Alias,
   CPBL_teamName2id,
-  NPB_teamName2id
+  CPBL_teamIncludes2id,
+  NPB_teamName2id,
+  NPB_teamIncludes2id
 };

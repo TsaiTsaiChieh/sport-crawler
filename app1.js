@@ -13,7 +13,7 @@ const { APP1_PORT } = process.env;
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() {
+schedule.scheduleJob('MLB 即時比分', '*/5 * * * * *', zone_tw, async function() {
   try {
     await MLB.livescore();
     return;
@@ -23,7 +23,7 @@ schedule.scheduleJob('文字直播', '*/3 * * * * *', zone_tw, async function() 
   }
 });
 
-schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('MLB 賽程', '0 */1 * * *', zone_tw, async function() {
   try {
     await MLB.match();
     return;
@@ -32,7 +32,7 @@ schedule.scheduleJob('賽程', '0 */1 * * *', zone_tw, async function() {
     return err;
   }
 });
-schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
+schedule.scheduleJob('MLB 監聽賽事狀態', '0 */1 * * * *', zone_tw, async function() {
   try {
     await MLB.status();
     return;
@@ -41,16 +41,6 @@ schedule.scheduleJob('監聽賽事狀態', '0 */1 * * * *', zone_tw, async funct
     return err;
   }
 });
-
-// schedule.scheduleJob('*/10 * * * * *', async function(fireDate) {
-//   try {
-//     await connection();
-//     return;
-//   } catch (err) {
-//     console.log(err);
-//     return err;
-//   }
-// });
 
 app.listen(APP1_PORT, function() {
   console.log(`MLB crawler on port: ${APP1_PORT}`);

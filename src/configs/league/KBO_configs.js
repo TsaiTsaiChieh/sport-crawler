@@ -8,6 +8,9 @@ const { league2Sport, leagueCodebook } = require('../../helpers/leaguesUtil');
  * * https://m.sports.naver.com/ajax/baseball/gamecenter/kbo/todayGames.nhn?gameId=20200923KTLT02020
  * * baseURL example:
  * * https://www.koreabaseball.com/ws/Main.asmx/GetKboGameList?leId=1&srId=0&date=20200922
+ * * livescoreURL example:（獵分網）
+ * * https://score.com.tw/dbjson.php?date=2020-09-28&sporttype=bb&union=bb_10
+ *
 */
 
 const configs = {
