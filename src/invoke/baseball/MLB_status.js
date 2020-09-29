@@ -23,10 +23,10 @@ async function invokeAPI(matchData) {
     let { scheduleAPI, sportId, date, leagueId, hydrate, useLatestGames } = configs;
     // 需打今天跟明天 MLB API
     [0, 1].map(async function(i) {
-      date = momentUtil.timestamp2date(Date.now(), { op: 'subtract', value: i, unit: 'days', format: 'YYYY-MM-DD' });
+      date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: i, unit: 'days', format: 'YYYY-MM-DD' });
       const URL = `${scheduleAPI}?sportId=${sportId}&date=${date}&leagueId=${leagueId}&hydrate=${hydrate}&useLatestGames=${useLatestGames}`;
-      const data = await getData(URL);
-      const matchChunk = await repackageMatchData(data);
+      const gameData = await getData(URL);
+      const matchChunk = await repackageMatchData(matchData, gameData);
       await updateStatusOrScore2MySQL(matchChunk, matchData);
     });
 
@@ -36,17 +36,17 @@ async function invokeAPI(matchData) {
   }
 }
 
-function repackageMatchData(matchData) {
+function repackageMatchData(matchData, gameData) {
   try {
     const data = [];
-    if (!matchData.dates.length) return Promise.resolve(data);
+    if (!gameData.dates.length) return Promise.resolve(data);
 
-    matchData.dates[0].games.map(function(ele) {
+    gameData.dates[0].games.map(function(ele) {
       const matchId = String(ele.gamePk);
       const detailedStatus = ele.status.detailedState; // 詳細描述
       const codedGameState = ele.status.codedGameState;
       const abstractGameCode = ele.status.abstractGameCode;
-      const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
+      const status = checkMatchStatus(matchData, matchId, { detailedStatus, codedGameState, abstractGameCode });
       let homeScore = 0;
       let awayScore = 0;
       if (ele.teams.home.score) homeScore = ele.teams.home.score;
@@ -66,6 +66,16 @@ function repackageMatchData(matchData) {
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
+}
+
+function checkMatchStatus(matchData, matchId, statusObj) {
+  const { detailedStatus, codedGameState, abstractGameCode } = statusObj;
+  const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
+  matchData.map(function(match) {
+    // now > 開賽時間且 API 偵測未開打
+    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && status === MATCH_STATUS.SCHEDULED)) match.status = MATCH_STATUS.INPLAY;
+  });
+  return status;
 }
 
 async function updateStatusOrScore2MySQL(games, matches) {
