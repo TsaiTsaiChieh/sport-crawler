@@ -14,6 +14,7 @@ async function main() {
     const { league_id } = configs;
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
+
     if (matchData.length) await invokeAPI(matchData);
     return Promise.resolve();
   } catch (err) {
@@ -44,13 +45,15 @@ function repackageMatchData(date, gameData, matchData) {
       const homeId = CPBL_teamIncludes2id(game.home);
       const awayId = CPBL_teamIncludes2id(game.away);
       const time = game.runtime;
-      const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
+      let scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
+      scheduled = 1601435694;
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
+          const status = checkMatchStatus(game, match, CPBL_statusMapping);
           data.push({
             matchId: match.matchId,
             gameId: game.gameid,
-            status: CPBL_statusMapping(game),
+            status,
             homeScore: game.score_a,
             awayScore: game.score_b,
             scheduled
@@ -62,6 +65,14 @@ function repackageMatchData(date, gameData, matchData) {
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
+}
+
+function checkMatchStatus(game, match, statusFunction) {
+  let status = statusFunction(game);
+  // now > 開賽時間且 API 偵測未開打
+  if (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED) status = MATCH_STATUS.INPLAY;
+
+  return status;
 }
 
 async function updateStatusOrScore2MySQL(matchChunk) {
