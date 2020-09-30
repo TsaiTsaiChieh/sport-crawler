@@ -325,7 +325,7 @@ function CPBL_teamIncludes2id(name) {
   if (name.includes('樂天桃猿')) return '329121';
   else if (name.includes('中信兄弟')) return '230422';
   else if (name.includes('統一獅')) return '224095';
-  else if (name.includes('富邦悍將')) return '230422';
+  else if (name.includes('富邦悍將')) return '224094';
   else throw new Error(`CPBL Invalid parameter: ${name}`);
 }
 

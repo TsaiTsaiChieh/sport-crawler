@@ -4,7 +4,7 @@ const { timestamp2date } = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { CPBL_statusMapping, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
-const { CPBL_teamName2id } = require('../../helpers/teamsMapping');
+const { CPBL_teamIncludes2id } = require('../../helpers/teamsMapping');
 const moment = require('moment');
 require('moment-timezone');
 
@@ -61,8 +61,8 @@ async function repackageLivescore(date, matchData, livescoreData) {
       livescoreData.data.map(function(game) {
         const gameId = String(game.gameid);
         const status = CPBL_statusMapping(game);
-        const homeId = CPBL_teamName2id(game.home);
-        const awayId = CPBL_teamName2id(game.away);
+        const homeId = CPBL_teamIncludes2id(game.home);
+        const awayId = CPBL_teamIncludes2id(game.away);
         const time = game.runtime;
         const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
@@ -86,7 +86,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
           temp.firstBase = base.first;
           temp.secondBase = base.second;
           temp.thirdBase = base.third;
-          temp.halfs = game.runinn.includes('上') ? '0' : '1';
+          temp.halfs = game.runinn.includes('下') ? '1' : '0';
           const homeScore = currentInningScore(currentInning, game.db);
           const awayScore = currentInningScore(currentInning, game.da);
           temp.home[`Innings${currentInning}`] = { runs: homeScore };
