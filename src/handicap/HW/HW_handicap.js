@@ -89,36 +89,51 @@ async function getHandicap() {
         if (
           (
             (data.result.data_list[k].roll === '滾球場' && data.result.data_list[k].transType === '全場') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽-季後賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽') ||
-						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽-季後賽')
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'MLB 美國職棒-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職棒-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NPB 日本職棒-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'CPBL 中華職棒-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '法國甲組聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '西班牙甲組聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '意大利甲組聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '荷蘭甲組聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '葡萄牙超級聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '中國超級聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '德國甲組聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本J1聯賽-總冠軍賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國K甲組聯賽-總冠軍賽')
 
           // 比賽名稱尚未確定
           // (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '澳洲職業足球聯賽') ||
