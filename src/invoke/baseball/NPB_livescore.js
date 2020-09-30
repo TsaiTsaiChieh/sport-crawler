@@ -4,7 +4,7 @@ const { timestamp2date } = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { NPB_statusMapping, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
-const { NPB_teamName2id } = require('../../helpers/teamsMapping');
+const { NPB_teamIncludes2id } = require('../../helpers/teamsMapping');
 const moment = require('moment');
 require('moment-timezone');
 
@@ -61,8 +61,8 @@ async function repackageLivescore(date, matchData, livescoreData) {
       livescoreData.data.map(function(game) {
         const gameId = String(game.gameid);
         const status = NPB_statusMapping(gameId, game.status);
-        const homeId = NPB_teamName2id(game.home);
-        const awayId = NPB_teamName2id(game.away);
+        const homeId = NPB_teamIncludes2id(game.home);
+        const awayId = NPB_teamIncludes2id(game.away);
         const time = game.runtime;
         const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
