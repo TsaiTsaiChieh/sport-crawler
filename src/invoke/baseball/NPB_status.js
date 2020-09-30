@@ -47,11 +47,13 @@ function repackageMatchData(date, gameData, matchData) {
       const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
-          const status = checkMatchStatus(game, matchData);
+          const matchId = match.matchId;
+          const status = checkMatchStatus(game, matchData, matchId);
           data.push({
-            matchId: match.matchId,
+            matchId,
             scheduled,
             gameId: game.gameid,
+            oriStatus: match.status,
             status,
             homeScore: game.score_a,
             awayScore: game.score_b
@@ -65,11 +67,11 @@ function repackageMatchData(date, gameData, matchData) {
   }
 }
 
-function checkMatchStatus(game, matchData) {
+function checkMatchStatus(game, matchData, matchId) {
   let status = NPB_statusMapping(game.gameid, game.status);
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
-    if (match.matchId === game.gameid && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
+    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
   });
   return status;
 }
@@ -78,13 +80,14 @@ async function updateStatusOrScore2MySQL(matchChunk) {
   try {
     const { INPLAY, END } = MATCH_STATUS;
     matchChunk.map(async function(match) {
+      const now = momentUtil.taipeiDate(new Date());
       if (match.status === END) {
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
-        console.log(`NPB - ${match.matchId} 完賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 完賽 at ${now}`);
       }
-      if (match.status === INPLAY) {
+      if (match.oriStatus !== INPLAY && match.status === INPLAY) {
         await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        console.log(`NPB - ${match.matchId} 開賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 開賽 at ${now}`);
       }
     });
     return Promise.resolve();

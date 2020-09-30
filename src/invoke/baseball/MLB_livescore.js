@@ -51,15 +51,12 @@ async function livescoreStart(matchData) {
 }
 
 function concatURL() {
-  let { scoreBoardAPI, stitch_env, sportId, startDate, endDate, gameTypes, leagueId } = configs;
+  let { scoreBoardAPI, stitch_env, sportId, startDate, endDate, leagueId } = configs;
   const yesterday = momentUtil.timestamp2date(Date.now(), { op: 'subtract', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
   startDate = yesterday;
   endDate = yesterday;
-  let livescoreURL = `${scoreBoardAPI}?stitch_env=${stitch_env}&sportId=${sportId}&startDate=${startDate}&endDate=${endDate}&leagueId=${leagueId}`;
+  const livescoreURL = `${scoreBoardAPI}?stitch_env=${stitch_env}&sportId=${sportId}&startDate=${startDate}&endDate=${endDate}&leagueId=${leagueId}`;
 
-  gameTypes.map(function(gameType) {
-    livescoreURL += `&gameType=${gameType}`;
-  });
   return livescoreURL;
 }
 
