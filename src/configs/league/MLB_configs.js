@@ -5,7 +5,7 @@ const league = 'MLB';
  * * scheduleAPI example:
  * * https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=2020-09-23&leagueId=103,104&hydrate=team,linescore,flags,liveLookin,review&useLatestGames=false&language=en
  * * scoreBoardAPI example:
- * * https://bdfed.stitch.mlbinfra.com/bdfed/transform-mlb-scoreboard?stitch_env=prod&sportId=1&startDate=2020-09-23&endDate=2020-09-23&leagueId=103,104&gameType=E&gameType=S&gameType=R&gameType=D&gameType=L&gameType=W&gameType=A
+ * * https://bdfed.stitch.mlbinfra.com/bdfed/transform-mlb-scoreboard?stitch_env=prod&sportId=1&startDate=2020-09-23&endDate=2020-09-23
 */
 
 const configs = {
