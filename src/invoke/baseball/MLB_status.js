@@ -22,7 +22,7 @@ async function invokeAPI(matchData) {
   try {
     let { scheduleAPI, sportId, date, leagueId, hydrate, useLatestGames } = configs;
     // 需打今天跟明天 MLB API
-    [0, 1].map(async function(i) {
+    [-1, 0].map(async function(i) {
       date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: i, unit: 'days', format: 'YYYY-MM-DD' });
       const URL = `${scheduleAPI}?sportId=${sportId}&date=${date}&leagueId=${leagueId}&hydrate=${hydrate}&useLatestGames=${useLatestGames}`;
       const gameData = await getData(URL);
@@ -70,10 +70,10 @@ function repackageMatchData(matchData, gameData) {
 
 function checkMatchStatus(matchData, matchId, statusObj) {
   const { detailedStatus, codedGameState, abstractGameCode } = statusObj;
-  const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
+  let status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
-    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && status === MATCH_STATUS.SCHEDULED)) match.status = MATCH_STATUS.INPLAY;
+    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
   });
   return status;
 }
