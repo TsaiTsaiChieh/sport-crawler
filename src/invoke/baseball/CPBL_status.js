@@ -45,8 +45,8 @@ function repackageMatchData(date, gameData, matchData) {
       const homeId = CPBL_teamIncludes2id(game.home);
       const awayId = CPBL_teamIncludes2id(game.away);
       const time = game.runtime;
-      let scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
-      scheduled = 1601435694;
+      const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
+
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
           const status = checkMatchStatus(game, match, CPBL_statusMapping);
@@ -54,6 +54,7 @@ function repackageMatchData(date, gameData, matchData) {
             matchId: match.matchId,
             gameId: game.gameid,
             status,
+            oriStatus: match.status,
             homeScore: game.score_a,
             awayScore: game.score_b,
             scheduled
@@ -79,17 +80,18 @@ async function updateStatusOrScore2MySQL(matchChunk) {
   try {
     const { INPLAY, END, POSTPONED } = MATCH_STATUS;
     matchChunk.map(async function(match) {
+      const now = momentUtil.taipeiDate(new Date());
       if (match.status === END) {
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
-        console.log(`CPBL - ${match.matchId} 完賽 at ${new Date()}`);
+        console.log(`CPBL - ${match.matchId} 完賽 at ${now}`);
       }
-      if (match.status === INPLAY) {
+      if (match.oriStatus !== INPLAY && match.status === INPLAY) {
         await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        console.log(`CPBL - ${match.matchId} 開賽 at ${new Date()}`);
+        console.log(`CPBL - ${match.matchId} 開賽 at ${now}`);
       }
       if (match.status === POSTPONED) {
         await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
-        console.log(`CPBL - ${match.matchId} 延賽 at ${new Date()}`);
+        console.log(`CPBL - ${match.matchId} 延賽 at ${now}`);
       }
     });
     return Promise.resolve();

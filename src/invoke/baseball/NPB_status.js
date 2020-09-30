@@ -53,6 +53,7 @@ function repackageMatchData(date, gameData, matchData) {
             matchId,
             scheduled,
             gameId: game.gameid,
+            oriStatus: match.status,
             status,
             homeScore: game.score_a,
             awayScore: game.score_b
@@ -79,13 +80,14 @@ async function updateStatusOrScore2MySQL(matchChunk) {
   try {
     const { INPLAY, END } = MATCH_STATUS;
     matchChunk.map(async function(match) {
+      const now = momentUtil.taipeiDate(new Date());
       if (match.status === END) {
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: match.matchId } });
-        console.log(`NPB - ${match.matchId} 完賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 完賽 at ${now}`);
       }
-      if (match.status === INPLAY) {
+      if (match.oriStatus !== INPLAY && match.status === INPLAY) {
         await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        console.log(`NPB - ${match.matchId} 開賽 at ${new Date()}`);
+        console.log(`NPB - ${match.matchId} 開賽 at ${now}`);
       }
     });
     return Promise.resolve();

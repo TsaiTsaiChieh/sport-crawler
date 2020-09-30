@@ -53,6 +53,7 @@ async function repackageMatchData(date, gameData, matchData) {
             matchId,
             scheduled,
             gameId: game.gameid,
+            oriStatus: match.status,
             status,
             homeScore: game.score_a,
             awayScore: game.score_b
@@ -81,21 +82,22 @@ async function updateStatusOrScore2MySQL(matchChunk) {
     const { sport, league } = configs;
 
     matchChunk.map(async function(match) {
+      const now = momentUtil.taipeiDate(new Date());
       if (match.status === END) {
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
         const path = `${sport}/${league}/${match.matchId}/Summary`;
         await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.END]);
-        console.log(`KBO - ${match.matchId} 完賽 at ${new Date()}`);
+        console.log(`KBO - ${match.matchId} 完賽 at ${now}`);
       }
-      if (match.status === INPLAY) {
+      if (match.oriStatus !== INPLAY && match.status === INPLAY) {
         await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
         const path = `${sport}/${league}/${match.matchId}/Summary`;
         await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.INPLAY]);
-        console.log(`KBO - ${match.matchId} 開賽 at ${new Date()}`);
+        console.log(`KBO - ${match.matchId} 開賽 at ${now}`);
       }
       if (match.status === POSTPONED) {
         await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
-        console.log(`KBO - ${match.matchId} 延賽 at ${new Date()}`);
+        console.log(`KBO - ${match.matchId} 延賽 at ${now}`);
       }
     });
     return Promise.resolve();

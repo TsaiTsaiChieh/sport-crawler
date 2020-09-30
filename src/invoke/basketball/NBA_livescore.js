@@ -34,7 +34,7 @@ async function updateMatchInplayStatus2MySQL(data) {
   try {
     if (data.length) {
       data.map(async function(ele) {
-        if (ele.status === MATCH_STATUS.SCHEDULED && Date.now() >= ele.scheduled * 1000) {
+        if (ele.status !== MATCH_STATUS.INPLAY && Date.now() >= ele.scheduled * 1000) {
           await mysql.Match.update(
             { status: MATCH_STATUS.INPLAY },
             { where: { bets_id: ele.matchId } });
