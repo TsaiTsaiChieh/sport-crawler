@@ -161,11 +161,11 @@ async function getHandicap() {
               firstHandicap = firstHandicap.replace('半', '.5');
               secondHandicap = secondHandicap.replace('半', '.5');
               data.result.data_list[k].proffer_one_A = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
-              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25')) {
+              if (String(data.result.data_list[k].proffer_one_A).indexOf('.25') >= 0) {
                 data.result.data_list[k].proffer_two_A = '-50';
-              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.5')) {
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.5') >= 0) {
                 data.result.data_list[k].proffer_two_A = '-100';
-              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75')) {
+              } else if (String(data.result.data_list[k].proffer_one_A).indexOf('.75') >= 0) {
                 data.result.data_list[k].proffer_two_A = '50';
               } else {
                 data.result.data_list[k].proffer_two_A = '0';
