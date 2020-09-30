@@ -83,14 +83,15 @@ async function updateStatusOrScore2MySQL(games, matches) {
     const { INPLAY, END, TBD } = MATCH_STATUS;
     games.map(function(game) {
       matches.map(async function(match) {
+        const now = momentUtil.taipeiDate(new Date());
         if (game.matchId === match.matchId && game.status === END) {
           await mysql.Match.update({ status: game.status, home_points: game.homeScore, away_points: game.awayScore }, { where: { bets_id: game.matchId } });
-          console.log(`MLB - ${match.matchId} 完賽 at ${new Date()}`);
+          console.log(`MLB - ${match.matchId} 完賽 at ${now}`);
         }
         if ((game.matchId === match.matchId && game.status === INPLAY) ||
          (game.matchId === match.matchId && game.status === TBD)) {
           await mysql.Match.update({ status: game.status }, { where: { bets_id: game.matchId } });
-          console.log(`MLB - ${match.matchId} 開賽/延期 at ${new Date()}`);
+          console.log(`MLB - ${match.matchId} 開賽/延期 at ${now}`);
         }
       });
     });
