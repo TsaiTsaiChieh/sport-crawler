@@ -23,6 +23,7 @@ async function main() {
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await updateMatchInplayStatus2MySQL(matchData);
     await liveTextStart(matchData);
+
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
@@ -33,7 +34,7 @@ async function updateMatchInplayStatus2MySQL(data) {
   try {
     if (data.length) {
       data.map(async function(ele) {
-        if (ele.status === MATCH_STATUS.SCHEDULED) {
+        if (ele.status === MATCH_STATUS.SCHEDULED && Date.now() >= ele.scheduled * 1000) {
           await mysql.Match.update(
             { status: MATCH_STATUS.INPLAY },
             { where: { bets_id: ele.matchId } });
