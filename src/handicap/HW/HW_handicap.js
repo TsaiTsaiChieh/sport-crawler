@@ -159,7 +159,7 @@ async function getHandicap() {
               secondHandicap = secondHandicap.replace('四球', '4');
               secondHandicap = secondHandicap.replace('五球', '5');
               firstHandicap = firstHandicap.replace('半', '.5');
-              secondHandicap = secondHandicap.replace('半', '.1');
+              secondHandicap = secondHandicap.replace('半', '.5');
               data.result.data_list[k].proffer_one_A = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
               if (String(data.result.data_list[k].proffer_one_A).indexOf('.25')) {
                 data.result.data_list[k].proffer_two_A = '-50';
@@ -1818,7 +1818,10 @@ function leagueName2Id(leagueName) {
       return '1056';
     }
 
-    // 意大利甲組聯賽 剩 19/20 組
+    // 意大利甲組聯賽
+    case '帕爾馬': {
+      return '6396';
+    }
     case '博洛尼亞': {
       // 波隆那
       return '1231';
@@ -1895,11 +1898,11 @@ function leagueName2Id(leagueName) {
       // 國際米蘭
       return '890';
     }
-    // ---
-    // 帕爾馬
-    // ---
 
-    // 德國甲組聯賽 剩 17/18 組
+    // 德國甲組聯賽
+    case '雲達不萊梅': {
+      return '43932';
+    }
     case '慕遜加柏': {
       return '4806';
     }
