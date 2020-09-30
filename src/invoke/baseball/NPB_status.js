@@ -47,9 +47,10 @@ function repackageMatchData(date, gameData, matchData) {
       const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
       matchData.map(function(match) {
         if (homeId === match.homeId && awayId === match.awayId && scheduled === match.scheduled) {
-          const status = checkMatchStatus(game, matchData);
+          const matchId = match.matchId;
+          const status = checkMatchStatus(game, matchData, matchId);
           data.push({
-            matchId: match.matchId,
+            matchId,
             scheduled,
             gameId: game.gameid,
             status,
@@ -65,11 +66,11 @@ function repackageMatchData(date, gameData, matchData) {
   }
 }
 
-function checkMatchStatus(game, matchData) {
+function checkMatchStatus(game, matchData, matchId) {
   let status = NPB_statusMapping(game.gameid, game.status);
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
-    if (match.matchId === game.gameid && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
+    if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
   });
   return status;
 }
