@@ -212,7 +212,7 @@ async function getHandicap() {
               secondHandicap = secondHandicap.replace('四球', '4');
               secondHandicap = secondHandicap.replace('五球', '5');
               firstHandicap = firstHandicap.replace('半', '.5');
-              secondHandicap = secondHandicap.replace('半', '.1');
+              secondHandicap = secondHandicap.replace('半', '.5');
               data.result.data_list[k].proffer_one_bs = (parseFloat(firstHandicap) + parseFloat(secondHandicap)) / 2;
               if (String(data.result.data_list[k].proffer_one_bs).indexOf('.25') >= 0) {
                 data.result.data_list[k].proffer_two_bs = '-50';
