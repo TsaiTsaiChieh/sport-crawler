@@ -83,7 +83,6 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     const homeTotalPoints = payload.boxscore.homeScore;
     await updateMatchEndStatus2MySQL({ status, gameId, awayTotalPoints, homeTotalPoints }, path);
     const nowPeriod = payload.boxscore.period;
-
     const clock = playByPlays[0].events[0].gameClock;
     const eventOrderAtNowPeriod = playByPlays[0].events.length;
     const statusDes = matchStatus[payload.boxscore.status];
@@ -96,7 +95,7 @@ async function updateLiveAndTeamData(matchData, gameId, path) {
     await set2realtime(`${path}/info/home/Total/points`, homeTotalPoints);
     const awayId = payload.gameProfile.awayTeamId;
     const homeId = payload.gameProfile.homeTeamId;
-    await updateLiveTextByPeriod({ gameId, awayId, homeId }, path);
+    await updateLiveTextByPeriod({ gameId, awayId, homeId, nowPeriod }, path);
 
     for (let i = 0; i < playByPlays.length; i++) {
       const period = playByPlays[i].period;
