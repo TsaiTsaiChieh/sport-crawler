@@ -33,8 +33,8 @@ async function repackageMatches(matchData) {
       const awayAlias = ele.teams.away.team.abbreviation;
       const { detailedStatus, codedGameState, abstractGameCode, statusCode } = ele.status;
       const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode, statusCode });
-      const gameDate = gameDateProcessor(ele.gameDate);
-      const scheduled = momentUtil.date2timestamp(gameDate);
+      // const gameDate = gameDateProcessor(ele.gameDate);
+      const scheduled = momentUtil.date2timestamp(ele.gameDate);
       if (ele.status.startTimeTBD === true) {
         const matchTBD = await repackageTBDMatches(matchData, { matchId, scheduled, homeId, homeAlias, awayId, awayAlias, status });
         data.push(matchTBD);
@@ -49,16 +49,16 @@ async function repackageMatches(matchData) {
   }
 }
 
-function gameDateProcessor(gameDate) {
-  const reverseGameDate = gameDate.split('').reverse().join('');
-  const index = reverseGameDate.indexOf(':');
-  const gameDateDigit = parseInt(reverseGameDate.substr(index + 1, 1));
-  if (gameDateDigit !== 0 || gameDateDigit !== 5) {
-    const temp = reverseGameDate.substr(0, index + 1) + '0' + reverseGameDate.substring(index + 2);
-    gameDate = temp.split('').reverse().join('');
-  }
-  return gameDate;
-}
+// function gameDateProcessor(gameDate) {
+//   const reverseGameDate = gameDate.split('').reverse().join('');
+//   const index = reverseGameDate.indexOf(':');
+//   const gameDateDigit = parseInt(reverseGameDate.substr(index + 1, 1));
+//   if (gameDateDigit !== 0 || gameDateDigit !== 5) {
+//     const temp = reverseGameDate.substr(0, index + 1) + '0' + reverseGameDate.substring(index + 2);
+//     gameDate = temp.split('').reverse().join('');
+//   }
+//   return gameDate;
+// }
 
 async function repackageTBDMatches(matchData, TBDData) {
   try {
