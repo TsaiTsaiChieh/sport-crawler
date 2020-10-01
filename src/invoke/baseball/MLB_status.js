@@ -43,10 +43,8 @@ function repackageMatchData(matchData, gameData) {
 
     gameData.dates[0].games.map(function(ele) {
       const matchId = String(ele.gamePk);
-      const detailedStatus = ele.status.detailedState; // 詳細描述
-      const codedGameState = ele.status.codedGameState;
-      const abstractGameCode = ele.status.abstractGameCode;
-      const status = checkMatchStatus(matchData, matchId, { detailedStatus, codedGameState, abstractGameCode });
+      const { detailedState, codedGameState, abstractGameCode, statusCode } = ele.status;
+      const status = checkMatchStatus(matchData, matchId, { detailedState, codedGameState, abstractGameCode, statusCode });
       let homeScore = 0;
       let awayScore = 0;
       if (ele.teams.home.score) homeScore = ele.teams.home.score;
@@ -69,8 +67,8 @@ function repackageMatchData(matchData, gameData) {
 }
 
 function checkMatchStatus(matchData, matchId, statusObj) {
-  const { detailedStatus, codedGameState, abstractGameCode } = statusObj;
-  let status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode });
+  const { detailedState, codedGameState, abstractGameCode, statusCode } = statusObj;
+  let status = MLB_statusMapping(matchId, { detailedState, codedGameState, abstractGameCode, statusCode });
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
     if (match.matchId === matchId && (Date.now() >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED)) status = MATCH_STATUS.INPLAY;
@@ -80,18 +78,22 @@ function checkMatchStatus(matchData, matchId, statusObj) {
 
 async function updateStatusOrScore2MySQL(games, matches) {
   try {
-    const { INPLAY, END, TBD } = MATCH_STATUS;
+    const { INPLAY, END, TBD, POSTPONED } = MATCH_STATUS;
     games.map(function(game) {
       matches.map(async function(match) {
         const now = momentUtil.taipeiDate(new Date());
-        if (game.matchId === match.matchId && game.status === END) {
+        if (game.matchId === match.matchId && game.status === END && match.status !== END) {
           await mysql.Match.update({ status: game.status, home_points: game.homeScore, away_points: game.awayScore }, { where: { bets_id: game.matchId } });
           console.log(`MLB - ${match.matchId} 完賽 at ${now}`);
         }
-        if ((game.matchId === match.matchId && game.status === INPLAY) ||
-         (game.matchId === match.matchId && game.status === TBD)) {
+        if (game.matchId === match.matchId && game.status === INPLAY && match.status !== INPLAY) {
           await mysql.Match.update({ status: game.status }, { where: { bets_id: game.matchId } });
-          console.log(`MLB - ${match.matchId} 開賽/延期 at ${now}`);
+          console.log(`MLB - ${match.matchId} 開賽at ${now}`);
+        }
+        if ((game.matchId === match.matchId && game.status === POSTPONED && match.status !== POSTPONED) ||
+         (game.matchId === match.matchId && game.status === TBD && match.status !== TBD)) {
+          await mysql.Match.update({ status: game.status }, { where: { bets_id: game.matchId } });
+          console.log(`MLB - ${match.matchId} 延期 at ${now}`);
         }
       });
     });
