@@ -19,7 +19,7 @@ const { APP2_PORT } = process.env;
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('NBA 賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('NBA 賽程', '5 */1 * * *', zone_tw, async function() {
   try {
     await NBA.match();
     return;
@@ -49,7 +49,7 @@ schedule.scheduleJob('KBO 文字直播', '*/5 * * * * *', zone_tw, async functio
   }
 });
 
-schedule.scheduleJob('KBO 賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('KBO 賽程', '5 */1 * * *', zone_tw, async function() {
   try {
     await KBO.match();
     return;
