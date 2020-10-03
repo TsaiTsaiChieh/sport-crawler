@@ -1,11 +1,12 @@
 const configs = require('../../configs/league/KBO_configs');
 const { getScheduledAndInplayMatchesFromMySQL, updateLiveAndTeamData } = require('../../helpers/databaseEngine');
-const { getData } = require('../../helpers/invokeUtil');
 const { timestamp2date } = require('../../helpers/momentUtil');
-const { KBO_id2Alias, KBO_teamName2id } = require('../../helpers/teamsMapping');
+const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
-const { MATCH_STATUS, MATCH_STATUS_REALTIME, KBO_statusMapping } = require('../../helpers/statusUtil');
+const { KBO_statusMapping, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
+const { KBO_teamIncludes2id } = require('../../helpers/teamsMapping');
 const moment = require('moment');
+const { MATCH_STATUS } = require('../../helpers/leaguesUtil');
 require('moment-timezone');
 
 async function main() {
@@ -14,7 +15,6 @@ async function main() {
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
     await livescoreStart(matchData);
-
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);
@@ -24,12 +24,12 @@ async function main() {
 async function livescoreStart(matchData) {
   try {
     if (matchData.length) {
-      let { baseURL, leId, srId, date } = configs;
+      let { livescoreURL, date, sporttype, union } = configs;
       const today = timestamp2date(new Date());
       date = today;
-      const baseData = await getData(`${baseURL}?leId=${leId}&srId=${srId}&date=${date}`);
-      const livescoreData = await tuneSeasonYearData(matchData, today);
-      const livescoreChunk = await repackageLivescore(matchData, livescoreData, baseData);
+      const URL = `${livescoreURL}?date=${date}&sporttype=${sporttype}&union=${union}`;
+      const livescoreData = await getData(URL);
+      const livescoreChunk = await repackageLivescore(date, matchData, livescoreData);
       await updateLiveAndTeamData(livescoreChunk, configs);
     }
     return Promise.resolve();
@@ -38,34 +38,10 @@ async function livescoreStart(matchData) {
   }
 }
 
-async function tuneSeasonYearData(matchData, today) {
-  const { nullThreshold } = configs;
-  const livescoreThisYear = concatURL(matchData, today, 0);
-  let livescoreData = await getData(livescoreThisYear);
-  if (livescoreData.length < nullThreshold) return livescoreData;
-  // 長度 > nullThreshold，代表資料無效，改打去年，也無效傳回傳 null
-  else if (livescoreData.length >= nullThreshold) {
-    livescoreData = await getData(concatURL(matchData, today, 1));
-    if (livescoreData.length < nullThreshold) return livescoreData;
-    else return null;
-  }
-}
-
-function concatURL(matchData, today, minus) {
-  const year = Number(today.substring(0, 4)) - minus;
-  let { livescoreURL, gameId } = configs;
-  const { homeId, awayId } = matchData[0];
-  const homeAlias = KBO_id2Alias(homeId);
-  const awayAlias = KBO_id2Alias(awayId);
-  gameId = `${today}${awayAlias}${homeAlias}2${year}`;
-  const URL = `${livescoreURL}?gameId=${gameId}`;
-  return URL;
-}
-
-async function repackageLivescore(matchData, livescoreData, baseData) {
+async function repackageLivescore(date, matchData, livescoreData) {
   try {
     const data = [];
-    if (!livescoreData) return Promise.resolve();
+    if (!livescoreData.data.length) return Promise.resolve(data);
     matchData.map(function(match) {
       const temp = {
         matchId: match.matchId,
@@ -77,58 +53,50 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
         firstBase: 0,
         secondBase: 0,
         thirdBase: 0,
-        status: MATCH_STATUS_REALTIME[2],
+        status: '',
         home: { },
         away: { },
         Total: { home: { R: 0, H: 0, E: 0 }, away: { R: 0, H: 0, E: 0 } }
       };
-      baseData.game.map(function(base) {
-        const homeId = KBO_teamName2id(base.HOME_ID);
-        const awayId = KBO_teamName2id(base.AWAY_ID);
-        const day = base.G_DT;
-        const time = base.G_TM;
-        const scheduled = moment.tz(`${day} ${time}`, 'YYYYMMDD hh:mm', configs.KoreaZone).unix();
-        if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
-          temp.baseId = base.G_ID;
-          temp.balls = String(base.BALL_CN);
-          temp.outs = String(base.OUT_CN);
-          temp.strikes = String(base.STRIKE_CN);
-          temp.innings = String(base.GAME_INN_NO);
-          temp.halfs = base.GAME_TB_SC === 'B' ? '1' : '0';
-          temp.firstBase = (base.B1_BAT_ORDER_NO === null || base.B1_BAT_ORDER_NO === 0) ? 0 : 1;
-          temp.secondBase = (base.B2_BAT_ORDER_NO === null || base.B2_BAT_ORDER_NO === 0) ? 0 : 1;
-          temp.thirdBase = (base.B3_BAT_ORDER_NO === null || base.B3_BAT_ORDER_NO === 0) ? 0 : 1;
-        }
-      });
-      livescoreData.map(function(game) {
-        // From 2020-09-24 18:30:00.0 to 2020-09-24 18:30:00, skip .0
-        const gameDateTime = game.gameDateTime.substring(0, game.gameDateTime.indexOf('.'));
-        const scheduled = moment.tz(gameDateTime, 'YYYY-MM-DD hh:mm:ss', configs.KoreaZone).unix();
-        const homeId = KBO_teamName2id(game.homeTeamCode);
-        const awayId = KBO_teamName2id(game.awayTeamCode);
 
-        if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
-          temp.gameId = game.gameId;
-          const { gameInfo } = game;
-          const status = KBO_statusMapping(game.gameId, game.statusNum);
+      livescoreData.data.map(function(game) {
+        const { tolerance } = configs;
+        const gameId = String(game.gameid);
+        const status = KBO_statusMapping(gameId, game.status);
+        const homeId = KBO_teamIncludes2id(game.home);
+        const awayId = KBO_teamIncludes2id(game.away);
+        const time = game.runtime;
+        const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', process.env.zone_tw).unix();
+        const lowerScheduled = moment(match.scheduled * 1000).subtract(tolerance[0], tolerance[1]).unix();
+        const upperScheduled = moment(match.scheduled * 1000).add(tolerance[0], tolerance[1]).unix();
+
+        if (match.homeId === homeId && match.awayId === awayId && (lowerScheduled <= scheduled && scheduled <= upperScheduled) && status === MATCH_STATUS.INPLAY) {
+          temp.gameId = gameId;
           temp.status = MATCH_STATUS_REALTIME[status];
-          const homeByInning = gameInfo.home_team_score_by_inning;
-          const awayByInning = gameInfo.away_team_score_by_inning;
-          const homeRHE = gameInfo.home_team_rheb;
-          const awayRHE = gameInfo.away_team_rheb;
-          const scoreBoard = deconstructInning(temp.innings, { homeByInning, awayByInning, homeRHE, awayRHE });
-          temp.Total.home.R = scoreBoard.home.R;
-          temp.Total.home.H = scoreBoard.home.H;
-          temp.Total.home.E = scoreBoard.home.E;
-          temp.Total.away.R = scoreBoard.away.R;
-          temp.Total.away.H = scoreBoard.away.H;
-          temp.Total.away.E = scoreBoard.away.E;
-          if (status === MATCH_STATUS.END && scoreBoard.home.runs === '-') scoreBoard.home.runs = 'X';
-          if (status === MATCH_STATUS.END && scoreBoard.away.runs === '-') scoreBoard.away.runs = 'X';
-          temp.home[`Innings${scoreBoard.inning}`] = { runs: scoreBoard.home.runs };
-          temp.away[`Innings${scoreBoard.inning}`] = { runs: scoreBoard.away.runs };
+          temp.Total.home.R = game.rb2;
+          temp.Total.away.R = game.ra2;
+          temp.Total.home.H = game.hb;
+          temp.Total.away.H = game.ha;
+          temp.Total.home.E = game.eb;
+          temp.Total.away.E = game.ea;
+          // SBO
+          temp.strikes = game.sb.replace('s', '');
+          temp.balls = game.bb.replace('b', '');
+          temp.outs = game.ob.replace('o', '');
+          const currentInning = getCurrentInning(game.da);
+          temp.innings = currentInning;
+          // 壘板圖
+          const base = baseMapping(game.base);
+          temp.firstBase = base.first;
+          temp.secondBase = base.second;
+          temp.thirdBase = base.third;
+          temp.halfs = game.runinn.includes('下') ? '1' : '0';
+          const homeScore = currentInningScore(currentInning, game.db);
+          const awayScore = currentInningScore(currentInning, game.da);
+          temp.home[`Innings${currentInning}`] = { runs: homeScore };
+          temp.away[`Innings${currentInning}`] = { runs: awayScore };
+          data.push(temp);
         }
-        data.push(temp);
       });
     });
     return Promise.resolve(data);
@@ -137,27 +105,22 @@ async function repackageLivescore(matchData, livescoreData, baseData) {
   }
 }
 
-function deconstructInning(currentInning, inningData) {
-  const { homeByInning, awayByInning, homeRHE, awayRHE } = inningData;
-  const homeScore = currentInningScore(currentInning, homeByInning);
-  const awayScore = currentInningScore(currentInning, awayByInning);
-  const homeRHEData = returnRHE(homeRHE);
-  const awayRHEData = returnRHE(awayRHE);
-  return {
-    inning: currentInning,
-    home: {
-      runs: homeScore,
-      R: homeRHEData.R,
-      H: homeRHEData.H,
-      E: homeRHEData.E
-    },
-    away: {
-      runs: awayScore,
-      R: awayRHEData.R,
-      H: awayRHEData.H,
-      E: awayRHEData.E
-    }
-  };
+function getCurrentInning(scoreboard) {
+  const index = [];
+  for (let i = 0; i < scoreboard.length; i++) if (scoreboard[i] === ',') index.push(i);
+  for (let i = 0; i < index.length - 1; i++) {
+    const temp = index[i + 1];
+    if (index[i] + 1 === temp) return i + 1;
+  }
+  return index.length;
+}
+
+function baseMapping(base) {
+  const num = Number(base.replace('base', ''));
+  const first = num === 1 || num === 3 || num === 5 || num === 7 ? 1 : 0;
+  const second = num === 2 || num === 3 || num === 6 || num === 7 ? 1 : 0;
+  const third = num === 4 || num === 5 || num === 7 ? 1 : 0;
+  return { first, second, third };
 }
 
 function currentInningScore(currentInning, str) {
@@ -166,18 +129,6 @@ function currentInningScore(currentInning, str) {
   let score = str.substring(indices[currentInning - 2] + 1, indices[currentInning - 1]).trim();
   if (score === '-' && currentInning !== '9') score = '0';
   return score;
-}
-
-function returnRHE(str) {
-  const indices = [];
-  for (let i = 0; i < str.length; i++) if (str[i] === ',') indices.push(i);
-  let R = str.substring(0, indices[0]).trim();
-  let H = str.substring(indices[0] + 1, indices[1]).trim();
-  let E = str.substring(indices[1] + 1, indices[2]).trim();
-  if (R === '-') R = '0';
-  if (H === '-') H = '0';
-  if (E === '-') E = '0';
-  return { R, H, E };
 }
 
 module.exports = main;
