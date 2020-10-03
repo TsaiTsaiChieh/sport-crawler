@@ -57,15 +57,15 @@ function concatURL(matchData, today, minus) {
   const { homeId, awayId } = matchData[0];
   const homeAlias = KBO_id2Alias(homeId);
   const awayAlias = KBO_id2Alias(awayId);
-  gameId = `${today}${awayAlias}${homeAlias}0${year}`;
+  gameId = `${today}${awayAlias}${homeAlias}2${year}`;
   const URL = `${livescoreURL}?gameId=${gameId}`;
   return URL;
 }
 
 async function repackageLivescore(matchData, livescoreData, baseData) {
   try {
-    if (!livescoreData) return Promise.resolve();
     const data = [];
+    if (!livescoreData) return Promise.resolve();
     matchData.map(function(match) {
       const temp = {
         matchId: match.matchId,
