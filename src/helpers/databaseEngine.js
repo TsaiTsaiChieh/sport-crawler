@@ -2,6 +2,7 @@ const mysql = require('./mysqlUtil');
 const ServerErrors = require('./ServerErrors');
 const { MATCH_STATUS } = require('./statusUtil');
 const { set2realtime } = require('./firebaseUtil');
+const momentUtil = require('./momentUtil');
 
 async function getScheduledAndInplayMatchesFromMySQL(nowUnix, leagueId) {
   try {
@@ -23,6 +24,36 @@ async function getScheduledAndInplayMatchesFromMySQL(nowUnix, leagueId) {
         INPLAY: MATCH_STATUS.INPLAY,
         nowUnix,
         yesterday
+      },
+      raw: true,
+      type: mysql.sequelize.QueryTypes.SELECT
+    });
+    return Promise.resolve(result);
+  } catch (err) {
+    return Promise.reject(new ServerErrors.MySQLError(err.stack));
+  }
+}
+
+async function getTomorrowScheduledMatchesFromMySQL(date, leagueId) {
+  try {
+    const begin = momentUtil.date2unix(date, { op: 'add', value: 1, unit: 'days' });
+    const end = momentUtil.date2unix(date, { op: 'add', value: 2, unit: 'days' }) - 1;
+    // Index is range or eq_ref, taking about 170ms
+    const result = await mysql.sequelize.query(`
+    SELECT game.bets_id AS matchId, game.status, game.scheduled, game.scheduled_tw, 
+	         home.team_id AS homeId, home.alias AS homeAlias, 
+	         away.team_id AS awayId, away.alias AS awayAlias
+      FROM matches AS game
+ LEFT JOIN match__teams AS home ON game.home_id = home.team_id
+ LEFT JOIN match__teams AS away ON game.away_id = away.team_id
+     WHERE game.league_id = :league_id
+       AND game.status = :SCHEDULED
+       AND game.scheduled BETWEEN :begin AND :end`, {
+      replacements: {
+        league_id: leagueId,
+        SCHEDULED: MATCH_STATUS.SCHEDULED,
+        begin,
+        end
       },
       raw: true,
       type: mysql.sequelize.QueryTypes.SELECT
@@ -86,6 +117,7 @@ async function updateLiveAndTeamData(livescoreData, configs) {
 }
 module.exports = {
   getScheduledAndInplayMatchesFromMySQL,
+  getTomorrowScheduledMatchesFromMySQL,
   updateMatchChunk2MySQL,
   updateLiveAndTeamData
 };
