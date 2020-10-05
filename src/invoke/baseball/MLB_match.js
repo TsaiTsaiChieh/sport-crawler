@@ -2,17 +2,20 @@ const momentUtil = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { MLB_teamName2id } = require('../../helpers/teamsMapping');
-const { MLB_statusMapping } = require('../../helpers/statusUtil');
+const { MATCH_STATUS, MLB_statusMapping } = require('../../helpers/statusUtil');
 const configs = require('../../configs/league/MLB_configs');
-const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
+const { getTomorrowScheduledMatchesFromMySQL, updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
+const mysql = require('../../helpers/mysqlUtil');
 
 async function main() {
   try {
     let { scheduleAPI, sportId, date, leagueId, hydrate, useLatestGames, league, league_id, sport_id, ori_league_id } = configs;
     date = momentUtil.timestamp2date(Date.now(), { format: 'YYYY-MM-DD' });
     const URL = `${scheduleAPI}?sportId=${sportId}&date=${date}&leagueId=${leagueId}&hydrate=${hydrate}&useLatestGames=${useLatestGames}`;
-    const data = await getData(URL);
-    const matchChunk = await repackageMatches(data);
+    const matchData = await getTomorrowScheduledMatchesFromMySQL(date, league_id);
+    const gameData = await getData(URL);
+    const matchChunk = await repackageMatches(gameData);
+    await checkMatchesWhichAreCanceled(matchData, matchChunk);
     await updateMatchChunk2MySQL(matchChunk, { league, league_id, sport_id, ori_league_id });
 
     return Promise.resolve();
@@ -21,25 +24,25 @@ async function main() {
   }
 }
 
-async function repackageMatches(matchData) {
+async function repackageMatches(gameData) {
   try {
     const data = [];
-    if (!matchData.dates.length) return Promise.resolve(data);
-    matchData.dates[0].games.map(async function(ele) {
-      const matchId = String(ele.gamePk);
-      const homeId = MLB_teamName2id(ele.teams.home.team.teamCode).id;
-      const awayId = MLB_teamName2id(ele.teams.away.team.teamCode).id;
-      const homeAlias = ele.teams.home.team.abbreviation;
-      const awayAlias = ele.teams.away.team.abbreviation;
-      const { detailedStatus, codedGameState, abstractGameCode, statusCode } = ele.status;
+    if (!gameData.dates.length) return Promise.resolve(data);
+    gameData.dates[0].games.map(async function(game) {
+      const matchId = String(game.gamePk);
+      const homeId = MLB_teamName2id(game.teams.home.team.teamCode).id;
+      const awayId = MLB_teamName2id(game.teams.away.team.teamCode).id;
+      const homeAlias = game.teams.home.team.abbreviation;
+      const awayAlias = game.teams.away.team.abbreviation;
+      const { detailedStatus, codedGameState, abstractGameCode, statusCode } = game.status;
       const status = MLB_statusMapping(matchId, { detailedStatus, codedGameState, abstractGameCode, statusCode });
-      // const gameDate = gameDateProcessor(ele.gameDate);
-      const scheduled = momentUtil.date2timestamp(ele.gameDate);
-      if (ele.status.startTimeTBD === true) {
-        const matchTBD = await repackageTBDMatches(matchData, { matchId, scheduled, homeId, homeAlias, awayId, awayAlias, status });
+      // const gameDate = gameDateProcessor(game.gameDate);
+      const scheduled = momentUtil.date2timestamp(game.gameDate);
+      if (game.status.startTimeTBD === true) {
+        const matchTBD = await repackageTBDMatches(gameData, { matchId, scheduled, homeId, homeAlias, awayId, awayAlias, status });
         data.push(matchTBD);
       }
-      if (ele.status.startTimeTBD === undefined) {
+      if (game.status.startTimeTBD === undefined) {
         data.push({ matchId, scheduled, homeId, homeAlias, awayId, awayAlias, status });
       }
     });
@@ -77,5 +80,31 @@ async function repackageTBDMatches(matchData, TBDData) {
   } catch (err) {
     return Promise.reject(new ServerErrors.RepackageError(err.stack));
   }
+}
+
+async function checkMatchesWhichAreCanceled(matchData, matchChunk) {
+  if (!matchData.length) return Promise.resolve();
+  const matchIdArr = []; // MySQL
+  const gameIdArr = []; // API
+  const matchesWhichAreCanceled = [];
+
+  matchData.map(match => matchIdArr.push(match.matchId));
+  matchChunk.map(game => gameIdArr.push(game.matchId));
+
+  matchIdArr.map(function(matchId) {
+    if (!gameIdArr.includes(matchId)) matchesWhichAreCanceled.push(matchId);
+  });
+
+  try {
+    if (matchesWhichAreCanceled.length) {
+      matchesWhichAreCanceled.map(async function(matchId) {
+        console.log(matchId);
+        await mysql.Match.update({ status: MATCH_STATUS.CANCELLED }, { where: { bets_id: matchId } });
+      });
+    }
+  } catch (err) {
+    return Promise.reject(new ServerErrors.MySQLError(err.stack));
+  }
+  return Promise.resolve();
 }
 module.exports = main;
