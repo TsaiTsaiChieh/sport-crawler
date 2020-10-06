@@ -18,7 +18,7 @@ const { APP3_PORT } = process.env;
 const app = express();
 app.use(Have.haven());
 
-schedule.scheduleJob('NPB 賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('NPB 賽程', '5 */1 * * *', zone_tw, async function() {
   try {
     await NPB.match();
     return;
@@ -48,7 +48,7 @@ schedule.scheduleJob('NPB 即時比分', '*/5 * * * * *', zone_tw, async functio
   }
 });
 
-schedule.scheduleJob('CPBL 賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('CPBL 賽程', '5 */1 * * *', zone_tw, async function() {
   try {
     await CPBL.match();
     return;

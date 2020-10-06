@@ -23,7 +23,7 @@ schedule.scheduleJob('MLB 即時比分', '*/5 * * * * *', zone_tw, async functio
   }
 });
 
-schedule.scheduleJob('MLB 賽程', '0 */1 * * *', zone_tw, async function() {
+schedule.scheduleJob('MLB 賽程', '5 */1 * * *', zone_tw, async function() {
   try {
     await MLB.match();
     return;

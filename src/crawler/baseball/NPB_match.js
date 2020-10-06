@@ -15,9 +15,9 @@ async function main() {
     const next2Date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 2, unit: 'days', format: 'YYYY-MM-DD' });
     const aimYear = next1Date.split('-')[0];
     let aimMonth = next1Date.split('-')[1];
-    const aimDay = next1Date.split('-')[2];
+    let aimDay = next1Date.split('-')[2];
     let nextMonth = next2Date.split('-')[1];
-    const nextDay = next2Date.split('-')[2];
+    let nextDay = next2Date.split('-')[2];
     const URL = `https://npb.jp/games/${aimYear}/schedule_${aimMonth}_detail.html`;
     aimMonth = aimMonth[0] === '0' ? aimMonth[1] : aimMonth;
     nextMonth = nextMonth[0] === '0' ? nextMonth[1] : nextMonth;
@@ -40,6 +40,12 @@ async function main() {
     let flag = 0;
     let matchCount = 1;
     let fullMonth;
+    if (aimDay[0] === '0') {
+      aimDay = aimDay[1];
+    }
+    if (nextDay[0] === '0') {
+      nextDay = nextDay[1];
+    }
     for (let i = 0; i < result.length; i++) {
       const ele = result[i];
       if (ele[0].split('（')[0] === `${aimMonth}/${aimDay}`) {
