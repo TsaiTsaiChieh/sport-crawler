@@ -103,7 +103,10 @@ async function getHandicap() {
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'KBO 韓國職棒-總冠軍賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-季後賽') ||
-            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-總冠軍賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-總冠軍賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽-總冠軍賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-季後賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-總冠軍賽') ||
@@ -2052,7 +2055,7 @@ function leagueName2Id(leagueName) {
       return '43996';
     }
 
-    // 葡萄牙超級聯賽 剩 14/18 組
+    // 葡萄牙超級聯賽 剩 15/18 組
     case '博阿維斯塔': {
       // 博阿維斯塔
       return '700';
@@ -2109,7 +2112,9 @@ function leagueName2Id(leagueName) {
       // 里奧艾維
       return '1336';
     }
-
+    case '馬里迪莫': {
+      return '705';
+    }
     // ---
     // 士砵亭
     // 艾維斯
