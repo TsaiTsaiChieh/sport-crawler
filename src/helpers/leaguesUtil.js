@@ -87,7 +87,8 @@ function leagueCodebook(league) {
       return {
         id: '1298',
         name_ch: '日本職籃',
-        hw_ball: ''
+        hw_ball: '14',
+        ori_league_id: '1298'
       };
     case 'MLB':
       return {
