@@ -34,7 +34,7 @@ async function updateMatchInplayStatus2MySQL(data) {
   try {
     if (data.length) {
       data.map(async function(ele) {
-        const now = Date.now() - 60 * 1000;
+        const now = Date.now() + 60 * 1000;
         if (ele.status !== MATCH_STATUS.INPLAY && now >= ele.scheduled * 1000) {
           await mysql.Match.update(
             { status: MATCH_STATUS.INPLAY },

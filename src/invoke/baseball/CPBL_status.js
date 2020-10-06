@@ -70,7 +70,7 @@ function repackageMatchData(date, gameData, matchData) {
 
 function checkMatchStatus(game, match, statusFunction) {
   let status = statusFunction(game);
-  const now = Date.now() - 60 * 1000;
+  const now = Date.now() + 60 * 1000;
   // now > 開賽時間且 API 偵測未開打
   if (now >= match.scheduled * 1000 && match.status === MATCH_STATUS.SCHEDULED) status = MATCH_STATUS.INPLAY;
 
