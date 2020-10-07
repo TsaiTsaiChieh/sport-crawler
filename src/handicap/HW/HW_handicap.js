@@ -1238,9 +1238,9 @@ async function queryForMatches(leagueId) {
   });
 }
 
-function teamName2Id(teamName) {
+function teamName2Id(name) {
   // MLB
-  if (teamName.includes('明尼蘇達雙城')) return '1088';
+  if (name.includes('明尼蘇達雙城')) return '1088';
   else if (name.includes('多倫多藍鳥')) return '1089';
   else if (name.includes('洛杉磯天使')) return '1090';
   else if (name.includes('底特律老虎')) return '1091';
@@ -1258,8 +1258,8 @@ function teamName2Id(teamName) {
   else if (name.includes('芝加哥白襪')) return '1203';
   else if (name.includes('坦帕灣光芒')) return '1216';
   else if (name.includes('休士頓太空人')) return '1217';
-  else if (name.includes('奧克蘭運動家')) return '1223';
-  else if (name.includes('聖路易紅雀')) return '1186';
+  else if (name.includes('奧克蘭運動家')) return '1222';
+  else if (name.includes('聖路易紅雀')) return '1223';
   else if (name.includes('克里夫蘭印地安人')) return '1310';
   else if (name.includes('德州遊騎兵')) return '1311';
   else if (name.includes('亞特蘭大勇士')) return '1352';
