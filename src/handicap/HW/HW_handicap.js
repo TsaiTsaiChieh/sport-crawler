@@ -1238,9 +1238,9 @@ async function queryForMatches(leagueId) {
   });
 }
 
-function teamName2Id(teamName) {
+function teamName2Id(name) {
   // MLB
-  if (teamName.includes('明尼蘇達雙城')) return '1088';
+  if (name.includes('明尼蘇達雙城')) return '1088';
   else if (name.includes('多倫多藍鳥')) return '1089';
   else if (name.includes('洛杉磯天使')) return '1090';
   else if (name.includes('底特律老虎')) return '1091';
