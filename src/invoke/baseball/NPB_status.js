@@ -68,7 +68,7 @@ function repackageMatchData(date, gameData, matchData) {
 }
 
 function checkMatchStatus(game, matchData, matchId) {
-  let status = NPB_statusMapping(game.gameid, game.status);
+  let status = NPB_statusMapping(game);
   matchData.map(function(match) {
     // now > 開賽時間且 API 偵測未開打
     const now = Date.now() + 60 * 1000;
