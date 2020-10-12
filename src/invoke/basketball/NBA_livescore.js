@@ -18,10 +18,11 @@ const mysql = require('../../helpers/mysqlUtil');
 async function main() {
   try {
     // XXX Consider redis implement
-    const { league_id } = configs;
+    const { league_id, league, sport } = configs;
+    const path = `${sport}/${league}`;
     const nowUnix = Math.floor(Date.now() / 1000);
     const matchData = await getScheduledAndInplayMatchesFromMySQL(nowUnix, league_id);
-    await updateMatchInplayStatus2MySQL(matchData);
+    await updateMatchInplayStatus2MySQL(matchData, path);
     await liveTextStart(matchData);
 
     return Promise.resolve();
@@ -30,7 +31,7 @@ async function main() {
   }
 }
 
-async function updateMatchInplayStatus2MySQL(data) {
+async function updateMatchInplayStatus2MySQL(data, path) {
   try {
     if (data.length) {
       data.map(async function(ele) {
@@ -39,6 +40,7 @@ async function updateMatchInplayStatus2MySQL(data) {
           await mysql.Match.update(
             { status: MATCH_STATUS.INPLAY },
             { where: { bets_id: ele.matchId } });
+          await set2realtime(`${path}/${ele.matchId}/Summary/status`, { status: MATCH_STATUS.INPLAY });
         }
       });
     }
@@ -143,6 +145,7 @@ async function updateMatchEndStatus2MySQL(matchData, path) {
   try {
     const { status, gameId, awayTotalPoints, homeTotalPoints } = matchData;
     if (parseInt(status) === matchStatus.end) {
+      await set2realtime(`${path}/status`, { status: MATCH_STATUS.END });
       await mysql.Match.update(
         {
           status: MATCH_STATUS.END,
@@ -150,7 +153,6 @@ async function updateMatchEndStatus2MySQL(matchData, path) {
           away_points: awayTotalPoints
         },
         { where: { bets_id: gameId } });
-      await set2realtime(`${path}/status`, { status: matchStatus['3'] });
     }
     return Promise.resolve();
   } catch (err) {

@@ -1,5 +1,4 @@
 const MATCH_STATUS = { SCHEDULED: 2, INPLAY: 1, END: 0, ABNORMAL: -1, VALID: 1, POSTPONED: -2, CANCELLED: -3, TBD: -10 };
-const MATCH_STATUS_REALTIME = { 2: 'scheduled', 1: 'inprogress', 0: 'closed' };
 
 function MLB_statusMapping(matchId, status) {
   const { detailedState, codedGameState, abstractGameCode, statusCode } = status;
@@ -39,7 +38,6 @@ function NPB_statusMapping(game) {
 
 module.exports = {
   MATCH_STATUS,
-  MATCH_STATUS_REALTIME,
   MLB_statusMapping,
   KBO_statusMapping,
   CPBL_statusMapping,

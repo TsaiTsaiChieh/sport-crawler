@@ -7,10 +7,12 @@ const { NPB_teamName2id } = require('../../helpers/teamsMapping');
 const mysql = require('../../helpers/mysqlUtil');
 const { MATCH_STATUS } = require('../../helpers/statusUtil');
 const { zone_tw } = process.env;
+const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
   try {
-    const { league, league_id, sport_id, ori_league_id } = configs;
+    const { league, sport, league_id, sport_id, ori_league_id } = configs;
+    const path = `${sport}/${league}`;
     const next1Date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
     const next2Date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 2, unit: 'days', format: 'YYYY-MM-DD' });
     const aimYear = next1Date.split('-')[0];
@@ -63,9 +65,11 @@ async function main() {
           const awayTeamID = NPB_teamName2id(ele[5]);
           const scheduleTime = `${aimYear}-${fullMonth}-${aimDay} ${ele[7]}:00`;
           const scheduled = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix() - 3600;
-
+          const matchId = `${aimYear}${fullMonth}${aimDay}${league_id}00${matchCount}`;
+          const status = MATCH_STATUS.SCHEDULED;
+          await set2realtime(`${path}/${matchId}/Summary/status`, { status });
           await mysql.Match.upsert({
-            bets_id: `${aimYear}${fullMonth}${aimDay}${league_id}00${matchCount}`,
+            bets_id: matchId,
             league_id: league_id,
             sport_id: sport_id,
             home_id: homeTeamID,
@@ -73,7 +77,7 @@ async function main() {
             scheduled: scheduled,
             scheduled_tw: scheduled * 1000,
             flag_prematch: MATCH_STATUS.VALID,
-            status: MATCH_STATUS.SCHEDULED,
+            status,
             ori_league_id: ori_league_id,
             ori_sport_id: sport_id
           });

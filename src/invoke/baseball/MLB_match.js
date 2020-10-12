@@ -4,8 +4,9 @@ const ServerErrors = require('../../helpers/ServerErrors');
 const { MLB_teamName2id } = require('../../helpers/teamsMapping');
 const { MATCH_STATUS, MLB_statusMapping } = require('../../helpers/statusUtil');
 const configs = require('../../configs/league/MLB_configs');
-const { getTomorrowScheduledMatchesFromMySQL, updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
+const { getTomorrowScheduledMatchesFromMySQL, updateMatchChunk2MySQL, updateMatchChunk2Realtime } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
+const { set2realtime } = require('../../helpers/firebaseUtil');
 
 async function main() {
   try {
@@ -16,6 +17,7 @@ async function main() {
     const gameData = await getData(URL);
     const matchChunk = await repackageMatches(gameData);
     await checkMatchesWhichAreCanceled(matchData, matchChunk);
+    await updateMatchChunk2Realtime(matchChunk, configs);
     await updateMatchChunk2MySQL(matchChunk, { league, league_id, sport_id, ori_league_id });
 
     return Promise.resolve();
@@ -97,9 +99,12 @@ async function checkMatchesWhichAreCanceled(matchData, matchChunk) {
 
   try {
     if (matchesWhichAreCanceled.length) {
+      const { league, sport } = configs;
+      const path = `${sport}/${league}`;
+
       matchesWhichAreCanceled.map(async function(matchId) {
-        console.log(matchId);
         await mysql.Match.update({ status: MATCH_STATUS.CANCELLED }, { where: { bets_id: matchId } });
+        await set2realtime(`${path}/${matchId}/Summary/status`, { status: MATCH_STATUS.CANCELLED });
       });
     }
   } catch (err) {

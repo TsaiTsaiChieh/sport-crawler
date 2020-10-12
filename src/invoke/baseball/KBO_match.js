@@ -5,7 +5,7 @@ const ServerErrors = require('../../helpers/ServerErrors');
 const { KBO_teamName2id } = require('../../helpers/teamsMapping');
 const html2json = require('html2json').html2json;
 const { MATCH_STATUS } = require('../../helpers/statusUtil');
-const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
+const { updateMatchChunk2MySQL, updateMatchChunk2Realtime } = require('../../helpers/databaseEngine');
 
 async function main() {
   try {
@@ -14,8 +14,8 @@ async function main() {
     const URL = `${matchURL}${date}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatch(data);
+    await updateMatchChunk2Realtime(matchChunk, configs);
     await updateMatchChunk2MySQL(matchChunk, { league, league_id, sport_id, ori_league_id });
-
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err);

@@ -3,7 +3,7 @@ const { timestamp2date } = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { NBA_teamName2id } = require('../../helpers/teamsMapping');
-const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
+const { updateMatchChunk2MySQL, updateMatchChunk2Realtime } = require('../../helpers/databaseEngine');
 const { MATCH_STATUS } = require('../../helpers/leaguesUtil');
 
 async function main() {
@@ -13,7 +13,9 @@ async function main() {
     const URL = `${matchAPI}?gameDate=${gameDate}&countryCode=${countryCode}&days=${days}&locale=${locale}&tz=${tz}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatches(data);
+    await updateMatchChunk2Realtime(matchChunk, configs);
     await updateMatchChunk2MySQL(matchChunk, configs);
+
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err.stack);

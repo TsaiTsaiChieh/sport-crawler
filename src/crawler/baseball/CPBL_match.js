@@ -6,11 +6,13 @@ const { CPBL_teamName2id } = require('../../helpers/teamsMapping');
 const mysql = require('../../helpers/mysqlUtil');
 const configs = require('../../configs/league/CPBL_configs');
 const { MATCH_STATUS } = require('../../helpers/statusUtil');
+const { set2realtime } = require('../../helpers/firebaseUtil');
 const { zone_tw } = process.env;
 
 async function main() {
   try {
-    const { league, league_id, sport_id, ori_league_id } = configs;
+    const { league, sport, league_id, sport_id, ori_league_id } = configs;
+    const path = `${sport}/${league}`;
     const date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
     const aimYear = date.split('-')[0];
     const aimMonth = date.split('-')[1];
@@ -72,9 +74,13 @@ async function main() {
       }
       let scheduleTime = `${aimYear}-${aimMonth}-${aimDay} ${scheduled}:00`;
       scheduleTime = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix();
+
       if (matchID !== '' && matchID !== null) {
+        const matchId = `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`;
+        const status = MATCH_STATUS.SCHEDULED;
+        await set2realtime(`${path}/${matchId}/Summary/status`, { status });
         await mysql.Match.upsert({
-          bets_id: `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`,
+          bets_id: matchId,
           league_id: league_id,
           sport_id: sport_id,
           home_id: homeID[i],
@@ -82,7 +88,7 @@ async function main() {
           scheduled: scheduleTime,
           scheduled_tw: scheduleTime * 1000,
           flag_prematch: MATCH_STATUS.VALID,
-          status: MATCH_STATUS.SCHEDULED,
+          status,
           ori_league_id: ori_league_id,
           ori_sport_id: sport_id
         });
