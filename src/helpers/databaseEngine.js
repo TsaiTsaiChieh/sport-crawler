@@ -89,6 +89,19 @@ async function updateMatchChunk2MySQL(data, configs) {
   }
 }
 
+async function updateMatchChunk2Realtime(data, configs) {
+  const { league, sport } = configs;
+  const path = `${sport}/${league}`;
+  try {
+    data.map(async function(ele) {
+      await set2realtime(`${path}/${ele.matchId}/Summary/status`, { status: ele.status });
+    });
+    return Promise.resolve();
+  } catch (err) {
+    return Promise.reject(new ServerErrors.RealtimeError(err.stack));
+  }
+}
+
 async function updateLiveAndTeamData(livescoreData, configs) {
   const { sport, league } = configs;
   livescoreData.map(async function(ele) {
@@ -119,5 +132,6 @@ module.exports = {
   getScheduledAndInplayMatchesFromMySQL,
   getTomorrowScheduledMatchesFromMySQL,
   updateMatchChunk2MySQL,
+  updateMatchChunk2Realtime,
   updateLiveAndTeamData
 };
