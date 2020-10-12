@@ -104,7 +104,7 @@ async function checkMatchesWhichAreCanceled(matchData, matchChunk) {
 
       matchesWhichAreCanceled.map(async function(matchId) {
         await mysql.Match.update({ status: MATCH_STATUS.CANCELLED }, { where: { bets_id: matchId } });
-        await set2realtime(`${path}/${matchId}/Summary/status`, { status: MATCH_STATUS.CANCELLED });
+        await set2realtime(`${path}/${matchId}/Summary/status`, MATCH_STATUS.CANCELLED);
       });
     }
   } catch (err) {
