@@ -5,7 +5,7 @@ const moment = require('moment');
 require('moment-timezone');
 const ServerErrors = require('../../helpers/ServerErrors');
 const { KBO_teamIncludes2id } = require('../../helpers/teamsMapping');
-const { MATCH_STATUS, MATCH_STATUS_REALTIME, KBO_statusMapping } = require('../../helpers/statusUtil');
+const { MATCH_STATUS, KBO_statusMapping } = require('../../helpers/statusUtil');
 const { getScheduledAndInplayMatchesFromMySQL } = require('../../helpers/databaseEngine');
 const mysql = require('../../helpers/mysqlUtil');
 const { set2realtime } = require('../../helpers/firebaseUtil');
@@ -83,25 +83,25 @@ function checkMatchStatus(status, matchData, matchId) {
 async function updateStatusOrScore2MySQL(matchChunk) {
   try {
     const { INPLAY, END, POSTPONED } = MATCH_STATUS;
-    const { sport, league } = configs;
-
+    const { league, sport } = configs;
+    const path = `${sport}/${league}`;
     matchChunk.map(async function(match) {
       const now = momentUtil.taipeiDate(new Date());
+      const { matchId } = match;
       if (match.status === END) {
-        await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        const path = `${sport}/${league}/${match.matchId}/Summary`;
-        await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.END]);
-        console.log(`KBO - ${match.matchId} 完賽 at ${now}`);
+        await set2realtime(`${path}/${matchId}/Summary/status`, { status: END });
+        await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore, sr_id: match.gameId }, { where: { bets_id: matchId } });
+        console.log(`KBO - ${matchId} 完賽 at ${now}`);
       }
       if (match.oriStatus !== INPLAY && match.status === INPLAY) {
-        await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: match.matchId } });
-        const path = `${sport}/${league}/${match.matchId}/Summary`;
-        await set2realtime(`${path}/status`, MATCH_STATUS_REALTIME[MATCH_STATUS.INPLAY]);
-        console.log(`KBO - ${match.matchId} 開賽 at ${now}`);
+        await set2realtime(`${path}/${matchId}/Summary/status`, { status: INPLAY });
+        await mysql.Match.update({ status: match.status, scheduled: match.scheduled, scheduled_tw: match.scheduled * 1000, sr_id: match.gameId }, { where: { bets_id: matchId } });
+        console.log(`KBO - ${matchId} 開賽 at ${now}`);
       }
       if (match.status === POSTPONED) {
-        await mysql.Match.update({ status: match.status }, { where: { bets_id: match.matchId } });
-        console.log(`KBO - ${match.matchId} 延賽 at ${now}`);
+        await set2realtime(`${path}/${matchId}/Summary/status`, { status: POSTPONED });
+        await mysql.Match.update({ status: match.status }, { where: { bets_id: matchId } });
+        console.log(`KBO - ${matchId} 延賽 at ${now}`);
       }
     });
     return Promise.resolve();
