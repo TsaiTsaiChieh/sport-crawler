@@ -3,7 +3,7 @@ const { getScheduledAndInplayMatchesFromMySQL, updateLiveAndTeamData } = require
 const { timestamp2date } = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
-const { CPBL_statusMapping, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
+const { CPBL_statusMapping } = require('../../helpers/statusUtil');
 const { CPBL_teamIncludes2id } = require('../../helpers/teamsMapping');
 const moment = require('moment');
 require('moment-timezone');
@@ -67,7 +67,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
         const scheduled = moment.tz(`${date} ${time}`, 'YYYY-MM-DD hh:mm', configs.taiwanZone).unix();
         if (match.homeId === homeId && match.awayId === awayId && match.scheduled === scheduled) {
           temp.gameId = gameId;
-          temp.status = MATCH_STATUS_REALTIME[status];
+          temp.status = status;
           temp.Total.home.R = game.rb2;
           temp.Total.away.R = game.ra2;
           temp.Total.home.H = game.hb;

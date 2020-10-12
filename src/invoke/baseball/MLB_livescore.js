@@ -4,7 +4,7 @@ const mysql = require('../../helpers/mysqlUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const momentUtil = require('../../helpers/momentUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
-const { MATCH_STATUS, MATCH_STATUS_REALTIME, MLB_statusMapping } = require('../../helpers/statusUtil');
+const { MATCH_STATUS, MLB_statusMapping } = require('../../helpers/statusUtil');
 
 async function main() {
   try {
@@ -85,7 +85,7 @@ async function repackageLivescore(matchData, livescoreData) {
         const { detailedState, codedGameState, abstractGameCode, statusCode } = game.status;
         const status = MLB_statusMapping(gamePk, { detailedState, codedGameState, abstractGameCode, statusCode });
         if (match.matchId === gamePk && game.linescore.currentInning > 0) {
-          temp.status = MATCH_STATUS_REALTIME[status];
+          temp.status = status;
           const { linescore } = game;
           game.linescore.innings.map(function(inning) {
             if (inning.home.runs) temp.Total.home.R += inning.home.runs;
