@@ -89,18 +89,18 @@ async function updateStatusOrScore2MySQL(games, matches) {
         const now = momentUtil.taipeiDate(new Date());
         const { matchId } = game;
         if (game.matchId === match.matchId && game.status === END && match.status !== END) {
-          await set2realtime(`${path}/${matchId}/Summary/status`, { status: END });
+          await set2realtime(`${path}/${matchId}/Summary/status`, END);
           await mysql.Match.update({ status: game.status, home_points: game.homeScore, away_points: game.awayScore }, { where: { bets_id: matchId } });
           console.log(`MLB - ${matchId} 完賽 at ${now}`);
         }
         if (game.matchId === match.matchId && game.status === INPLAY && match.status !== INPLAY) {
-          await set2realtime(`${path}/${matchId}/Summary/status`, { status: INPLAY });
+          await set2realtime(`${path}/${matchId}/Summary/status`, INPLAY);
           await mysql.Match.update({ status: game.status }, { where: { bets_id: matchId } });
           console.log(`MLB - ${matchId} 開賽 at ${now}`);
         }
         if ((game.matchId === match.matchId && game.status === POSTPONED && match.status !== POSTPONED) ||
          (game.matchId === match.matchId && game.status === TBD && match.status !== TBD)) {
-          await set2realtime(`${path}/${matchId}/Summary/status`, { status: POSTPONED });
+          await set2realtime(`${path}/${matchId}/Summary/status`, POSTPONED);
           await mysql.Match.update({ status: game.status }, { where: { bets_id: matchId } });
           console.log(`MLB - ${matchId} 延期 at ${now}`);
         }

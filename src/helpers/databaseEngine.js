@@ -94,7 +94,7 @@ async function updateMatchChunk2Realtime(data, configs) {
   const path = `${sport}/${league}`;
   try {
     data.map(async function(ele) {
-      await set2realtime(`${path}/${ele.matchId}/Summary/status`, { status: ele.status });
+      await set2realtime(`${path}/${ele.matchId}/Summary/status`, ele.status);
     });
     return Promise.resolve();
   } catch (err) {

@@ -78,7 +78,7 @@ async function main() {
       if (matchID !== '' && matchID !== null) {
         const matchId = `${aimYear}${aimMonth}${aimDay}${league_id}G${matchID}`;
         const status = MATCH_STATUS.SCHEDULED;
-        await set2realtime(`${path}/${matchId}/Summary/status`, { status });
+        await set2realtime(`${path}/${matchId}/Summary/status`, status);
         await mysql.Match.upsert({
           bets_id: matchId,
           league_id: league_id,

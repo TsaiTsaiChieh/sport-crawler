@@ -67,7 +67,7 @@ async function main() {
           const scheduled = moment.tz(scheduleTime, 'YYYY-MM-DD HH:mm:ss', zone_tw).unix() - 3600;
           const matchId = `${aimYear}${fullMonth}${aimDay}${league_id}00${matchCount}`;
           const status = MATCH_STATUS.SCHEDULED;
-          await set2realtime(`${path}/${matchId}/Summary/status`, { status });
+          await set2realtime(`${path}/${matchId}/Summary/status`, status);
           await mysql.Match.upsert({
             bets_id: matchId,
             league_id: league_id,
