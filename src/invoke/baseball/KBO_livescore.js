@@ -3,7 +3,7 @@ const { getScheduledAndInplayMatchesFromMySQL, updateLiveAndTeamData } = require
 const { timestamp2date } = require('../../helpers/momentUtil');
 const { getData } = require('../../helpers/invokeUtil');
 const ServerErrors = require('../../helpers/ServerErrors');
-const { KBO_statusMapping, MATCH_STATUS_REALTIME } = require('../../helpers/statusUtil');
+const { KBO_statusMapping } = require('../../helpers/statusUtil');
 const { KBO_teamIncludes2id } = require('../../helpers/teamsMapping');
 const moment = require('moment');
 const { MATCH_STATUS } = require('../../helpers/leaguesUtil');
@@ -72,7 +72,7 @@ async function repackageLivescore(date, matchData, livescoreData) {
 
         if (match.homeId === homeId && match.awayId === awayId && (lowerScheduled <= scheduled && scheduled <= upperScheduled) && status === MATCH_STATUS.INPLAY) {
           temp.gameId = gameId;
-          temp.status = MATCH_STATUS_REALTIME[status];
+          temp.status = status;
           temp.Total.home.R = game.rb2;
           temp.Total.away.R = game.ra2;
           temp.Total.home.H = game.hb;
