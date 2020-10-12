@@ -106,7 +106,10 @@ async function getHandicap() {
 						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === 'NBA 美國職業籃球-總冠軍賽') ||
 						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽-季後賽') ||
-            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽-總冠軍賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '日本籃球B聯賽-總冠軍賽') ||
+						(data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國籃球聯賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國籃球聯賽-季後賽') ||
+            (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '韓國籃球聯賽-總冠軍賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-季後賽') ||
             (data.result.data_list[k].transType === '全場' && data.result.data_list[k].league_name === '英格蘭超級聯賽-總冠軍賽') ||
@@ -1372,6 +1375,36 @@ function teamName2Id(name) {
   else if (name.includes('廣州恒大')) return '11289';
   else if (name.includes('上海綠地申花')) return '43807';
   else if (name.includes('廣州富力')) return '43806';
+  // 韓籃
+  else if (name.includes('全州KCC宙斯盾')) return '52580';
+  else if (name.includes('昌原LG獵隼')) return '58742';
+  else if (name.includes('首爾三星迅雷')) return '48858';
+  else if (name.includes('安陽KGC')) return '58502';
+  else if (name.includes('釜山KT爆音')) return '58738';
+  else if (name.includes('高陽獵戶座')) return '58497';
+  else if (name.includes('仁川東土大象')) return '58501';
+  else if (name.includes('首爾SK騎士')) return '58503';
+  else if (name.includes('原州東浦新世代')) return '58737';
+  else if (name.includes('蔚山現代太陽神')) return '52579';
+  // 日藍
+  else if (name.includes('秋田北部喜悅')) return '50069';
+  else if (name.includes('豐田汽車')) return '49133';
+  else if (name.includes('千葉噴氣機')) return '49666';
+  else if (name.includes('北海道風神')) return '50195';
+  else if (name.includes('宇都宮布雷克斯')) return '298998';
+  else if (name.includes('澀谷陽光搖滾')) return '49684';
+  else if (name.includes('愛信三河海馬')) return '54190';
+  else if (name.includes('新瀉天鵝')) return '52101';
+  else if (name.includes('三遠新鳳凰城')) return '50198';
+  else if (name.includes('川崎雷霆勇者')) return '184992';
+  else if (name.includes('富山松雞')) return '52401';
+  else if (name.includes('橫濱海盜')) return '49683';
+  else if (name.includes('京都創榮')) return '50197';
+  else if (name.includes('名古屋鑽石海豚')) return '50196';
+  else if (name.includes('大阪七福神')) return '50194';
+  else if (name.includes('沖繩金帝皇')) return '49134';
+  else if (name.includes('島根魔術')) return '76325';
+  else if (name.includes('滋賀湖星')) return '49645';
   // 英超
   else if (name.includes('曼聯')) return '10899';
   else if (name.includes('白禮頓')) return '17161';
