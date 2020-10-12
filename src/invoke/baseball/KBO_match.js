@@ -10,7 +10,7 @@ const { updateMatchChunk2MySQL, updateMatchChunk2Realtime } = require('../../hel
 async function main() {
   try {
     let { matchURL, date, league, league_id, sport_id, ori_league_id } = configs;
-    date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 3, unit: 'days', format: 'YYYY-MM-DD' });
+    date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
     const URL = `${matchURL}${date}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatch(data);
