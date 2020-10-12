@@ -10,7 +10,7 @@ const { updateMatchChunk2MySQL } = require('../../helpers/databaseEngine');
 async function main() {
   try {
     let { matchURL, date, league, league_id, sport_id, ori_league_id } = configs;
-    date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 1, unit: 'days', format: 'YYYY-MM-DD' });
+    date = momentUtil.timestamp2date(Date.now(), { op: 'add', value: 3, unit: 'days', format: 'YYYY-MM-DD' });
     const URL = `${matchURL}${date}`;
     const data = await getData(URL);
     const matchChunk = await repackageMatch(data);
@@ -28,7 +28,7 @@ async function repackageMatch(matchData) {
     const json = html2json(matchData);
     if (!json.child.length) return Promise.resolve(data);
     json.child.map(function(ele, i) {
-      if (i % 2 === 0) {
+      if (i % 2 !== 0) {
         const matchId = hrefReplacement(ele.attr.href);
         const scheduled = momentUtil.date2timestamp(ele.child[5].child[1].child[3].attr.datetime);
         const awayAlias = ele.child[3].child[1].attr.class[1];
