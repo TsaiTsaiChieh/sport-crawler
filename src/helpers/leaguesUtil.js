@@ -57,31 +57,32 @@ function leagueCodebook(league) {
         id: '8251',
         name_ch: '超級籃球聯賽',
         ori_league_id: '8251',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'WNBA':
       return {
         id: '244',
         name_ch: '美國國家女子籃球協會',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'NBL':
       return {
         id: '1714',
         name_ch: '澳洲職籃',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'CBA':
       return {
         id: '2319',
         name_ch: '中國職籃',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'KBL':
       return {
         id: '2148',
         name_ch: '韓國職籃',
-        hw_ball: ''
+        hw_ball: '14',
+        ori_league_id: '2148'
       };
     case 'BJL':
       return {
@@ -122,13 +123,13 @@ function leagueCodebook(league) {
       return {
         id: '2759',
         name_ch: '澳洲職棒',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'LMB':
       return {
         id: '4412',
         name_ch: '墨西哥職棒',
-        hw_ball: ''
+        hw_ball: '14'
       };
     case 'NHL':
       return {
