@@ -89,7 +89,7 @@ async function updateStatusOrScore2MySQL(matchChunk) {
       if (match.status === END) {
         await set2realtime(`${path}/${matchId}/Summary/status`, END);
         await mysql.Match.update({ status: match.status, home_points: match.homeScore, away_points: match.awayScore }, { where: { bets_id: matchId } });
-        console.log(`CPBL - ${match.matchId} 完賽 at ${now}`);
+        console.log(`CPBL - ${matchId} 完賽 at ${now}`);
       }
       if (match.oriStatus !== INPLAY && match.status === INPLAY) {
         await set2realtime(`${path}/${matchId}/Summary/status`, INPLAY);
