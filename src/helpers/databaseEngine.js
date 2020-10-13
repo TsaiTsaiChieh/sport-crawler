@@ -116,7 +116,7 @@ async function updateLiveAndTeamData(livescoreData, configs) {
     await set2realtime(`${path}/Now_outs`, ele.outs);
     await set2realtime(`${path}/Now_strikes`, ele.strikes);
     await set2realtime(`${path}/Now_halfs`, ele.halfs);
-    await set2realtime(`${path}/status`, String(ele.status));
+    await set2realtime(`${path}/status`, ele.status);
     await set2realtime(`${path}/info/home/Total/points`, String(ele.Total.home.R));
     await set2realtime(`${path}/info/away/Total/points`, String(ele.Total.away.R));
     await set2realtime(`${path}/info/home/Total/hits`, String(ele.Total.home.H));
